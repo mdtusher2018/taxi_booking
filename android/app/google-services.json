@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "59441920882",
+    "project_id": "texibooking-26657",
+    "storage_bucket": "texibooking-26657.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59441920882:android:494a5453fdf2d6c4477beb",
+        "android_client_info": {
+          "package_name": "com.example.taxi_booking"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE4QYD7t9KTTG-K9cz8uw9Seyd3iIIq8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
