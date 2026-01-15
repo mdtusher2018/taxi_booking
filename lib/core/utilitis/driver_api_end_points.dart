@@ -24,6 +24,7 @@ class DriverApiEndpoints {
 
   //vihicals
   static var addVehicale = "vehicles/create-vehicle";
+
   static String myVehicales(int page) =>
       "vehicles/all-vehicles?limit=10&page=$page";
   static String vehicaleDetails(String id) => "vehicles/details/$id";
@@ -35,4 +36,7 @@ class DriverApiEndpoints {
   static String deleteVehicale(String vehicalId) {
     return "vehicles/delete-vehicle/$vehicalId";
   }
+
+  //Home Ride
+  static String driverOnline = "with-car-drivers/update-current-location";
 }

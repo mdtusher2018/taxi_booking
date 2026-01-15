@@ -1,6 +1,8 @@
 class DriverAppRoutes {
   static const splashView = '/splash';
 
+  static const dashboardView = '/dashboard';
+
   static const homeView = '/home';
 
   static const authenticationView = '/authentication';
@@ -17,7 +19,6 @@ class DriverAppRoutes {
 
   //old
 
-  static const dashboardView = '/dashboard';
   static const notificationView = '/notification';
   static const chatView = '/chat';
   static const walletView = '/wallet';

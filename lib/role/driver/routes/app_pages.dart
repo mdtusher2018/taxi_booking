@@ -5,7 +5,7 @@ import 'package:taxi_booking/role/driver/featured/call/views/call_view.dart';
 import 'package:taxi_booking/role/driver/featured/chat/views/chat_view.dart';
 import 'package:taxi_booking/role/driver/featured/customer_support/views/customer_support_view.dart';
 import 'package:taxi_booking/role/driver/featured/dashboard/views/dashboard_view.dart';
-import 'package:taxi_booking/role/driver/featured/home/views/home_view.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/views/home_view.dart';
 import 'package:taxi_booking/role/driver/featured/notification/views/notification_view.dart';
 import 'package:taxi_booking/role/driver/featured/payment/views/payment_view.dart';
 import 'package:taxi_booking/role/driver/featured/ride_history/views/ride_history_view.dart';
@@ -31,6 +31,10 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => DriverSplashView(),
       ),
 
+      GoRoute(
+        path: DriverAppRoutes.dashboardView,
+        builder: (context, state) => DriverDashboardView(),
+      ),
       GoRoute(
         path: DriverAppRoutes.homeView,
         builder: (context, state) => DriverHomeView(),
@@ -103,7 +107,7 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
       //old
       GoRoute(
         path: DriverAppRoutes.dashboardView,
-        builder: (context, state) => DashboardView(),
+        builder: (context, state) => DriverDashboardView(),
       ),
       GoRoute(
         path: DriverAppRoutes.notificationView,

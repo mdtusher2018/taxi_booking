@@ -1,5 +1,3 @@
-
-
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
@@ -7,11 +5,10 @@ import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
-import 'package:taxi_booking/role/driver/featured/home/widget/user_sheet_header.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/user_sheet_header.dart';
 
-import '../../chat/views/message_view.dart';
-
-import '../model/ride_request_model.dart';
+import '../../../chat/views/message_view.dart';
 
 class TripDetailsSheet extends StatelessWidget {
   TripDetailsSheet({super.key});
@@ -308,8 +305,8 @@ class TripDetailsSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(RideRequestModel trip) {
-    switch (trip.status) {
+  Widget _buildActionButtons(RideRequestResponse trip) {
+    switch ('accepted') {
       case 'accepted':
         return Column(
           children: [

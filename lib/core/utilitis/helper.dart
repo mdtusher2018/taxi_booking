@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_booking/core/services/storage/i_local_storage_service.dart';
 import 'package:taxi_booking/core/services/storage/storage_key.dart';
@@ -45,4 +47,48 @@ double calculatePolylineDistance(List<LatLng> points) {
   }
 
   return totalDistance;
+}
+
+// Helper method to get current location
+Future<Position?> getCurrentLocation() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    return null;
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return null;
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    return null;
+  }
+
+  Position position = await Geolocator.getCurrentPosition(
+    desiredAccuracy: LocationAccuracy.high,
+  );
+
+  return position;
+}
+
+Future<String> getAddressFromLocation(double latitude, double longitude) async {
+  try {
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      latitude,
+      longitude,
+    );
+
+    Placemark place = placemarks.first;
+    String address = '${place.name}, ${place.locality}, ${place.country}';
+    return address;
+  } catch (e) {
+    return "Unknown address";
+  }
 }

@@ -69,10 +69,10 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
   );
   // login
   final TextEditingController loginPhoneController = TextEditingController(
-    text: kDebugMode ? "+12058550123" : null,
+    text: kDebugMode ? "+8801933141861" : null,
   );
   final TextEditingController loginPasswordController = TextEditingController(
-    text: kDebugMode ? "password@!" : null,
+    text: kDebugMode ? "password@!5" : null,
   );
 
   @override
@@ -88,7 +88,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
             ref
                 .watch(snackbarServiceProvider)
                 .showSuccess("Login successful!", context: context);
-            Future.microtask(() => context.push(DriverAppRoutes.homeView));
+            Future.microtask(() => context.push(DriverAppRoutes.dashboardView));
           }
         },
         loading: () {
@@ -127,10 +127,9 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
                     Expanded(
                       child: CustomButton(
                         title: 'Login',
-                        buttonColor:
-                            authModeisLogin
-                                ? AppColors.mainColor
-                                : Colors.transparent,
+                        buttonColor: authModeisLogin
+                            ? AppColors.mainColor
+                            : Colors.transparent,
                         onTap: () {
                           authModeController.state = true;
                         },
@@ -147,10 +146,9 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
                     Expanded(
                       child: CustomButton(
                         title: 'Sign up',
-                        buttonColor:
-                            !authModeisLogin
-                                ? AppColors.mainColor
-                                : Colors.transparent,
+                        buttonColor: !authModeisLogin
+                            ? AppColors.mainColor
+                            : Colors.transparent,
                         onTap: () {
                           authModeController.state = false;
                         },

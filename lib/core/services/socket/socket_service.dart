@@ -76,6 +76,9 @@ class SocketService {
   void emit(String event, dynamic data) {
     if (!isConnected) return;
     _socket!.emit(event, data);
+    AppLogger.i(
+      "👂 Emit to socket event: $event\n👂 With data:${data.toString()}",
+    );
   }
 
   // ------------------ LISTEN ------------------

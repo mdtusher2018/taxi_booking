@@ -50,6 +50,54 @@ final class AuthRepositoryProvider
 
 String _$authRepositoryHash() => r'9c0a72bca4b1a842e2e75ef97e3edf209ac1bf9e';
 
+@ProviderFor(homerideRepository)
+final homerideRepositoryProvider = HomerideRepositoryProvider._();
+
+final class HomerideRepositoryProvider
+    extends
+        $FunctionalProvider<
+          HomeRideRepository,
+          HomeRideRepository,
+          HomeRideRepository
+        >
+    with $Provider<HomeRideRepository> {
+  HomerideRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'homerideRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$homerideRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<HomeRideRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  HomeRideRepository create(Ref ref) {
+    return homerideRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(HomeRideRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<HomeRideRepository>(value),
+    );
+  }
+}
+
+String _$homerideRepositoryHash() =>
+    r'ed8cb0ef3252580b2e3e0690b95d853c9f01d9ae';
+
 @ProviderFor(profileRepository)
 final profileRepositoryProvider = ProfileRepositoryProvider._();
 

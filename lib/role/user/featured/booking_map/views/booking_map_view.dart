@@ -29,7 +29,7 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
           (state.currentLocation == null)
               ? Center(child: CircularProgressIndicator())
               : GoogleMap(
-                  onMapCreated: controller.onMapCreated,
+                  onMapCreated: controller.mapControllerSet,
                   initialCameraPosition: CameraPosition(
                     target: state.currentLocation!,
                     zoom: 14.0,

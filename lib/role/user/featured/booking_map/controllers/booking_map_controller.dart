@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
@@ -14,9 +13,9 @@ import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/core/utilitis/user_api_end_points.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/marker_icon.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/model/create_ride_response.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/model/driver_live_location_update.dart';
-import '../../../../../resource/app_images/app_images.dart';
 import '../model/driver_info_model.dart';
 
 class PricingModel {
@@ -134,7 +133,8 @@ final bookingMapControllerProvider =
       ),
     );
 
-class BookingMapController extends StateNotifier<BookingMapState> {
+class BookingMapController extends StateNotifier<BookingMapState>
+    with MapMarkerIcon {
   final IApiService apiService;
   final SocketService socketService;
 
@@ -143,21 +143,13 @@ class BookingMapController extends StateNotifier<BookingMapState> {
     _init();
   }
 
-  GoogleMapController? mapController;
-  BitmapDescriptor? taxiIcon;
-  BitmapDescriptor? pickupIcon;
-  BitmapDescriptor? currentLocationIcon;
-
   final polylinePoints = PolylinePoints(apiKey: UserApiEndpoints.mapKey);
 
   Future<void> _init() async {
-    await _initMarkers();
+    await initMarkers();
+
     goToCurrentLocation();
     initSurgeMultiplier();
-    // ever(pickupLatLng, (_) => updateSurgeMultiplier());
-    // ever(pickupLatLng, (_) => _onLocationChanged());
-    // ever(dropLatLng, (_) => _onLocationChanged());
-    // ever(driverLatLng, (_) => _onDriverLocationChanged());
   }
 
   final TextEditingController dropLocationController = TextEditingController();
@@ -243,30 +235,9 @@ class BookingMapController extends StateNotifier<BookingMapState> {
           print(state.tripDurationMin.toString());
         }
 
-        _fitCameraBounds(routePoints);
+        fitCameraBounds(routePoints);
       }
     }
-  }
-
-  void _fitCameraBounds(List<LatLng> points) {
-    double minLat = points.first.latitude;
-    double maxLat = points.first.latitude;
-    double minLng = points.first.longitude;
-    double maxLng = points.first.longitude;
-
-    for (final point in points) {
-      if (point.latitude < minLat) minLat = point.latitude;
-      if (point.latitude > maxLat) maxLat = point.latitude;
-      if (point.longitude < minLng) minLng = point.longitude;
-      if (point.longitude > maxLng) maxLng = point.longitude;
-    }
-
-    final bounds = LatLngBounds(
-      southwest: LatLng(minLat, minLng),
-      northeast: LatLng(maxLat, maxLng),
-    );
-
-    mapController?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 80));
   }
 
   Future<void> _onDriverLocationChanged() async {
@@ -329,13 +300,9 @@ class BookingMapController extends StateNotifier<BookingMapState> {
           tripDurationMin: (result.primaryRoute!.duration ?? 0) / 60,
         );
 
-        _fitCameraBounds(routePoints);
+        fitCameraBounds(routePoints);
       }
     }
-  }
-
-  void onMapCreated(GoogleMapController controller) {
-    mapController = controller;
   }
 
   void onSearchTap() {
@@ -362,13 +329,7 @@ class BookingMapController extends StateNotifier<BookingMapState> {
     state = state.copyWith(dropLatLng: latlng);
   }
 
-  Future<void> cameraMove(LatLng location) async {
-    await mapController!.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(target: location, zoom: 13.0),
-      ),
-    );
-  }
+
 
   void goToCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
@@ -401,46 +362,6 @@ class BookingMapController extends StateNotifier<BookingMapState> {
     }
   }
 
-  Future<void> _initMarkers() async {
-    Future<void> loadPickupMarker() async {
-      try {
-        final ByteData byteData = await rootBundle.load(AppImages.pickupMarker);
-        final Uint8List bytes = byteData.buffer.asUint8List();
-        pickupIcon = BitmapDescriptor.fromBytes(bytes);
-      } catch (e) {
-        pickupIcon = BitmapDescriptor.defaultMarker;
-      }
-    }
-
-    Future<void> loadTaxiMarker() async {
-      try {
-        final ByteData byteData = await rootBundle.load(AppImages.customMarker);
-        final Uint8List bytes = byteData.buffer.asUint8List();
-        taxiIcon = BitmapDescriptor.fromBytes(bytes);
-      } catch (e) {
-        taxiIcon = BitmapDescriptor.defaultMarker;
-      }
-    }
-
-    Future<void> loadCurrentLocationMarker() async {
-      try {
-        final ByteData byteData = await rootBundle.load(
-          AppImages.myCurrentLocationMarker,
-        );
-        final Uint8List bytes = byteData.buffer.asUint8List();
-        currentLocationIcon = BitmapDescriptor.fromBytes(bytes);
-      } catch (_) {
-        currentLocationIcon = BitmapDescriptor.defaultMarker;
-      }
-    }
-
-    await Future.wait([
-      loadTaxiMarker(),
-      loadPickupMarker(),
-      loadCurrentLocationMarker(),
-    ]);
-  }
-
   List<LocationSuggestion> getPopularLocations() {
     return [
       LocationSuggestion(
@@ -466,8 +387,6 @@ class BookingMapController extends StateNotifier<BookingMapState> {
   //=========================================
 
   void updateSurgeMultiplier() {
-    AppLogger.d("updateSurgeMultiplier Called");
-    AppLogger.d(socketService.isConnected.toString());
     socketService.emit(SocketEvents.liveCountUpdate, {
       "location": {
         "latitude": state.pickupLatLng!.latitude,
@@ -477,9 +396,7 @@ class BookingMapController extends StateNotifier<BookingMapState> {
   }
 
   void initSurgeMultiplier() {
-    AppLogger.d("initSurgeMultiplier Called");
     socketService.on(SocketEvents.liveCountUpdate, (data) {
-      AppLogger.d(data.toString());
       final calculatedSurge =
           (data['rideRequestCount'] ?? 0) / (data['availableDriverCount'] ?? 1);
 
@@ -537,7 +454,6 @@ class BookingMapController extends StateNotifier<BookingMapState> {
       state = state.copyWith(status: RideBookingStatus.searchingDriver);
 
       socketService.on(SocketEvents.rideAccepted, (data) {
-        AppLogger.d(data.toString());
         state = state.copyWith(
           acceptedDriverInfo: RideAcceptResponse.fromJson(data).driverInfo,
         );
@@ -550,7 +466,6 @@ class BookingMapController extends StateNotifier<BookingMapState> {
             ),
           );
           socketService.on(SocketEvents.driverCurrentLocation, (data) {
-            AppLogger.d(data.toString());
             final response = DriverCurrentLocationResponse.fromJson(data);
             state = state.copyWith(
               driverLatLng: LatLng(
