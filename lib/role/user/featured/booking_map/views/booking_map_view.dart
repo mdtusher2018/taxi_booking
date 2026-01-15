@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/sheet/searching_driver_sheet.dart';
 import '../../../../../resource/common_widget/custom_network_image.dart';

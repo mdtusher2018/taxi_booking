@@ -197,12 +197,16 @@ class OnTheWaySheet extends ConsumerWidget {
 
                         /// -------- ARRIVED BUTTON --------
                         CustomButton(
-                          title: "Arrived",
+                          title: "Start Ride",
                           border: Border.all(
                             width: 2,
                             color: AppColors.btnColor,
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            ref
+                                .read(homeRideControllerProvider.notifier)
+                                .startRide(rideId: request.rideInfo.id);
+                          },
                         ),
                       ],
                     )

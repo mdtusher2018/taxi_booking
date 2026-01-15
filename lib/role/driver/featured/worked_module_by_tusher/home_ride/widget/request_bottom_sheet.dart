@@ -76,6 +76,7 @@ class RequestListSheet extends ConsumerWidget {
                         return _buildRequestItem(ref, request, isExpanded);
                       },
                     ),
+                    SizedBox(height: 80),
                   ],
                 ),
               );
@@ -213,15 +214,17 @@ class RequestListSheet extends ConsumerWidget {
       children: [
         Icon(icon, size: 18),
         const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '$label: ',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(value, maxLines: 2),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '$label: ',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(value, maxLines: 2),
+            ],
+          ),
         ),
       ],
     );

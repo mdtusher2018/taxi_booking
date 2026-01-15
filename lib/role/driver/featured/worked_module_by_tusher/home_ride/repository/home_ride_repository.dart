@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/repository.dart';
 import 'package:taxi_booking/core/base/result.dart';
-import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
@@ -65,23 +64,40 @@ class HomeRideRepository extends Repository {
   }
 
   void rideDecline({required String rideId}) {
-    socketService.emit(SocketEvents.rideAccepted, {
-      {"accepted": false, "rideId": rideId},
-    });
+    throw UnimplementedError("rideDecline is not implemented yet");
   }
 
   void updateDriverLocation({
     required double latitude,
     required double longitude,
     required String rideId,
+    required String passengerId,
     required double averageSpeedKmPH,
   }) {
-    AppLogger.i("Updating driver location: Lat:$latitude, Lng:$longitude");
-    socketService.emit(SocketEvents.rideAccepted, {
+    socketService.emit(SocketEvents.updateDriverLocation, {
+      "latitude": latitude,
+      "longitude": longitude,
+      'passengerId': passengerId,
+      "rideId": rideId,
+      "averageSpeedKmPH": averageSpeedKmPH,
+    });
+  }
+
+  void startRide({
+    required double latitude,
+    required double longitude,
+    required String rideId,
+    required double averageSpeedKmPH,
+  }) {
+    socketService.emit(SocketEvents.rideStarted, {
       "latitude": latitude,
       "longitude": longitude,
       "rideId": rideId,
       "averageSpeedKmPH": averageSpeedKmPH,
     });
+  }
+
+  void endRide({required String rideId}) {
+    socketService.emit(SocketEvents.rideEnded, {"rideId": rideId});
   }
 }

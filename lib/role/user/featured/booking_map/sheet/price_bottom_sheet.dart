@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:taxi_booking/role/user/featured/booking_map/controllers/booking_map_controller.dart';
+import 'package:taxi_booking/role/user/featured/booking_map/model/pricing_model.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/sheet/create_ride_summary_sheet.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';

@@ -11,119 +11,15 @@ import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
+import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/core/utilitis/user_api_end_points.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/marker_icon.dart';
+import 'package:taxi_booking/role/user/featured/booking_map/controllers/booking_map_state.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/model/create_ride_response.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/model/driver_live_location_update.dart';
+import 'package:taxi_booking/role/user/featured/booking_map/model/pricing_model.dart';
 import '../model/driver_info_model.dart';
-
-class PricingModel {
-  final String title;
-  final String subtitle;
-  final double startFare;
-  final double perKm;
-  final double perMin;
-  final double minFare;
-  final String? extra;
-
-  PricingModel({
-    required this.title,
-    required this.subtitle,
-    required this.startFare,
-    required this.perKm,
-    required this.perMin,
-    required this.minFare,
-    this.extra,
-  });
-}
-
-enum RideBookingStatus {
-  initial,
-  rideCreating,
-  searchingDriver,
-  driverOnTheWay,
-  rideStarted,
-  rideInProgress,
-  rideCompleted,
-  rideCancelled,
-  paymentProcessing,
-  paymentCompleted,
-  paymentFailed,
-  rideFailed,
-  rideEnded,
-}
-
-class BookingMapState {
-  final bool isLoading;
-  final Set<Marker> markers;
-  final Set<Polyline> polylines;
-
-  final LatLng? pickupLatLng;
-  final LatLng? dropLatLng;
-  final LatLng? currentLocation;
-  final LatLng? driverLatLng;
-
-  final RideBookingStatus status;
-  final double routeDistanceKm;
-  final double tripDurationMin;
-  final double surgeMultiplier;
-  final String rideId;
-  final DriverInfo? acceptedDriverInfo;
-
-  final PricingModel? selectedPriceModel;
-
-  const BookingMapState({
-    this.isLoading = false,
-    this.markers = const {},
-    this.polylines = const {},
-    this.pickupLatLng,
-    this.dropLatLng,
-    this.currentLocation,
-    this.driverLatLng,
-    this.status = RideBookingStatus.initial,
-    this.routeDistanceKm = 0,
-    this.tripDurationMin = 0,
-    this.surgeMultiplier = 1,
-    this.rideId = '',
-    this.acceptedDriverInfo,
-    this.selectedPriceModel,
-  });
-
-  BookingMapState copyWith({
-    bool? isLoading,
-    Set<Marker>? markers,
-    Set<Polyline>? polylines,
-    LatLng? pickupLatLng,
-    LatLng? dropLatLng,
-    LatLng? currentLocation,
-    LatLng? driverLatLng,
-    RideBookingStatus? status,
-    double? routeDistanceKm,
-    double? tripDurationMin,
-    double? surgeMultiplier,
-    String? rideId,
-    DriverInfo? acceptedDriverInfo,
-    PricingModel? selectedPriceModel,
-  }) {
-    return BookingMapState(
-      isLoading: isLoading ?? this.isLoading,
-      markers: markers ?? this.markers,
-      polylines: polylines ?? this.polylines,
-      pickupLatLng: pickupLatLng ?? this.pickupLatLng,
-      dropLatLng: dropLatLng ?? this.dropLatLng,
-      currentLocation: currentLocation ?? this.currentLocation,
-      driverLatLng: driverLatLng ?? this.driverLatLng,
-      status: status ?? this.status,
-      routeDistanceKm: routeDistanceKm ?? this.routeDistanceKm,
-      tripDurationMin: tripDurationMin ?? this.tripDurationMin,
-      surgeMultiplier: surgeMultiplier ?? this.surgeMultiplier,
-      rideId: rideId ?? this.rideId,
-      acceptedDriverInfo: acceptedDriverInfo ?? this.acceptedDriverInfo,
-      selectedPriceModel: selectedPriceModel ?? this.selectedPriceModel,
-    );
-  }
-}
 
 final bookingMapControllerProvider =
     StateNotifierProvider<BookingMapController, BookingMapState>(
@@ -157,7 +53,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
       TextEditingController();
 
   void onLocationChanged() async {
-    state.markers.removeWhere((m) => m.markerId == 'pickup');
+    state.markers.removeWhere((m) => m.markerId.value == 'pickup');
 
     if (state.pickupLatLng != null && pickupIcon != null) {
       state.markers.add(
@@ -174,7 +70,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
       );
     }
 
-    state.markers.removeWhere((m) => m.markerId == 'drop');
+    state.markers.removeWhere((m) => m.markerId.value == 'drop');
 
     if (state.dropLatLng != null) {
       state.markers.add(
@@ -329,8 +225,6 @@ class BookingMapController extends StateNotifier<BookingMapState>
     state = state.copyWith(dropLatLng: latlng);
   }
 
-
-
   void goToCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) return;
@@ -345,7 +239,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
 
       if (currentLocationIcon != null) {
         state.markers.removeWhere(
-          (marker) => marker.markerId == 'current_location',
+          (marker) => marker.markerId.value == 'current_location',
         );
         state.markers.add(
           Marker(

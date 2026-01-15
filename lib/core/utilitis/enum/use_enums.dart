@@ -1,0 +1,15 @@
+enum RideBookingStatus {
+  initial,
+  rideCreating,
+  searchingDriver,
+  driverOnTheWay,
+  rideStarted,
+  rideInProgress,
+  rideCompleted,
+  rideCancelled,
+  paymentProcessing,
+  paymentCompleted,
+  paymentFailed,
+  rideFailed,
+  rideEnded,
+}

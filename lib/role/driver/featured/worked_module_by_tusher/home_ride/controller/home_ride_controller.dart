@@ -1,14 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
+import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
+import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/role/driver/driver_di/repository.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_state.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/marker_icon.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/driver_online_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
@@ -16,63 +20,13 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_r
 
 part 'home_ride_controller.g.dart';
 
-enum DriverStatus { offline, online, haveSelectedRequest, showTripDetailsSheet }
-
-class HomeRideState {
-  final DriverStatus status;
-  final DriverOnlineResponse? onlineResponse;
-  final List<RideRequestResponse> rideRequest;
-  final String? expandedRequestId;
-  final RideRequestResponse? selectedRide;
-  final String? error;
-
-  final LatLng? driverLocation;
-  final Set<Marker> markers;
-  final Set<Polyline> polylines;
-
-  const HomeRideState({
-    required this.status,
-    this.onlineResponse,
-    this.error,
-    this.rideRequest = const [],
-    this.expandedRequestId,
-    this.selectedRide,
-    this.driverLocation,
-    this.markers = const {},
-    this.polylines = const {},
-  });
-
-  HomeRideState copyWith({
-    DriverStatus? status,
-    DriverOnlineResponse? onlineResponse,
-    List<RideRequestResponse>? rideRequest,
-    String? error,
-    String? expandedRequestId,
-    RideRequestResponse? selectedRide,
-    LatLng? driverLocation,
-    Set<Marker>? markers,
-    Set<Polyline>? polylines,
-  }) {
-    return HomeRideState(
-      status: status ?? this.status,
-      onlineResponse: onlineResponse ?? this.onlineResponse,
-      rideRequest: rideRequest ?? this.rideRequest,
-      error: error,
-      expandedRequestId: expandedRequestId ?? this.expandedRequestId,
-      selectedRide: selectedRide ?? this.selectedRide,
-      driverLocation: driverLocation ?? this.driverLocation,
-      markers: markers ?? this.markers,
-      polylines: polylines ?? this.polylines,
-    );
-  }
-}
-
 @riverpod
 class HomeRideController extends _$HomeRideController with MapMarkerIcon {
   late HomeRideRepository repository;
 
   Timer? _locationTimer;
   StreamSubscription<Position>? _locationStream;
+  final polylinePoints = PolylinePoints(apiKey: DriverApiEndpoints.mapKey);
 
   void startTrackingDriverLocation() {
     _locationStream?.cancel();
@@ -93,6 +47,12 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
           );
           cameraMove(latLng);
 
+          /// 🔁 REDRAW ROUTE IF RIDE IS ACTIVE
+          if (state.status == DriverStatus.haveSelectedRequest &&
+              state.selectedRide != null) {
+            _drawRouteToPickup(state.selectedRide!);
+          }
+
           state = state.copyWith(
             driverLocation: latLng,
             markers: {
@@ -111,11 +71,19 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
   }
 
   Future<void> _drawRouteToPickup(RideRequestResponse ride) async {
-    if (state.driverLocation == null) return;
+    AppLogger.e("Drawing route to pickup location...");
+    LatLng? driverLatLng = state.driverLocation;
+
+    if (driverLatLng == null) {
+      final position = await getCurrentLocation();
+      if (position == null) return;
+
+      driverLatLng = LatLng(position.latitude, position.longitude);
+    }
 
     final pickupLatLng = LatLng(
-      ride.rideInfo.pickupLocation.coordinates[0],
-      ride.rideInfo.pickupLocation.coordinates[1],
+      ride.rideInfo.pickupLocation.coordinates[1], // latitude
+      ride.rideInfo.pickupLocation.coordinates[0], // longitude
     );
 
     /// Pickup marker
@@ -125,18 +93,40 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
       icon: pickupIcon ?? BitmapDescriptor.defaultMarker,
     );
 
-    /// Simple straight polyline (for now)
+    final result = await polylinePoints.getRouteBetweenCoordinatesV2(
+      request: RoutesApiRequest(
+        origin: PointLatLng(driverLatLng.latitude, driverLatLng.longitude),
+        destination: PointLatLng(pickupLatLng.latitude, pickupLatLng.longitude),
+        travelMode: TravelMode.driving,
+      ),
+    );
+
+    if (result.primaryRoute?.polylinePoints == null ||
+        result.primaryRoute!.polylinePoints!.isEmpty) {
+      AppLogger.e("❌ Route not found: ${result.errorMessage}");
+      return;
+    }
+
+    final routePoints = result.primaryRoute!.polylinePoints!
+        .map((p) => LatLng(p.latitude, p.longitude))
+        .toList();
+
     final polyline = Polyline(
-      polylineId: const PolylineId("route"),
-      points: [state.driverLocation!, pickupLatLng],
+      polylineId: const PolylineId('route'),
+      color: Colors.blue,
       width: 5,
-      color: Colors.yellowAccent,
+      points: routePoints,
     );
 
     state = state.copyWith(
-      markers: {...state.markers, pickupMarker},
+      markers: {
+        ...state.markers.where((m) => m.markerId.value != "pickup"),
+        pickupMarker,
+      },
       polylines: {polyline},
     );
+
+    AppLogger.i("✅ Route drawn with ${routePoints.length} points");
   }
 
   @override
@@ -206,7 +196,7 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
   Future<void> rideAccepted({required RideRequestResponse ride}) async {
     repository.rideAccept(rideId: ride.rideInfo.id);
 
-    _startLocationUpdates(ride.rideInfo.id);
+    _startLocationUpdates(ride.rideInfo.id, ride.passengerInfo.id);
     _drawRouteToPickup(ride);
     state = state.copyWith(
       status: DriverStatus.haveSelectedRequest,
@@ -214,7 +204,7 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
     );
   }
 
-  void _startLocationUpdates(String rideId) {
+  void _startLocationUpdates(String rideId, String passengerId) {
     _locationTimer?.cancel();
 
     _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
@@ -225,6 +215,7 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
         repository.updateDriverLocation(
           latitude: position.latitude,
           longitude: position.longitude,
+          passengerId: passengerId,
           rideId: rideId,
           averageSpeedKmPH: 1,
         );
@@ -236,5 +227,31 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
     repository.rideDecline(rideId: rideId);
 
     state = state.copyWith(status: DriverStatus.online);
+  }
+
+  void startRide({required String rideId}) async {
+    final position = await getCurrentLocation();
+
+    if (position != null) {
+      repository.startRide(
+        latitude: position.latitude,
+        longitude: position.longitude,
+
+        rideId: rideId,
+        averageSpeedKmPH: 1,
+      );
+      state = state.copyWith(status: DriverStatus.onGoingRide);
+    }
+  }
+
+  void endRide({required String rideId}) async {
+    final position = await getCurrentLocation();
+
+    if (position != null) {
+      repository.endRide(
+        rideId: rideId,
+      );
+      state = state.copyWith(status: DriverStatus.onGoingRide);
+    }
   }
 }

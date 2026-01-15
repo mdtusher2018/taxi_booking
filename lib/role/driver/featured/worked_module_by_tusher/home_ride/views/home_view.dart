@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/role/driver/featured/add_taxi_dashboard/views/add_taxi_dashboard_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_controller.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_going_ride.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_the_way_sheet.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/request_bottom_sheet.dart';
 import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
@@ -131,6 +133,10 @@ class DriverHomeView extends ConsumerWidget {
           /// ---------------- ON THE WAY SHEET ----------------
           if (state.status == DriverStatus.haveSelectedRequest)
             Positioned(bottom: 0, left: 0, right: 0, child: OnTheWaySheet()),
+
+          /// ---------------- ONGOING RIDE SHEET ----------------
+          if (state.status == DriverStatus.onGoingRide)
+            Positioned(bottom: 0, left: 0, right: 0, child: OngoingRideSheet()),
         ],
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:taxi_booking/core/logger/log_helper.dart';
-import 'package:taxi_booking/role/user/featured/booking_map/controllers/booking_map_controller.dart';
+import 'package:taxi_booking/role/user/featured/booking_map/model/pricing_model.dart';
 
 double distanceFare({
   required PricingModel pricing,
