@@ -15,6 +15,8 @@ class UserAppRoutes {
 
   static const myDriversView = '/myDrivers';
 
+  static const messagingView = '/messaging_view';
+
   //old
 
   static const dashboardView = '/dashboard';

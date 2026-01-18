@@ -16,6 +16,7 @@ class DriverAppRoutes {
   static const profileView = '/profile';
 
   static const myDriversView = '/myDrivers';
+  static const messagingView = '/messaging';
 
   //old
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
-import 'package:taxi_booking/role/user/featured/chat/views/message_view.dart';
 import 'package:taxi_booking/role/user/featured/payment/views/payment_view.dart';
 import 'package:taxi_booking/role/user/featured/setting/views/edit_profile_view.dart';
 
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_switch_widget.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/chat/views/user_message_view.dart';
 
 import '../../../../../resource/common_dialog/custom_dialog.dart';
 import '../../../../../resource/utilitis/common_style.dart';
@@ -141,11 +141,7 @@ class _UserSettingViewState extends State<UserSettingView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => MessageView(
-                        userImage: 'https://i.pravatar.cc/150?img=3',
-                        userName: 'Customer Support',
-                        targetUserId: '1234567890',
-                      ),
+                      builder: (_) => UserMessageView(reciverId: "support_id"),
                     ),
                   );
                 },

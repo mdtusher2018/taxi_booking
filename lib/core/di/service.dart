@@ -11,17 +11,17 @@ import 'package:taxi_booking/role/driver/routes/app_pages.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'service.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 ILocalStorageService localStorageService(Ref ref) {
   return LocalStorageService();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 ISnackBarService snackbarService(Ref ref) {
   return SnackBarService();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 ApiClient apiClient(Ref ref) {
   final navigatorKey = ref
       .watch(driverAppRouterProvider)
@@ -34,7 +34,7 @@ ApiClient apiClient(Ref ref) {
   );
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 IApiService apiService(Ref ref) {
   return ApiService(
     ref.watch(apiClientProvider),
@@ -42,7 +42,7 @@ IApiService apiService(Ref ref) {
   );
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 SocketService socketService(Ref ref) {
   return SocketService();
 }

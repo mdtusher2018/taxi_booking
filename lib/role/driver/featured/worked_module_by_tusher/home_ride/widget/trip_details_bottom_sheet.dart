@@ -1,14 +1,14 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/user_sheet_header.dart';
-
-import '../../../chat/views/message_view.dart';
+import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
 
 class TripDetailsSheet extends StatelessWidget {
   TripDetailsSheet({super.key});
@@ -262,17 +262,9 @@ class TripDetailsSheet extends StatelessWidget {
                               const Color(0xffFFC107),
                               Colors.white,
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return MessageView(
-                                        userImage: trip.passenger.profileImage,
-                                        userName: trip.passenger.name,
-                                        targetUserId: '12345678',
-                                      );
-                                    },
-                                  ),
+                                context.push(
+                                  DriverAppRoutes.messagingView,
+                                  extra: "",
                                 );
                               },
                             ),

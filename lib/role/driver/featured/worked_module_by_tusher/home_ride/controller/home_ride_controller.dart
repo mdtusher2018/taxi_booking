@@ -13,15 +13,15 @@ import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/role/driver/driver_di/repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_state.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/marker_icon.dart';
+import 'package:taxi_booking/core/utilitis/mixin/map_mixin.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/driver_online_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/repository/home_ride_repository.dart';
 
 part 'home_ride_controller.g.dart';
 
-@riverpod
-class HomeRideController extends _$HomeRideController with MapMarkerIcon {
+@Riverpod(keepAlive: true)
+class HomeRideController extends _$HomeRideController with MapMixin {
   late HomeRideRepository repository;
 
   Timer? _locationTimer;
@@ -71,7 +71,6 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
   }
 
   Future<void> _drawRouteToPickup(RideRequestResponse ride) async {
-    AppLogger.e("Drawing route to pickup location...");
     LatLng? driverLatLng = state.driverLocation;
 
     if (driverLatLng == null) {
@@ -125,8 +124,6 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
       },
       polylines: {polyline},
     );
-
-    AppLogger.i("✅ Route drawn with ${routePoints.length} points");
   }
 
   @override
@@ -208,7 +205,6 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
     _locationTimer?.cancel();
 
     _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-      AppLogger.i("Timer tick: Updating driver location for rideId: $rideId");
       final position = await getCurrentLocation();
 
       if (position != null) {
@@ -248,9 +244,7 @@ class HomeRideController extends _$HomeRideController with MapMarkerIcon {
     final position = await getCurrentLocation();
 
     if (position != null) {
-      repository.endRide(
-        rideId: rideId,
-      );
+      repository.endRide(rideId: rideId);
       state = state.copyWith(status: DriverStatus.onGoingRide);
     }
   }

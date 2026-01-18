@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:taxi_booking/role/user/featured/authentication/views/authentication_view.dart';
-import 'package:taxi_booking/role/user/featured/booking_map/views/booking_map_view.dart';
-import 'package:taxi_booking/role/user/featured/dashboard/views/dashboard_view.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/authentication/views/authentication_view.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/views/booking_map_view.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/user_root_view.dart';
 import 'package:taxi_booking/role/user/featured/setting/views/setting_view.dart';
 
-import 'package:taxi_booking/role/user/featured/splash/views/splash_view.dart';
+import 'package:taxi_booking/role/user/featured/splash/splash_view.dart';
 import 'package:taxi_booking/role/user/routes/user_app_routes.dart';
 
 final userAppRouterProvider = Provider<GoRouter>((ref) {
@@ -19,7 +19,7 @@ final userAppRouterProvider = Provider<GoRouter>((ref) {
 
       GoRoute(
         path: UserAppRoutes.rootView,
-        builder: (context, state) => UserDashboardView(),
+        builder: (context, state) => UserRootView(),
       ),
       GoRoute(
         path: UserAppRoutes.settingView,

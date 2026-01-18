@@ -98,6 +98,47 @@ final class HomerideRepositoryProvider
 String _$homerideRepositoryHash() =>
     r'ed8cb0ef3252580b2e3e0690b95d853c9f01d9ae';
 
+@ProviderFor(chatRepository)
+final chatRepositoryProvider = ChatRepositoryProvider._();
+
+final class ChatRepositoryProvider
+    extends $FunctionalProvider<ChatRepository, ChatRepository, ChatRepository>
+    with $Provider<ChatRepository> {
+  ChatRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'chatRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$chatRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<ChatRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ChatRepository create(Ref ref) {
+    return chatRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ChatRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ChatRepository>(value),
+    );
+  }
+}
+
+String _$chatRepositoryHash() => r'c4ded39db3f8dc46def6b4e13d49661c4611ad4c';
+
 @ProviderFor(profileRepository)
 final profileRepositoryProvider = ProfileRepositoryProvider._();
 

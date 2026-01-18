@@ -2,11 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
+import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
 
 class OnTheWaySheet extends ConsumerWidget {
   const OnTheWaySheet({super.key});
@@ -111,7 +114,7 @@ class OnTheWaySheet extends ConsumerWidget {
                     ),
                   ),
                 ),
-                _buildOnTheWayItem(ref, request, true),
+                _buildOnTheWayItem(context, ref, request, true),
               ],
             ),
           );
@@ -121,7 +124,9 @@ class OnTheWaySheet extends ConsumerWidget {
   }
 
   Widget _buildOnTheWayItem(
+    BuildContext context,
     WidgetRef ref,
+
     RideRequestResponse request,
     bool isExpanded,
   ) {
@@ -195,6 +200,58 @@ class OnTheWaySheet extends ConsumerWidget {
                         ),
                         const SizedBox(height: 16),
 
+                        /// -------- ACTION BUTTONS (Cancel | Message | Call) --------
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _actionIcon(
+                                icon: Icons.close,
+                                label: 'Cancel',
+
+                                onTap: () {
+                                  // TODO: cancel ride logic
+                                },
+                              ),
+                              _actionIcon(
+                                icon: Icons.message,
+                                label: 'Message',
+
+                                onTap: () {
+                                  final id = ref
+                                      .read(homeRideControllerProvider)
+                                      .selectedRide
+                                      ?.passengerInfo
+                                      .id;
+
+                                  context.push(
+                                    DriverAppRoutes.messagingView,
+                                    extra: {'id': id},
+                                  );
+                                },
+                              ),
+                              _actionIcon(
+                                icon: Icons.call,
+                                label: 'Call',
+
+                                onTap: () {
+                                  LaunchUrlService().makePhoneCall(
+                                    phoneNumber: request.passengerInfo.phone,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 16),
+
                         /// -------- ARRIVED BUTTON --------
                         CustomButton(
                           title: "Start Ride",
@@ -214,6 +271,35 @@ class OnTheWaySheet extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _actionIcon({
+    required IconData icon,
+    required String label,
+
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.greenLightHover,
+            ),
+            child: Icon(icon, color: AppColors.btnColor, size: 22),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     );
   }

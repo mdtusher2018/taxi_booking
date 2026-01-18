@@ -50,7 +50,7 @@ Future<void> appinitalized() async {
 
 void main() async {
   appinitalized();
-  runApp(const ProviderScope(child: MyApp(role: AppRole.driver)));
+  runApp(const ProviderScope(child: MyApp(role: AppRole.user)));
 }
 
 class MyApp extends ConsumerWidget {

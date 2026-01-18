@@ -26,7 +26,20 @@ class SocketEvents {
   // =========================
   // CHAT / MESSAGE EVENTS
   // =========================
+
   static const String newMessage = 'new-message';
+  static const String sendMessage = 'send-message';
+
+  //get chat by reciver id
+  static const String getChatByReciverId = 'message';
+  static const String receiverDetails = 'receiver-details';
+  static const String previousMessage = 'previous-message';
+
+  //get all chat list work as get api
+  static const String myChatListEmit = 'my-chat-list';
+  static String myChatListListen(String userId) {
+    return 'chat-list::$userId';
+  }
 
   // =========================
   // LIVE / ANALYTICS EVENTS

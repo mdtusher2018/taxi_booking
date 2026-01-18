@@ -1,5 +1,6 @@
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/repository/chat_repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/repository/auth_repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/drivers_repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/repository/home_ride_repository.dart';
@@ -28,6 +29,12 @@ HomeRideRepository homerideRepository(Ref ref) {
     localStorageService: localStorageService,
     socketService: socketService,
   );
+}
+
+@riverpod
+ChatRepository chatRepository(Ref ref) {
+  final socketService = ref.read(socketServiceProvider);
+  return ChatRepository(socketService: socketService);
 }
 
 @riverpod

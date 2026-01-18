@@ -2,9 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/role/driver/featured/add_taxi_dashboard/views/add_taxi_dashboard_view.dart';
 import 'package:taxi_booking/role/driver/featured/call/views/call_view.dart';
-import 'package:taxi_booking/role/driver/featured/chat/views/chat_view.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/views/chat_list_view.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/views/message_view.dart';
 import 'package:taxi_booking/role/driver/featured/customer_support/views/customer_support_view.dart';
-import 'package:taxi_booking/role/driver/featured/dashboard/views/dashboard_view.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver_root_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/views/home_view.dart';
 import 'package:taxi_booking/role/driver/featured/notification/views/notification_view.dart';
 import 'package:taxi_booking/role/driver/featured/payment/views/payment_view.dart';
@@ -33,7 +34,7 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
 
       GoRoute(
         path: DriverAppRoutes.dashboardView,
-        builder: (context, state) => DriverDashboardView(),
+        builder: (context, state) => DriverRootView(),
       ),
       GoRoute(
         path: DriverAppRoutes.homeView,
@@ -103,11 +104,20 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
           return MyDriversView();
         },
       ),
+      GoRoute(
+        path: DriverAppRoutes.messagingView,
+
+        builder: (context, state) {
+          final reciverId = state.extra as Map<String, dynamic>;
+
+          return MessageView(reciverId: reciverId['id']);
+        },
+      ),
 
       //old
       GoRoute(
         path: DriverAppRoutes.dashboardView,
-        builder: (context, state) => DriverDashboardView(),
+        builder: (context, state) => DriverRootView(),
       ),
       GoRoute(
         path: DriverAppRoutes.notificationView,
@@ -115,7 +125,7 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: DriverAppRoutes.chatView,
-        builder: (context, state) => const ChatView(),
+        builder: (context, state) => const ChatListView(),
       ),
       GoRoute(
         path: DriverAppRoutes.walletView,

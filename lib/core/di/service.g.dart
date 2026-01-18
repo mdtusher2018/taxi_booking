@@ -26,7 +26,7 @@ final class LocalStorageServiceProvider
         argument: null,
         retry: null,
         name: r'localStorageServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,7 +55,7 @@ final class LocalStorageServiceProvider
 }
 
 String _$localStorageServiceHash() =>
-    r'a19e2c779d80f4b6b66be001d27428285ecaa138';
+    r'759cc6fa47a6a11e641f9d930754b8a44cf841b4';
 
 @ProviderFor(snackbarService)
 final snackbarServiceProvider = SnackbarServiceProvider._();
@@ -74,7 +74,7 @@ final class SnackbarServiceProvider
         argument: null,
         retry: null,
         name: r'snackbarServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -101,7 +101,7 @@ final class SnackbarServiceProvider
   }
 }
 
-String _$snackbarServiceHash() => r'80ca5fd1f22f389c9251ea824c9b56172a720b20';
+String _$snackbarServiceHash() => r'22fb233b5763192c88397ca544986c1845bfbc58';
 
 @ProviderFor(apiClient)
 final apiClientProvider = ApiClientProvider._();
@@ -115,7 +115,7 @@ final class ApiClientProvider
         argument: null,
         retry: null,
         name: r'apiClientProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -142,7 +142,7 @@ final class ApiClientProvider
   }
 }
 
-String _$apiClientHash() => r'6515154c8efe718a3ee27a24cc7480b81f52efbe';
+String _$apiClientHash() => r'76050a8544e84573f94115cab99975bcf1a46263';
 
 @ProviderFor(apiService)
 final apiServiceProvider = ApiServiceProvider._();
@@ -156,7 +156,7 @@ final class ApiServiceProvider
         argument: null,
         retry: null,
         name: r'apiServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -183,7 +183,7 @@ final class ApiServiceProvider
   }
 }
 
-String _$apiServiceHash() => r'615727dabd9ecd6498ae7c81508e217a45787b33';
+String _$apiServiceHash() => r'a2142cac08279e644b063241c13b2026b0bc491b';
 
 @ProviderFor(socketService)
 final socketServiceProvider = SocketServiceProvider._();
@@ -197,7 +197,7 @@ final class SocketServiceProvider
         argument: null,
         retry: null,
         name: r'socketServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -224,4 +224,4 @@ final class SocketServiceProvider
   }
 }
 
-String _$socketServiceHash() => r'62bb102c4a074ca003f87f21aa52f7058793b5e7';
+String _$socketServiceHash() => r'eaa65598a36cd5e22bc520a4bb958a55c99f36db';

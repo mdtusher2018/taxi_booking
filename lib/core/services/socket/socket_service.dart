@@ -76,15 +76,12 @@ class SocketService {
   void emit(String event, dynamic data) {
     if (!isConnected) return;
     _socket!.emit(event, data);
-    AppLogger.i("👂 Emit to socket event: $event\n👂 With data:$data");
   }
 
   // ------------------ LISTEN ------------------
   void on(String event, Function(dynamic data) callback) {
     _activeListeners.add(event);
-    AppLogger.i(
-      "👂 Listening to socket event: $event\n👂 All Events:${activeListeners.toString()}",
-    );
+
     _socket?.on(event, callback);
   }
 
