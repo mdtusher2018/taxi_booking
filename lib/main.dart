@@ -8,30 +8,6 @@ import 'package:taxi_booking/firebase_options.dart';
 import 'package:taxi_booking/role/driver/routes/app_pages.dart';
 import 'package:taxi_booking/role/user/routes/user_app_pages.dart';
 
-// void main() {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   appinitalized();
-//   runApp(
-//     GetMaterialApp(
-//       title: "Application",
-//       initialRoute: AppPages.INITIAL,
-//       getPages: AppPages.routes,
-//       // home: DashboardView(), //for development purpose
-//     ),
-//   );
-// }
-// Future<void> appinitalized() async {
-//   FlutterError.onError = (FlutterErrorDetails details) {
-//     FlutterError.dumpErrorToConsole(details);
-//     debugPrint('Caught FlutterError: ${details.exception}');
-//     debugPrint('Stack trace:');
-//     debugPrint(details.stack.toString());
-//   };
-//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-//   await DependencyInjection.init();
-//   await NotificationService.init();
-// }
-
 enum AppRole { driver, user }
 
 Future<void> appinitalized() async {
@@ -50,7 +26,7 @@ Future<void> appinitalized() async {
 
 void main() async {
   appinitalized();
-  runApp(const ProviderScope(child: MyApp(role: AppRole.user)));
+  runApp(const ProviderScope(child: MyApp(role: AppRole.driver)));
 }
 
 class MyApp extends ConsumerWidget {

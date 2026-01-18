@@ -61,6 +61,8 @@ class _DriverDashboardViewState extends ConsumerState<DriverRootView> {
       SocketConfig(url: DriverApiEndpoints.baseSocketUrl, token: token),
     );
     socketService.connect();
+    
+
   }
 
   @override

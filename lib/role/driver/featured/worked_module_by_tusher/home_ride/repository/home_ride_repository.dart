@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/repository.dart';
 import 'package:taxi_booking/core/base/result.dart';
@@ -8,6 +9,7 @@ import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
 import 'package:taxi_booking/core/services/storage/i_local_storage_service.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/badge_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/driver_online_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
 
@@ -50,6 +52,23 @@ class HomeRideRepository extends Repository {
     });
 
     return controller.stream;
+  }
+
+  void listenMessageBadge({
+    required String receiverId,
+    required WidgetRef ref,
+  }) {
+    socketService.on(SocketEvents.newMessage, (data) {
+      if (data != null) {
+        /// Trigger badge
+        ref.read(chatBadgeControllerProvider.notifier).showBadge();
+
+        /// Optional: refresh chat data
+        socketService.emit(SocketEvents.getChatByReciverId, {
+          "receiverId": receiverId,
+        });
+      }
+    });
   }
 
   void stopListenToRideRequest() {

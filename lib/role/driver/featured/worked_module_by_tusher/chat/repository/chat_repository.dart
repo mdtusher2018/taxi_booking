@@ -53,6 +53,15 @@ class ChatRepository extends Repository {
       }
     });
 
+    //bad code
+    socketService.on(SocketEvents.newMessage, (data) {
+      if (data != null) {
+        socketService.emit(SocketEvents.getChatByReciverId, {
+          "receiverId": receiverId,
+        });
+      }
+    });
+
     socketService.emit(SocketEvents.getChatByReciverId, {
       "receiverId": receiverId,
     });

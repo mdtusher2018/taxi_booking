@@ -7,6 +7,7 @@ import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/badge_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
 import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
@@ -219,22 +220,27 @@ class OnTheWaySheet extends ConsumerWidget {
                                   // TODO: cancel ride logic
                                 },
                               ),
-                              _actionIcon(
-                                icon: Icons.message,
-                                label: 'Message',
+                              Badge(
+                                isLabelVisible: ref.watch(
+                                  chatBadgeControllerProvider,
+                                ),
+                                child: _actionIcon(
+                                  icon: Icons.message,
+                                  label: 'Message',
 
-                                onTap: () {
-                                  final id = ref
-                                      .read(homeRideControllerProvider)
-                                      .selectedRide
-                                      ?.passengerInfo
-                                      .id;
+                                  onTap: () {
+                                    final id = ref
+                                        .read(homeRideControllerProvider)
+                                        .selectedRide
+                                        ?.passengerInfo
+                                        .id;
 
-                                  context.push(
-                                    DriverAppRoutes.messagingView,
-                                    extra: {'id': id},
-                                  );
-                                },
+                                    context.push(
+                                      DriverAppRoutes.messagingView,
+                                      extra: {'id': id},
+                                    );
+                                  },
+                                ),
                               ),
                               _actionIcon(
                                 icon: Icons.call,

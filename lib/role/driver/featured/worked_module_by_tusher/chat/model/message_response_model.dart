@@ -47,9 +47,9 @@ class ReceiverUser {
   factory ReceiverUser.fromJson(Map<String, dynamic> json) {
     return ReceiverUser(
       id: json['_id'],
-      name: json['name'] ?? "Unnamed User",
+      name: json['fullName'] ?? "Unnamed User",
       email: json['email'] ?? "",
-      image: json['image'] ?? "",
+      image: json['identityUploads']?['selfie'] ?? "",
       isOnline: json['isOnline'] ?? false,
       status: json['status'] ?? '',
     );
