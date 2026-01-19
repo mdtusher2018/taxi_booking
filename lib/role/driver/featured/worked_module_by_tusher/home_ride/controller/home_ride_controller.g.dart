@@ -42,7 +42,7 @@ final class HomeRideControllerProvider
 }
 
 String _$homeRideControllerHash() =>
-    r'dd49fe45cc21c6d5cbbb8bf9762d7a0bf8d49c48';
+    r'ecd2ffb43f826df198bcf740bb3d9b4cf8504b1b';
 
 abstract class _$HomeRideController extends $Notifier<HomeRideState> {
   HomeRideState build();

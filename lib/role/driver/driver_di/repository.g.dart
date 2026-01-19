@@ -137,7 +137,7 @@ final class ChatRepositoryProvider
   }
 }
 
-String _$chatRepositoryHash() => r'c4ded39db3f8dc46def6b4e13d49661c4611ad4c';
+String _$chatRepositoryHash() => r'de28c3fb9c6c3f661f5d534f4e8bbd838f7b76d4';
 
 @ProviderFor(profileRepository)
 final profileRepositoryProvider = ProfileRepositoryProvider._();

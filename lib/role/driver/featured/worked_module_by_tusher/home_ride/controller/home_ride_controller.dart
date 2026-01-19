@@ -195,10 +195,21 @@ class HomeRideController extends _$HomeRideController with MapMixin {
 
     _startLocationUpdates(ride.rideInfo.id, ride.passengerInfo.id);
     _drawRouteToPickup(ride);
+
+    repository.listenMessageBadge(receiverId: ride.passengerInfo.id).listen((
+      chatMessage,
+    ) {
+      state = state.copyWith(haveUnreadMessage: true);
+    });
+
     state = state.copyWith(
       status: DriverStatus.haveSelectedRequest,
       selectedRide: ride,
     );
+  }
+
+  void clearUnreadMessage() {
+    state = state.copyWith(haveUnreadMessage: false);
   }
 
   void _startLocationUpdates(String rideId, String passengerId) {

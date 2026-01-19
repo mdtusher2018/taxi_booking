@@ -34,7 +34,8 @@ HomeRideRepository homerideRepository(Ref ref) {
 @riverpod
 ChatRepository chatRepository(Ref ref) {
   final socketService = ref.read(socketServiceProvider);
-  return ChatRepository(socketService: socketService);
+  final apiService = ref.read(apiServiceProvider);
+  return ChatRepository(socketService: socketService, apiService: apiService);
 }
 
 @riverpod

@@ -83,6 +83,7 @@ class SocketService {
     _activeListeners.add(event);
 
     _socket?.on(event, callback);
+    AppLogger.i("Started listening to socket event: $event");
   }
 
   void off(String event) {

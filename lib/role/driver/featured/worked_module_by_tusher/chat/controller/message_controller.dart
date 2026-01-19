@@ -1,6 +1,6 @@
-import 'dart:async';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:taxi_booking/core/base/failure.dart';
+import 'package:taxi_booking/core/base/result.dart';
 import 'package:taxi_booking/role/driver/driver_di/repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/model/message_response_model.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/repository/chat_repository.dart';
@@ -11,33 +11,33 @@ class MessageState {
   final List<ChatMessage> messages;
   final ReceiverUser? receiver;
   final bool loading;
+  final String? errorMessage;
 
   const MessageState({
     this.messages = const [],
     this.receiver,
     this.loading = true,
+    this.errorMessage,
   });
 
   MessageState copyWith({
     List<ChatMessage>? messages,
     ReceiverUser? receiver,
     bool? loading,
+    String? errorMessage,
   }) {
     return MessageState(
       messages: messages ?? this.messages,
       receiver: receiver ?? this.receiver,
       loading: loading ?? this.loading,
+      errorMessage: errorMessage,
     );
   }
 }
 
-@Riverpod(keepAlive: false)
+@riverpod
 class MessageController extends _$MessageController {
   late ChatRepository repository;
-  // ignore: unused_field
-  StreamSubscription? _msgSub;
-  // ignore: unused_field
-  StreamSubscription? _receiverSub;
 
   @override
   MessageState build() {
@@ -45,16 +45,34 @@ class MessageController extends _$MessageController {
     return const MessageState();
   }
 
-  void openChat(String receiverId) {
-    repository.getChatByReceiverId(receiverId);
+  void loadPriviousChat(String receiverId) async {
+    state = state.copyWith(loading: true);
 
-    _msgSub = repository.messagesStream().listen((messages) {
-      state = state.copyWith(messages: messages, loading: false);
-    });
+    final result = await repository.loadPriviousChat(receiverId);
 
-    _receiverSub = repository.receiverStream().listen((user) {
-      state = state.copyWith(receiver: user);
+    if (result is Failure) {
+      state = state.copyWith(
+        loading: false,
+        errorMessage: ((result as FailureResult).error as Failure).message,
+      );
+    } else if (result is Success) {
+      state = state.copyWith(
+        loading: false,
+        messages: ((result as Success).data as PreviousMessageResponse).data,
+        receiver:
+            ((result as Success).data as PreviousMessageResponse).receiverUser,
+      );
+    }
+  }
+
+  void startListeningNewMessage() {
+    repository.listenNewMessage().listen((charMessage) {
+      state = state.copyWith(messages: [charMessage, ...state.messages]);
     });
+  }
+
+  void closeListiningNewMessage() {
+    repository.closeListiningNewMessage();
   }
 
   void sendMessage({required String receiverId, required String text}) {

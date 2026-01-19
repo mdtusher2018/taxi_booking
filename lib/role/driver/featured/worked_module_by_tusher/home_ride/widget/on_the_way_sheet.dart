@@ -7,7 +7,6 @@ import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/badge_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
 import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
@@ -221,9 +220,9 @@ class OnTheWaySheet extends ConsumerWidget {
                                 },
                               ),
                               Badge(
-                                isLabelVisible: ref.watch(
-                                  chatBadgeControllerProvider,
-                                ),
+                                isLabelVisible: ref
+                                    .read(homeRideControllerProvider)
+                                    .haveUnreadMessage,
                                 child: _actionIcon(
                                   icon: Icons.message,
                                   label: 'Message',
@@ -239,6 +238,11 @@ class OnTheWaySheet extends ConsumerWidget {
                                       DriverAppRoutes.messagingView,
                                       extra: {'id': id},
                                     );
+                                    ref
+                                        .read(
+                                          homeRideControllerProvider.notifier,
+                                        )
+                                        .clearUnreadMessage();
                                   },
                                 ),
                               ),

@@ -27,6 +27,7 @@ class SocketEvents {
   // CHAT / MESSAGE EVENTS
   // =========================
 
+  static const String unreadMessage = 'unread-message';
   static const String newMessage = 'new-message';
   static const String sendMessage = 'send-message';
 

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/controller/message_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/model/message_response_model.dart';
 
 class MessageView extends ConsumerStatefulWidget {
   final String reciverId;
-  MessageView({super.key, required this.reciverId});
+  const MessageView({super.key, required this.reciverId});
 
   @override
   ConsumerState<MessageView> createState() => _MessageViewState();
@@ -15,18 +16,34 @@ class MessageView extends ConsumerStatefulWidget {
 class _MessageViewState extends ConsumerState<MessageView> {
   final TextEditingController textEditingController = TextEditingController();
 
+  // Store a reference to the notifier
+  late MessageController controller;
+
   @override
   void initState() {
     super.initState();
     AppLogger.i(" Reciver Id: ${widget.reciverId}");
+    controller = ref.read(messageControllerProvider.notifier);
     Future.microtask(() {
-      ref.read(messageControllerProvider.notifier).openChat(widget.reciverId);
+      controller.startListeningNewMessage();
+      controller.loadPriviousChat(widget.reciverId);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(messageControllerProvider);
+
+    ref.listen(messageControllerProvider, (previous, next) {
+      if (previous?.errorMessage == null && next.errorMessage != null) {
+        ref
+            .read(snackbarServiceProvider)
+            .showError(
+              next.errorMessage ?? "Unknown Error Occurred",
+              context: context,
+            );
+      }
+    });
 
     return Scaffold(
       backgroundColor: const Color(0xffF5F7FA),
@@ -35,9 +52,15 @@ class _MessageViewState extends ConsumerState<MessageView> {
         child: _ChatAppBar(user: state.receiver),
       ),
       body: state.loading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildChat(state),
+          ? const Center(child: CircularProgressIndicator()) // Loading state
+          : _buildChat(state), // Messages display
     );
+  }
+
+  @override
+  void dispose() {
+    ref.read(messageControllerProvider.notifier).closeListiningNewMessage();
+    if (mounted) super.dispose();
   }
 
   Widget _buildChat(MessageState state) {
@@ -131,7 +154,7 @@ class _ChatAppBar extends StatelessWidget {
             backgroundColor: Colors.grey.shade200,
             child: ClipOval(
               child: Image.network(
-                user?.image ?? '',
+                user?.user.identityUploads ?? '',
                 width: 48,
                 height: 48,
                 fit: BoxFit.cover,
@@ -146,7 +169,7 @@ class _ChatAppBar extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(user?.name ?? "Loading..."),
+              Text(user?.user.fullName ?? "Loading..."),
               Text(
                 user?.isOnline == true ? "Online" : "Offline",
                 style: TextStyle(

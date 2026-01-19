@@ -39,4 +39,8 @@ class DriverApiEndpoints {
 
   //Home Ride
   static String driverOnline = "with-car-drivers/update-current-location";
+
+  //chat
+  static String previousMessage(String reciverId) =>
+      "messages/previous-messages/$reciverId";
 }

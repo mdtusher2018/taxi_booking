@@ -10,6 +10,7 @@ class HomeRideState {
   final String? expandedRequestId;
   final RideRequestResponse? selectedRide;
   final String? error;
+  final bool haveUnreadMessage;
 
   final LatLng? driverLocation;
   final Set<Marker> markers;
@@ -17,6 +18,7 @@ class HomeRideState {
 
   const HomeRideState({
     required this.status,
+    this.haveUnreadMessage = false,
     this.onlineResponse,
     this.error,
     this.rideRequest = const [],
@@ -29,6 +31,7 @@ class HomeRideState {
 
   HomeRideState copyWith({
     DriverStatus? status,
+    bool? haveUnreadMessage,
     DriverOnlineResponse? onlineResponse,
     List<RideRequestResponse>? rideRequest,
     String? error,
@@ -40,6 +43,7 @@ class HomeRideState {
   }) {
     return HomeRideState(
       status: status ?? this.status,
+      haveUnreadMessage: haveUnreadMessage ?? this.haveUnreadMessage,
       onlineResponse: onlineResponse ?? this.onlineResponse,
       rideRequest: rideRequest ?? this.rideRequest,
       error: error,

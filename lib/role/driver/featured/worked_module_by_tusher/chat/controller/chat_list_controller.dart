@@ -76,14 +76,4 @@ class ChatListController extends _$ChatListController {
     }
     repository.sendMessage(reciverId: reciverId, text: text);
   }
-
-  /// ✍ Typing indicator
-  void sendTyping({required String chatId}) {
-    repository.sendTyping(chatId: chatId);
-  }
-
-  /// 👀 Seen
-  void markSeen(String chatId) {
-    repository.markSeen(chatId: chatId);
-  }
 }
