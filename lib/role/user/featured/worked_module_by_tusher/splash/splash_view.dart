@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
-import 'package:taxi_booking/role/user/routes/user_app_routes.dart';
+import 'package:taxi_booking/core/routes/user_app_routes.dart';
 
 class UserSplashView extends StatefulWidget {
   const UserSplashView({super.key});

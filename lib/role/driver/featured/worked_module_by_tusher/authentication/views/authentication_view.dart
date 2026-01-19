@@ -15,7 +15,7 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authen
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/views/forgot_password_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/widget/auth_app_bar.dart';
 
-import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
+import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';

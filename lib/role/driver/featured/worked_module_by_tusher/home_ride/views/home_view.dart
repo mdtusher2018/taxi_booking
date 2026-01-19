@@ -14,7 +14,7 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_r
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_going_ride.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_the_way_sheet.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/request_bottom_sheet.dart';
-import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
+import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 
 class DriverHomeView extends ConsumerWidget {
   const DriverHomeView({super.key});

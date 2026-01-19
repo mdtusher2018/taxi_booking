@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/user_sheet_header.dart';
-import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
 
 class TripDetailsSheet extends StatelessWidget {
   TripDetailsSheet({super.key});
@@ -263,7 +263,7 @@ class TripDetailsSheet extends StatelessWidget {
                               Colors.white,
                               onTap: () {
                                 context.push(
-                                  DriverAppRoutes.messagingView,
+                                  CommonAppRoutes.messagingView,
                                   extra: "",
                                 );
                               },

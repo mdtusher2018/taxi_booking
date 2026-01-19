@@ -5,8 +5,8 @@ import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/services/notification/notification_service.dart';
 import 'package:taxi_booking/core/services/snackbar/snackbar_service.dart';
 import 'package:taxi_booking/firebase_options.dart';
-import 'package:taxi_booking/role/driver/routes/app_pages.dart';
-import 'package:taxi_booking/role/user/routes/user_app_pages.dart';
+import 'package:taxi_booking/core/routes/driver_app_pages.dart';
+import 'package:taxi_booking/core/routes/user_app_pages.dart';
 
 enum AppRole { driver, user }
 
@@ -41,6 +41,7 @@ class MyApp extends ConsumerWidget {
         : ref.watch(userAppRouterProvider);
     return MaterialApp.router(
       scaffoldMessengerKey: (snackBarService as SnackBarService).messengerKey,
+
       title: 'Template App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),

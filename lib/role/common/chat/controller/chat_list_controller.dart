@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
-import 'package:taxi_booking/role/driver/driver_di/repository.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/model/chat_list_item_model.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/repository/chat_repository.dart';
+import 'package:taxi_booking/role/common/chat/model/chat_list_item_model.dart';
+import 'package:taxi_booking/role/common/chat/repository/chat_repository.dart';
+import 'package:taxi_booking/role/common/di/repository.dart';
 
 part 'chat_list_controller.g.dart';
 

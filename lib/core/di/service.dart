@@ -7,7 +7,7 @@ import 'package:taxi_booking/core/services/socket/socket_service.dart';
 import 'package:taxi_booking/core/services/storage/i_local_storage_service.dart';
 import 'package:taxi_booking/core/services/storage/local_storage_service.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
-import 'package:taxi_booking/role/driver/routes/app_pages.dart';
+import 'package:taxi_booking/core/routes/driver_app_pages.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'service.g.dart';
 

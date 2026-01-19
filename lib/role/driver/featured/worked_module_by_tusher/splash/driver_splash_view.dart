@@ -1,6 +1,6 @@
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
-import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
+import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

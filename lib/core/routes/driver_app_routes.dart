@@ -16,17 +16,5 @@ class DriverAppRoutes {
   static const profileView = '/profile';
 
   static const myDriversView = '/myDrivers';
-  static const messagingView = '/messaging';
 
-  //old
-
-  static const notificationView = '/notification';
-  static const chatView = '/chat';
-  static const walletView = '/wallet';
-  static const rideHistoryView = '/ride-history';
-  static const customerSupportView = '/customer-support';
-  static const addTransfortView = '/add-transfort';
-  static const paymentView = '/payment';
-  static const callView = '/call';
-  static const addTaxiDashboardView = '/add-taxi-dashboard';
 }

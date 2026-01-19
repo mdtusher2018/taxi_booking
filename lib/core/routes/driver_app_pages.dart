@@ -1,17 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:taxi_booking/role/driver/featured/add_taxi_dashboard/views/add_taxi_dashboard_view.dart';
-import 'package:taxi_booking/role/driver/featured/call/views/call_view.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/views/chat_list_view.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/views/message_view.dart';
-import 'package:taxi_booking/role/driver/featured/customer_support/views/customer_support_view.dart';
+import 'package:taxi_booking/core/routes/common_app_routes.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver_root_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/views/home_view.dart';
-import 'package:taxi_booking/role/driver/featured/notification/views/notification_view.dart';
-import 'package:taxi_booking/role/driver/featured/payment/views/payment_view.dart';
-import 'package:taxi_booking/role/driver/featured/ride_history/views/ride_history_view.dart';
-import 'package:taxi_booking/role/driver/featured/splash/views/driver_splash_view.dart';
-import 'package:taxi_booking/role/driver/featured/wallet/views/wallet_view.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/splash/driver_splash_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/views/authentication_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/views/document_upload_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/views/driving_license_and_business_info_view.dart';
@@ -21,12 +13,13 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/model/profile_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/views/edit_profile_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/views/setting_view.dart';
-import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
+import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 
 final driverAppRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: DriverAppRoutes.splashView,
     routes: [
+      ...commonAppRoutes,
       GoRoute(
         path: DriverAppRoutes.splashView,
         builder: (context, state) => DriverSplashView(),
@@ -104,54 +97,45 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
           return MyDriversView();
         },
       ),
-      GoRoute(
-        path: DriverAppRoutes.messagingView,
-
-        builder: (context, state) {
-          final reciverId = state.extra as Map<String, dynamic>;
-
-          return MessageView(reciverId: reciverId['id']);
-        },
-      ),
 
       //old
       GoRoute(
         path: DriverAppRoutes.dashboardView,
         builder: (context, state) => DriverRootView(),
       ),
-      GoRoute(
-        path: DriverAppRoutes.notificationView,
-        builder: (context, state) => const NotificationView(),
-      ),
-      GoRoute(
-        path: DriverAppRoutes.chatView,
-        builder: (context, state) => const ChatListView(),
-      ),
-      GoRoute(
-        path: DriverAppRoutes.walletView,
-        builder: (context, state) => WalletView(),
-      ),
-      GoRoute(
-        path: DriverAppRoutes.rideHistoryView,
-        builder: (context, state) => RideHistoryView(),
-      ),
-      GoRoute(
-        path: DriverAppRoutes.customerSupportView,
-        builder: (context, state) => const CustomerSupportView(),
-      ),
+      // GoRoute(
+      //   path: DriverAppRoutes.notificationView,
+      //   builder: (context, state) => const NotificationView(),
+      // ),
+      // GoRoute(
+      //   path: DriverAppRoutes.chatView,
+      //   builder: (context, state) => const ChatListView(),
+      // ),
+      // GoRoute(
+      //   path: DriverAppRoutes.walletView,
+      //   builder: (context, state) => WalletView(),
+      // ),
+      // GoRoute(
+      //   path: DriverAppRoutes.rideHistoryView,
+      //   builder: (context, state) => RideHistoryView(),
+      // ),
+      // GoRoute(
+      //   path: DriverAppRoutes.customerSupportView,
+      //   builder: (context, state) => const CustomerSupportView(),
+      // ),
 
-      GoRoute(
-        path: DriverAppRoutes.paymentView,
-        builder: (context, state) => const PaymentView(),
-      ),
-      GoRoute(
-        path: DriverAppRoutes.callView,
-        builder: (context, state) => const CallView(),
-      ),
-      GoRoute(
-        path: DriverAppRoutes.addTaxiDashboardView,
-        builder: (context, state) => const AddTaxiDashboardView(),
-      ),
+      // GoRoute(
+      //   path: DriverAppRoutes.paymentView,
+      //   builder: (context, state) => const PaymentView(),
+      // ),
+      // GoRoute(
+      //   path: DriverAppRoutes.callView,
+      //   builder: (context, state) => const CallView(),
+      // ),
+      // GoRoute(
+      //   path: DriverAppRoutes.addTaxiDashboardView,
+      //   builder: (context, state) => const AddTaxiDashboardView(),
+      // ),
     ],
   );
 });

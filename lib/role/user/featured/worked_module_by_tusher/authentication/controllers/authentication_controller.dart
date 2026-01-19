@@ -1,10 +1,15 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/core/di/service.dart';
+import 'package:taxi_booking/core/logger/log_helper.dart';
+import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/services/storage/i_local_storage_service.dart';
 import 'package:taxi_booking/core/services/storage/storage_key.dart';
 import 'package:taxi_booking/core/utilitis/user_api_end_points.dart';
+import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/authentication/models/sign_in_response.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/authentication/models/signup_response.dart';
 
@@ -31,7 +36,6 @@ class AuthenticationState {
     );
   }
 }
-
 
 final userAuthenticationProvider =
     StateNotifierProvider<AuthenticationNotifier, AuthenticationState>(
@@ -64,7 +68,11 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
 
   //================ LOGIN =================
 
-  Future<void> login({required String phone, required String password}) async {
+  Future<void> login({
+    required String phone,
+    required String password,
+    required BuildContext context,
+  }) async {
     try {
       state = state.copyWith(isLoading: true);
 
@@ -75,9 +83,13 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
       if (loginResponse.statusCode == 200 && loginResponse.data != null) {
         final token = loginResponse.data!.accessToken;
         await localStorage.saveKey(StorageKey.accessToken, token);
+        context.go(UserAppRoutes.rootView);
       } else {
-        throw Exception(loginResponse.message);
+        CustomToast.showToast(message: loginResponse.message, isError: true);
       }
+    } catch (e) {
+      AppLogger.e(e.toString());
+      CustomToast.showToast(message: e.toString(), isError: true);
     } finally {
       state = state.copyWith(isLoading: false);
     }

@@ -1,9 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
-import 'package:taxi_booking/role/driver/driver_di/repository.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/model/message_response_model.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/repository/chat_repository.dart';
+import 'package:taxi_booking/role/common/chat/model/message_response_model.dart';
+import 'package:taxi_booking/role/common/chat/repository/chat_repository.dart';
+import 'package:taxi_booking/role/common/di/repository.dart';
 
 part 'message_controller.g.dart';
 

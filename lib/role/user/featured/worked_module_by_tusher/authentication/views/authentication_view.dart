@@ -136,6 +136,7 @@ class _AuthenticationViewState extends ConsumerState<UserAuthenticationView> {
                           return;
                         }
                         await authController.login(
+                          context: context,
                           phone: validationController.loginPhoneController.text,
                           password:
                               validationController.loginPasswordController.text,

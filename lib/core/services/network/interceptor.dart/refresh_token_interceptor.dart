@@ -6,7 +6,7 @@ import 'package:taxi_booking/core/services/network/interceptor.dart/logger_inter
 import 'package:taxi_booking/core/services/storage/i_local_storage_service.dart';
 import 'package:taxi_booking/core/services/storage/storage_key.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
-import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
+import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

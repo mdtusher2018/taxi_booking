@@ -4,7 +4,7 @@ import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/services/socket/socket_config.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/views/chat_list_view.dart';
+import 'package:taxi_booking/role/common/chat/views/chat_list_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/views/home_view.dart';
 import 'package:taxi_booking/role/driver/featured/notification/views/notification_view.dart';
 import 'package:taxi_booking/role/driver/featured/ride_history/views/ride_history_view.dart';
@@ -61,8 +61,6 @@ class _DriverDashboardViewState extends ConsumerState<DriverRootView> {
       SocketConfig(url: DriverApiEndpoints.baseSocketUrl, token: token),
     );
     socketService.connect();
-    
-
   }
 
   @override

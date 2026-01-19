@@ -8,7 +8,7 @@ import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/controller/auth_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/controller/signup_from_provider.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/models/signup_response.dart';
-import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
+import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

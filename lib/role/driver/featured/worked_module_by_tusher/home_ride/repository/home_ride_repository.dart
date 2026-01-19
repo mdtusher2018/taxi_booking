@@ -7,7 +7,7 @@ import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
 import 'package:taxi_booking/core/services/storage/i_local_storage_service.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/model/message_response_model.dart';
+import 'package:taxi_booking/role/common/chat/model/message_response_model.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/driver_online_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
 

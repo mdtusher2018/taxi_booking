@@ -3,11 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
+import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/services/storage/storage_key.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/controller/chat_list_controller.dart';
-import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
+import 'package:taxi_booking/role/common/chat/controller/chat_list_controller.dart';
+
 import '../widget/chat_list_widget.dart';
 
 class ChatListView extends ConsumerStatefulWidget {
@@ -68,7 +69,7 @@ class _ChatViewState extends ConsumerState<ChatListView> {
         final lastMessage = chat.message.text;
 
         return CustomChatTile(
-          imageUrl: participant?.image??"",
+          imageUrl: participant?.image ?? "",
           userName: participant?.email ?? "Unknown User",
           lastMessage: lastMessage,
           rating: chat.unreadMessageCount.toDouble(),
@@ -77,7 +78,7 @@ class _ChatViewState extends ConsumerState<ChatListView> {
               : () {
                   AppLogger.d(participant.id);
                   context.push(
-                    DriverAppRoutes.messagingView,
+                    CommonAppRoutes.messagingView,
                     extra: {'id': participant.id},
                   );
                 },

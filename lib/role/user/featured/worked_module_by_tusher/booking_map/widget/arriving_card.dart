@@ -2,9 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/core/utilitis/launch_url.dart';
+import 'package:taxi_booking/role/common/chat/views/message_view.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/controllers/booking_map_controller.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
-import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/chat/views/user_message_view.dart';
+
 import '../../../../../../resource/common_widget/custom_network_image.dart';
 import '../views/cancel_booking_view.dart';
 
@@ -216,7 +217,7 @@ class _ArrivingCardState extends ConsumerState<ArrivingCard> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return UserMessageView(
+                        return MessageView(
                           reciverId: state.acceptedDriverInfo?.driverId ?? "",
                         );
                       },

@@ -5,7 +5,7 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/controller/profile_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/widget/profile_details_widgets.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/my_vehicales_view.dart';
-import 'package:taxi_booking/role/driver/routes/driver_app_routes.dart';
+import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../wallet/views/wallet_view.dart';

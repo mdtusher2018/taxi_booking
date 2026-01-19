@@ -20,6 +20,9 @@ double totalFare({
 }) {
   AppLogger.d(surgeMultiplier.toString());
 
+  if (surgeMultiplier.isInfinite || surgeMultiplier.isNaN) {
+    surgeMultiplier = 1;
+  }
   // 1️⃣ Base fare calculation
   final double baseFare =
       pricing.startFare +

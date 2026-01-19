@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/controller/message_controller.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/chat/model/message_response_model.dart';
+import 'package:taxi_booking/role/common/chat/controller/message_controller.dart';
+import 'package:taxi_booking/role/common/chat/model/message_response_model.dart';
 
 class MessageView extends ConsumerStatefulWidget {
   final String reciverId;
@@ -24,7 +24,7 @@ class _MessageViewState extends ConsumerState<MessageView> {
     super.initState();
     AppLogger.i(" Reciver Id: ${widget.reciverId}");
     controller = ref.read(messageControllerProvider.notifier);
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       controller.startListeningNewMessage();
       controller.loadPriviousChat(widget.reciverId);
     });
@@ -55,12 +55,6 @@ class _MessageViewState extends ConsumerState<MessageView> {
           ? const Center(child: CircularProgressIndicator()) // Loading state
           : _buildChat(state), // Messages display
     );
-  }
-
-  @override
-  void dispose() {
-    ref.read(messageControllerProvider.notifier).closeListiningNewMessage();
-    if (mounted) super.dispose();
   }
 
   Widget _buildChat(MessageState state) {
