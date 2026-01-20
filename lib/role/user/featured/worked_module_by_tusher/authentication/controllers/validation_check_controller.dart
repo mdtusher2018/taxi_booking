@@ -1,115 +1,3 @@
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// class ValidationCheckController extends GetxController {
-//   // Controllers
-//   final TextEditingController fullNameController = TextEditingController(
-//     text: kDebugMode ? "tusher" : null,
-//   );
-//   final TextEditingController emailController = TextEditingController(
-//     text: kDebugMode ? "number@gmail.com" : null,
-//   );
-//   final TextEditingController phoneController = TextEditingController(
-//     text: kDebugMode ? "+12314534123" : null,
-//   );
-//   final TextEditingController genderController = TextEditingController();
-//   final TextEditingController passwordController = TextEditingController(
-//     text: kDebugMode ? "Hello123@" : null,
-//   );
-//   // login
-//   final TextEditingController loginPhoneController = TextEditingController(
-//     text: kDebugMode ? "+12314534125" : null,
-//   );
-//   final TextEditingController loginPasswordController = TextEditingController(
-//     text: kDebugMode ? "P@ssw0rd!" : null,
-//   );
-//   // Observables
-//   RxString fullName = ''.obs;
-//   RxString email = ''.obs;
-//   RxString phone = ''.obs;
-//   RxString gender = ''.obs;
-//   RxString password = ''.obs;
-//   RxInt passwordStrength = 0.obs;
-//   RxString passwordLabel = 'Weak'.obs;
-//   RxString nameError = ''.obs;
-//   RxString emailError = ''.obs;
-//   RxString phoneError = ''.obs;
-//   RxString passwordError = ''.obs;
-//   RxBool isSubmitted = false.obs; // NEW
-//   // Individual validators
-//   void validateFullName(String value) {
-//     fullName.value = value;
-//     if (isSubmitted.value) {
-//       nameError.value =
-//           value.length < 3 ? 'Name must be at least 3 characters' : '';
-//     } else {
-//       nameError.value = '';
-//     }
-//   }
-//   void validateEmail(String value) {
-//     email.value = value;
-//     if (isSubmitted.value) {
-//       emailError.value = GetUtils.isEmail(value) ? '' : 'Enter a valid email';
-//     } else {
-//       emailError.value = '';
-//     }
-//   }
-//   void validatePhone(String value) {
-//     phone.value = value;
-//     if (isSubmitted.value) {
-//       phoneError.value =
-//           GetUtils.isPhoneNumber(value) ? '' : 'Enter a valid phone';
-//     } else {
-//       phoneError.value = '';
-//     }
-//   }
-//   void validateGender(String value) {
-//     gender.value = value;
-//   }
-//   void checkPasswordStrength(String value) {
-//     password.value = value;
-//     if (isSubmitted.value) {
-//       passwordError.value =
-//           value.length < 6 ? 'Password must be at least 6 characters' : '';
-//     } else {
-//       passwordError.value = '';
-//     }
-//     int strength = 0;
-//     if (value.length >= 8) strength++;
-//     if (RegExp(r'[A-Z]').hasMatch(value)) strength++;
-//     if (RegExp(r'[a-z]').hasMatch(value)) strength++;
-//     if (RegExp(r'\d').hasMatch(value)) strength++;
-//     if (RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) strength++;
-//     passwordStrength.value = strength;
-//     if (strength <= 2) {
-//       passwordLabel.value = 'Weak';
-//     } else if (strength <= 4) {
-//       passwordLabel.value = 'Medium';
-//     } else {
-//       passwordLabel.value = 'Strong';
-//     }
-//   }
-//   // Validate All (called on "Sign Up" tap)
-//   bool validateAllFields() {
-//     isSubmitted.value = true;
-//     validateFullName(fullNameController.text);
-//     validateEmail(emailController.text);
-//     validatePhone(phoneController.text);
-//     checkPasswordStrength(passwordController.text);
-//     return nameError.value.isEmpty &&
-//         emailError.value.isEmpty &&
-//         passwordError.value.isEmpty;
-//   }
-//   @override
-//   void onClose() {
-//     fullNameController.dispose();
-//     emailController.dispose();
-//     genderController.dispose();
-//     passwordController.dispose();
-//     super.onClose();
-//   }
-// }
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -217,10 +105,9 @@ class ValidationNotifier extends StateNotifier<ValidationState> {
   //================ Validators =================
 
   void validateFullName(String value) {
-    final error =
-        state.isSubmitted && value.length < 3
-            ? 'Name must be at least 3 characters'
-            : '';
+    final error = state.isSubmitted && value.length < 3
+        ? 'Name must be at least 3 characters'
+        : '';
 
     state = state.copyWith(fullName: value, nameError: error);
   }
@@ -228,10 +115,9 @@ class ValidationNotifier extends StateNotifier<ValidationState> {
   void validateEmail(String value) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-    final error =
-        state.isSubmitted && !emailRegex.hasMatch(value)
-            ? 'Enter a valid email'
-            : '';
+    final error = state.isSubmitted && !emailRegex.hasMatch(value)
+        ? 'Enter a valid email'
+        : '';
 
     state = state.copyWith(email: value, emailError: error);
   }
@@ -239,10 +125,9 @@ class ValidationNotifier extends StateNotifier<ValidationState> {
   void validatePhone(String value) {
     final phoneRegex = RegExp(r'^\+?[0-9]{7,15}$');
 
-    final error =
-        state.isSubmitted && !phoneRegex.hasMatch(value)
-            ? 'Enter a valid phone'
-            : '';
+    final error = state.isSubmitted && !phoneRegex.hasMatch(value)
+        ? 'Enter a valid phone'
+        : '';
 
     state = state.copyWith(phone: value, phoneError: error);
   }
@@ -269,10 +154,9 @@ class ValidationNotifier extends StateNotifier<ValidationState> {
       label = 'Strong';
     }
 
-    final error =
-        state.isSubmitted && value.length < 6
-            ? 'Password must be at least 6 characters'
-            : '';
+    final error = state.isSubmitted && value.length < 6
+        ? 'Password must be at least 6 characters'
+        : '';
 
     state = state.copyWith(
       password: value,

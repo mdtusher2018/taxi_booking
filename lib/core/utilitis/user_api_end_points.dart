@@ -3,10 +3,10 @@ import 'package:taxi_booking/core/utilitis/common_api_endpoints.dart';
 class UserApiEndpoints {
   // static const String MAP_KEY = 'AIzaSyAYU95zhhNeRjmDdr2AckdfQxz2zm9HHNQ';
 
-  static String mapKey = ApiEndPoints.mapKey;
-  static const String baseUrl = ApiEndPoints.baseUrl;
-  static const String baseImageUrl = ApiEndPoints.baseImageUrl;
-  static const String baseSocketUrl = ApiEndPoints.baseSocketUrl;
+  static String mapKey = CommonApiEndPoints.mapKey;
+  static const String baseUrl = CommonApiEndPoints.baseUrl;
+  static const String baseImageUrl = CommonApiEndPoints.baseImageUrl;
+  static const String baseSocketUrl = CommonApiEndPoints.baseSocketUrl;
 
   static const String login = "auth/login";
 

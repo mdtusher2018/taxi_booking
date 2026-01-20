@@ -5,6 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/sheet/searching_driver_sheet.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/driver_arrived.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/on_the_destination_way.dart';
 import '../../../../../../resource/common_widget/custom_network_image.dart';
 import '../controllers/booking_map_controller.dart';
 import '../sheet/destination_picker_sheet.dart';
@@ -27,13 +29,12 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
     ref.listen(bookingMapControllerProvider, (previous, next) {
       if (previous?.pickupLatLng != next.pickupLatLng) {
         controller.updateSurgeMultiplier();
-        controller.onLocationChanged();
+        controller.onPicupPickoffLocationChanged();
       }
       if (previous?.dropLatLng != next.dropLatLng) {
-        controller.onLocationChanged();
+        controller.onPicupPickoffLocationChanged();
       }
       if (previous?.driverLatLng != next.driverLatLng) {
-        controller.onLocationChanged();
         controller.onDriverLocationChanged();
       }
     });
@@ -113,6 +114,30 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               child: ArrivingCard(
                 onCancel: () {
                   controller.onRideCancel();
+                },
+              ),
+            ),
+          if (state.status == RideBookingStatus.driverArived)
+            Positioned(
+              bottom: 100, // Position from the bottom of the screen
+              left: 16,
+              right: 16,
+              child: DriverArrivedCard(
+                onCancel: () {
+                  controller
+                      .onRideCancel(); // Call the function to cancel the ride
+                },
+              ),
+            ),
+          if (state.status == RideBookingStatus.rideStarted)
+            Positioned(
+              bottom: 100, // Position from the bottom of the screen
+              left: 16,
+              right: 16,
+              child: OnYourWayCard(
+                onCancel: () {
+                  controller
+                      .onRideCancel(); // Call the function to cancel the ride
                 },
               ),
             ),

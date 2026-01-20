@@ -26,7 +26,7 @@ Future<void> appinitalized() async {
 
 void main() async {
   appinitalized();
-  runApp(const ProviderScope(child: MyApp(role: AppRole.driver)));
+  runApp(const ProviderScope(child: MyApp(role: AppRole.user)));
 }
 
 class MyApp extends ConsumerWidget {
@@ -41,8 +41,6 @@ class MyApp extends ConsumerWidget {
         : ref.watch(userAppRouterProvider);
     return MaterialApp.router(
       scaffoldMessengerKey: (snackBarService as SnackBarService).messengerKey,
-
-      title: 'Template App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       routerConfig: router,

@@ -49,25 +49,17 @@ class BookingMapController extends StateNotifier<BookingMapState>
 
     goToCurrentLocation();
     initSurgeMultiplier();
-
-    // ever(pickupLatLng, (_) => updateSurgeMultiplier());
-    // ever(pickupLatLng, (_) => _onLocationChanged());
-    // ever(dropLatLng, (_) => _onLocationChanged());
-    // ever(driverLatLng, (_) => _onDriverLocationChanged());
   }
 
   final TextEditingController dropLocationController = TextEditingController();
   final TextEditingController pickupLocationController =
       TextEditingController();
 
-  Future<void> onLocationChanged() async {
+  Future<void> onPicupPickoffLocationChanged() async {
     // ----- MARKERS -----
     final updatedMarkers = Set<Marker>.from(state.markers);
 
-    // Remove old pickup marker
     updatedMarkers.removeWhere((m) => m.markerId.value == 'pickup');
-
-    // Add pickup marker
     if (state.pickupLatLng != null && pickupIcon != null) {
       updatedMarkers.add(
         Marker(
@@ -187,10 +179,15 @@ class BookingMapController extends StateNotifier<BookingMapState>
             state.driverLatLng!.latitude,
             state.driverLatLng!.longitude,
           ),
-          destination: PointLatLng(
-            state.pickupLatLng!.latitude,
-            state.pickupLatLng!.longitude,
-          ),
+          destination: (state.status == RideBookingStatus.rideStarted)
+              ? PointLatLng(
+                  state.dropLatLng!.latitude,
+                  state.dropLatLng!.longitude,
+                )
+              : PointLatLng(
+                  state.pickupLatLng!.latitude,
+                  state.pickupLatLng!.longitude,
+                ),
           travelMode: TravelMode.driving,
         ),
       );
@@ -216,8 +213,6 @@ class BookingMapController extends StateNotifier<BookingMapState>
               calculatePolylineDistance(routePoints),
           tripDurationMin: (result.primaryRoute!.duration ?? 0) / 60,
         );
-
-        fitCameraBounds(routePoints);
       }
     }
   }
@@ -373,6 +368,8 @@ class BookingMapController extends StateNotifier<BookingMapState>
           acceptedDriverInfo: RideAcceptResponse.fromJson(data).driverInfo,
         );
 
+        listenAllAfterRideAccepted();
+
         if (state.acceptedDriverInfo != null) {
           state = state.copyWith(
             driverLatLng: LatLng(
@@ -380,16 +377,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
               state.acceptedDriverInfo!.location!.coordinates!.first,
             ),
           );
-          socketService.on(SocketEvents.driverCurrentLocation, (data) {
-            final response = DriverCurrentLocationResponse.fromJson(data);
-            state = state.copyWith(
-              driverLatLng: LatLng(
-                response.driverCurrentLocation.latitude,
-                response.driverCurrentLocation.longitude,
-              ),
-            );
-            onDriverLocationChanged();
-          });
+
           onDriverLocationChanged();
           state = state.copyWith(status: RideBookingStatus.driverOnTheWay);
         }
@@ -399,5 +387,35 @@ class BookingMapController extends StateNotifier<BookingMapState>
     } finally {
       state = state.copyWith(isLoading: false);
     }
+  }
+
+  void listenAllAfterRideAccepted() {
+    socketService.on(SocketEvents.driverCurrentLocation, (data) {
+      final response = DriverCurrentLocationResponse.fromJson(data);
+      state = state.copyWith(
+        driverLatLng: LatLng(
+          response.driverCurrentLocation.latitude,
+          response.driverCurrentLocation.longitude,
+        ),
+      );
+      onDriverLocationChanged();
+    });
+
+    socketService.on(SocketEvents.driverArrived, (data) {
+      final updatedMarkers = Set<Marker>.from(state.markers);
+      updatedMarkers.removeWhere((m) => m.markerId.value == 'pickup');
+      state = state.copyWith(
+        markers: updatedMarkers,
+        status: RideBookingStatus.driverArived,
+      );
+    });
+
+    socketService.on(SocketEvents.rideStarted, (data) {
+      state = state.copyWith(status: RideBookingStatus.rideStarted);
+      onDriverLocationChanged();
+    });
+
+    socketService.on(SocketEvents.unreadMessage, (data) {});
+    socketService.on(SocketEvents.rideEnded, (data) {});
   }
 }

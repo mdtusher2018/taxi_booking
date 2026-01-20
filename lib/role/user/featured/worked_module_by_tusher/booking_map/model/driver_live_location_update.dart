@@ -19,10 +19,10 @@ class DriverCurrentLocation {
 }
 
 class Distance {
-  final int meters;
-  final double km;
+  final num meters;
+  final num km;
   final String text;
-  final int etaMinutes;
+  final num etaMinutes;
 
   Distance({
     required this.meters,

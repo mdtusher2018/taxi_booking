@@ -1,9 +1,8 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/di/service.dart';
-import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/services/storage/i_local_storage_service.dart';
@@ -88,8 +87,10 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
         CustomToast.showToast(message: loginResponse.message, isError: true);
       }
     } catch (e) {
-      AppLogger.e(e.toString());
-      CustomToast.showToast(message: e.toString(), isError: true);
+      CustomToast.showToast(
+        message: Failure.mapExceptionToFailure(e).message,
+        isError: true,
+      );
     } finally {
       state = state.copyWith(isLoading: false);
     }
@@ -104,6 +105,7 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
     required String gender,
     required String password,
     String role = "user",
+    required BuildContext context,
   }) async {
     try {
       state = state.copyWith(isLoading: true);
@@ -115,7 +117,6 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
         "password": password,
         "role": role,
       };
-      log(body.toString());
 
       final response = await apiService.post(UserApiEndpoints.signup, body);
       final signupResponse = SignupResponse.fromJson(response);
@@ -123,9 +124,15 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
       if (signupResponse.statusCode == 201) {
         final token = signupResponse.data.sendOtp.token;
         await localStorage.saveKey(StorageKey.accessToken, token);
+        context.go(UserAppRoutes.rootView);
       } else {
-        throw Exception(signupResponse.message);
+        CustomToast.showToast(message: signupResponse.message, isError: true);
       }
+    } catch (e) {
+      CustomToast.showToast(
+        message: Failure.mapExceptionToFailure(e).message,
+        isError: true,
+      );
     } finally {
       state = state.copyWith(isLoading: false);
     }

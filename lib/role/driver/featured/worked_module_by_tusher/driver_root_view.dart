@@ -5,8 +5,8 @@ import 'package:taxi_booking/core/services/socket/socket_config.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/role/common/chat/views/chat_list_view.dart';
+import 'package:taxi_booking/role/common/notifications/notifications_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/views/home_view.dart';
-import 'package:taxi_booking/role/driver/featured/notification/views/notification_view.dart';
 import 'package:taxi_booking/role/driver/featured/ride_history/views/ride_history_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/views/setting_view.dart';
 

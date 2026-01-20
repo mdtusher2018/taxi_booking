@@ -3,6 +3,7 @@ enum RideBookingStatus {
   rideCreating,
   searchingDriver,
   driverOnTheWay,
+  driverArived,
   rideStarted,
   rideInProgress,
   rideCompleted,

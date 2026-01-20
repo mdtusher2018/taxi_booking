@@ -69,6 +69,7 @@ class VerifyPhoneView extends ConsumerWidget {
                   phoneNumber: phone,
                   gender: validationState.gender,
                   password: validationState.password,
+                  context: context,
                 );
 
                 if (!context.mounted) return;

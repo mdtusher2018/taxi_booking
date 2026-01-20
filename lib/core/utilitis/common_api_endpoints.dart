@@ -1,4 +1,4 @@
-class ApiEndPoints {
+class CommonApiEndPoints {
   static String mapKey =
       "AIzaSyAQk0BDUcdmln3zCV4CbPDn7UF2Y1PjD7Q"; //from client
   // "AIzaSyBuSZJklSc1j0D4kqhkJcmyArcZbWujbXQ";
@@ -15,4 +15,8 @@ class ApiEndPoints {
   //chat
   static String previousMessage(String reciverId) =>
       "messages/previous-messages/$reciverId";
+
+  //notifications
+  static String notification(int page) =>
+      "notification/my-notifications?page=$page";
 }

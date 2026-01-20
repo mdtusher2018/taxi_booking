@@ -59,7 +59,7 @@ class ChatRepository extends Repository {
   ) async {
     return asyncGuard<PreviousMessageResponse>(() async {
       final res = await apiService.get(
-        ApiEndPoints.previousMessage(receiverId),
+        CommonApiEndPoints.previousMessage(receiverId),
       );
       return PreviousMessageResponse.fromJson(res);
     });
