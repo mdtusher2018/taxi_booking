@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/app_images/app_images.dart';
@@ -14,7 +15,6 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_r
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_going_ride.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_the_way_sheet.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/request_bottom_sheet.dart';
-import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 
 class DriverHomeView extends ConsumerWidget {
   const DriverHomeView({super.key});
@@ -55,7 +55,7 @@ class DriverHomeView extends ConsumerWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    context.push(DriverAppRoutes.settingView);
+                    context.push(CommonAppRoutes.settingView);
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
@@ -131,11 +131,11 @@ class DriverHomeView extends ConsumerWidget {
             Positioned(bottom: 0, left: 0, right: 0, child: RequestListSheet()),
 
           /// ---------------- ON THE WAY SHEET ----------------
-          if (state.status == DriverStatus.haveSelectedRequest)
+          if (state.status == DriverStatus.onGoingToPick)
             Positioned(bottom: 0, left: 0, right: 0, child: OnTheWaySheet()),
 
           /// ---------------- ONGOING RIDE SHEET ----------------
-          if (state.status == DriverStatus.onGoingRide)
+          if (state.status == DriverStatus.rideStartrd)
             Positioned(bottom: 0, left: 0, right: 0, child: OngoingRideSheet()),
         ],
       ),

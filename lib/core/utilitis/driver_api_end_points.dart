@@ -19,9 +19,6 @@ class DriverApiEndpoints {
 
   static var refreshToken = "auth/refresh-token";
 
-  //profile
-  static var getProfile = "without-car/my-profile";
-
   //vihicals
   static var addVehicale = "vehicles/create-vehicle";
 

@@ -7,8 +7,8 @@ import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/role/common/chat/views/chat_list_view.dart';
 import 'package:taxi_booking/role/common/notifications/notifications_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/views/home_view.dart';
-import 'package:taxi_booking/role/driver/featured/ride_history/views/ride_history_view.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/views/setting_view.dart';
+import 'package:taxi_booking/role/common/ride_history/ride_history_view.dart';
+import 'package:taxi_booking/role/common/setting/views/setting_view.dart';
 
 class DriverRootView extends ConsumerStatefulWidget {
   DriverRootView({super.key});
@@ -38,7 +38,7 @@ class _DriverDashboardViewState extends ConsumerState<DriverRootView> {
     RideHistoryView(),
     DriverHomeView(),
     ChatListView(),
-    DriverSettingView(),
+    SettingView(),
   ];
 
   @override

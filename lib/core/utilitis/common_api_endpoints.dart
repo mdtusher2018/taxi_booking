@@ -19,4 +19,8 @@ class CommonApiEndPoints {
   //notifications
   static String notification(int page) =>
       "notification/my-notifications?page=$page";
+
+  static String rideHistory(int page) => "rides/my-rides?page=$page";
+
+  static var getProfile = "users/my-profile";
 }

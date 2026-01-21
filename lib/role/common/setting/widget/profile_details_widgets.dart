@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:taxi_booking/main.dart';
+import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/common_widget/network_circular_image.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
@@ -21,14 +24,26 @@ class ImageRow extends StatelessWidget {
           const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: CachedNetworkImage(
-              imageUrl: url,
-              height: 140,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              placeholder:
-                  (context, url) =>
-                      Container(height: 140, color: Colors.grey[300]),
+
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(width: 1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: url,
+                height: 140,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) {
+                  return FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Icon(Icons.broken_image, size: 80),
+                  );
+                },
+                placeholder: (context, url) =>
+                    Container(height: 140, color: Colors.grey[300]),
+              ),
             ),
           ),
         ],
@@ -93,7 +108,7 @@ class SectionCard extends StatelessWidget {
   }
 }
 
-class ProfileHeader extends StatelessWidget {
+class ProfileHeader extends ConsumerWidget {
   final String name;
   final String phone;
   final String image;
@@ -108,7 +123,7 @@ class ProfileHeader extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -122,33 +137,64 @@ class ProfileHeader extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        spacing: 4,
         children: [
-          NetworkCircleAvatar(
-            imageUrl: image,
-            radius: 40,
-            fallback: Icon(Icons.person, size: 40),
+          Row(
+            children: [
+              NetworkCircleAvatar(
+                imageUrl: image,
+                radius: 40,
+                fallback: Icon(Icons.person, size: 40),
+              ),
+
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomText(
+                      title: name,
+                      style: CommonStyle.textStyleMedium(size: 18),
+                    ),
+                    const SizedBox(height: 4),
+                    CustomText(
+                      title: phone,
+                      style: CommonStyle.textStyleSmall(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              if (isVerified)
+                Icon(Icons.verified, size: 32, color: Colors.yellow.shade800),
+            ],
           ),
 
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          if (ref.watch(appRole.notifier).state == AppRole.user) ...[
+            const Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomText(
-                  title: name,
-                  style: CommonStyle.textStyleMedium(size: 18),
+                Row(
+                  children: [
+                    Image.asset(AppImages.bronzeIcon, width: 32, height: 32),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Bronze",
+                      style: CommonStyle.textStyleMedium(size: 14),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                CustomText(
-                  title: phone,
-                  style: CommonStyle.textStyleSmall(color: Colors.grey),
+                const Text(
+                  "63.2 Points",
+                  style: TextStyle(
+                    color: Colors.amber,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
-          ),
-          if (isVerified)
-            Icon(Icons.verified, size: 32, color: Colors.yellow.shade800),
+          ],
         ],
       ),
     );

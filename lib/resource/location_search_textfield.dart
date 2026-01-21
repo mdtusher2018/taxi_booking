@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
-
+import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
 
@@ -32,10 +31,8 @@ class LocationSearchField extends StatefulWidget {
 
 class _LocationSearchFieldState extends State<LocationSearchField> {
   Future<void> _getCurrentLocation() async {
-    final permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) return;
-
-    final position = await Geolocator.getCurrentPosition();
+    final position = await getCurrentLocation();
+    if (position == null) return;
 
     final latLng = LatLng(position.latitude, position.longitude);
 
@@ -72,13 +69,12 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
           inputDecoration: InputDecoration(
             hintText: widget.hint,
             prefixIcon: Icon(Icons.location_on, color: Colors.black),
-            suffixIcon:
-                widget.enableCurrentLocation
-                    ? IconButton(
-                      icon: Icon(Icons.my_location, color: widget.iconColor),
-                      onPressed: _getCurrentLocation,
-                    )
-                    : null,
+            suffixIcon: widget.enableCurrentLocation
+                ? IconButton(
+                    icon: Icon(Icons.my_location, color: widget.iconColor),
+                    onPressed: _getCurrentLocation,
+                  )
+                : null,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
 

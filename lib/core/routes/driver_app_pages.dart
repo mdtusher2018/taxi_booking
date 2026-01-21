@@ -10,9 +10,6 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authen
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/views/email_verification_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/views/transport_selection_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/view/my_drivers.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/model/profile_response.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/views/edit_profile_view.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/views/setting_view.dart';
 import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 
 final driverAppRouterProvider = Provider<GoRouter>((ref) {
@@ -32,10 +29,6 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: DriverAppRoutes.homeView,
         builder: (context, state) => DriverHomeView(),
-      ),
-      GoRoute(
-        path: DriverAppRoutes.settingView,
-        builder: (context, state) => const DriverSettingView(),
       ),
 
       GoRoute(
@@ -80,17 +73,7 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
           return DocumentUploadView(withCar: withCar);
         },
       ),
-      GoRoute(
-        path: DriverAppRoutes.settingView,
-        builder: (context, state) => DriverSettingView(),
-      ),
-      GoRoute(
-        path: DriverAppRoutes.profileView,
-        builder: (context, state) {
-          final extra = state.extra as ProfileData;
-          return ProfileView(data: extra);
-        },
-      ),
+
       GoRoute(
         path: DriverAppRoutes.myDriversView,
         builder: (context, state) {

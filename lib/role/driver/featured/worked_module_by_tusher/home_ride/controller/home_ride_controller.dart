@@ -48,7 +48,7 @@ class HomeRideController extends _$HomeRideController with MapMixin {
           cameraMove(latLng);
 
           /// 🔁 REDRAW ROUTE IF RIDE IS ACTIVE
-          if (state.status == DriverStatus.haveSelectedRequest &&
+          if (state.status == DriverStatus.onGoingToPick &&
               state.selectedRide != null) {
             _drawRouteToPickup(state.selectedRide!);
           }
@@ -201,9 +201,13 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     ) {
       state = state.copyWith(haveUnreadMessage: true);
     });
+    
+    repository.reachedPickupLocation().listen((response) {
+      state = state.copyWith(status: DriverStatus.reachedPickupLocation);
+    });
 
     state = state.copyWith(
-      status: DriverStatus.haveSelectedRequest,
+      status: DriverStatus.onGoingToPick,
       selectedRide: ride,
     );
   }
@@ -218,8 +222,17 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       final position = await getCurrentLocation();
 
-      if (position != null) {
+      if (position != null && state.status == DriverStatus.onGoingToPick) {
         repository.updateDriverLocation(
+          latitude: position.latitude,
+          longitude: position.longitude,
+          passengerId: passengerId,
+          rideId: rideId,
+          averageSpeedKmPH: 1,
+        );
+      }
+      if (position != null && state.status == DriverStatus.rideStartrd) {
+        repository.updateDriverLocationAfterRideStart(
           latitude: position.latitude,
           longitude: position.longitude,
           passengerId: passengerId,
@@ -246,8 +259,10 @@ class HomeRideController extends _$HomeRideController with MapMixin {
 
         rideId: rideId,
         averageSpeedKmPH: 1,
+        onSuccess: (response) {
+          state = state.copyWith(status: DriverStatus.rideStartrd);
+        },
       );
-      state = state.copyWith(status: DriverStatus.onGoingRide);
     }
   }
 
@@ -255,8 +270,12 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     final position = await getCurrentLocation();
 
     if (position != null) {
-      repository.endRide(rideId: rideId);
-      state = state.copyWith(status: DriverStatus.onGoingRide);
+      repository.endRide(
+        rideId: rideId,
+        onSuccess: (response) {
+          state = state.copyWith(status: DriverStatus.rideEnd);
+        },
+      );
     }
   }
 }

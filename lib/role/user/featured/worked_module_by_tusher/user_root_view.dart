@@ -6,9 +6,9 @@ import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/core/utilitis/user_api_end_points.dart';
 import 'package:taxi_booking/role/common/chat/views/chat_list_view.dart';
 import 'package:taxi_booking/role/common/notifications/notifications_view.dart';
+import 'package:taxi_booking/role/common/ride_history/ride_history_view.dart';
+import 'package:taxi_booking/role/common/setting/views/setting_view.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/views/booking_map_view.dart';
-import 'package:taxi_booking/role/user/featured/ride_history/views/ride_history_view.dart';
-import 'package:taxi_booking/role/user/featured/setting/views/setting_view.dart';
 
 class UserRootView extends ConsumerStatefulWidget {
   const UserRootView({super.key});
@@ -33,7 +33,7 @@ class _DashboardViewState extends ConsumerState<UserRootView> {
     RideHistoryView(),
     UserBookingMapView(),
     ChatListView(),
-    UserSettingView(),
+    SettingView(),
   ];
 
   void changeTab(int index) {

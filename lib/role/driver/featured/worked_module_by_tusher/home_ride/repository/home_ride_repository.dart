@@ -69,10 +69,15 @@ class HomeRideRepository extends Repository {
   }
 
   void rideAccept({required String rideId}) {
-    socketService.emit(SocketEvents.rideAccepted, {
-      {"accepted": true, "rideId": rideId},
-    });
-    socketService.off(SocketEvents.rideRequest);
+    socketService.emit(
+      SocketEvents.rideAccepted,
+      {
+        {"accepted": true, "rideId": rideId},
+      },
+      onSuccess: (response) {
+        socketService.off(SocketEvents.rideRequest);
+      },
+    );
   }
 
   void rideDecline({required String rideId}) {
@@ -92,7 +97,34 @@ class HomeRideRepository extends Repository {
       'passengerId': passengerId,
       "rideId": rideId,
       "averageSpeedKmPH": averageSpeedKmPH,
+    }, onSuccess: (response) {});
+  }
+
+  Stream<bool> reachedPickupLocation() {
+    final StreamController<bool> controller = StreamController<bool>();
+    socketService.on(SocketEvents.driverArrived, (data) {
+      if (data != null) {
+        controller.add(true);
+        socketService.off(SocketEvents.driverArrived);
+      }
     });
+    return controller.stream;
+  }
+
+  void updateDriverLocationAfterRideStart({
+    required double latitude,
+    required double longitude,
+    required String rideId,
+    required String passengerId,
+    required double averageSpeedKmPH,
+  }) {
+    socketService.emit(SocketEvents.updateDriverLocationAfterRideStart, {
+      "latitude": latitude,
+      "longitude": longitude,
+      'passengerId': passengerId,
+      "rideId": rideId,
+      "averageSpeedKmPH": averageSpeedKmPH,
+    }, onSuccess: (response) {});
   }
 
   void startRide({
@@ -100,16 +132,22 @@ class HomeRideRepository extends Repository {
     required double longitude,
     required String rideId,
     required double averageSpeedKmPH,
+    required Function(dynamic response)? onSuccess,
   }) {
     socketService.emit(SocketEvents.rideStarted, {
       "latitude": latitude,
       "longitude": longitude,
       "rideId": rideId,
       "averageSpeedKmPH": averageSpeedKmPH,
-    });
+    }, onSuccess: onSuccess);
   }
 
-  void endRide({required String rideId}) {
-    socketService.emit(SocketEvents.rideEnded, {"rideId": rideId});
+  void endRide({
+    required String rideId,
+    required Function(dynamic response)? onSuccess,
+  }) {
+    socketService.emit(SocketEvents.rideEnded, {
+      "rideId": rideId,
+    }, onSuccess: onSuccess);
   }
 }

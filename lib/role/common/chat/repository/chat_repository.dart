@@ -25,7 +25,11 @@ class ChatRepository extends Repository {
       }
     });
 
-    socketService.emit(SocketEvents.myChatListEmit, {});
+    socketService.emit(
+      SocketEvents.myChatListEmit,
+      {},
+      onSuccess: (response) {},
+    );
 
     return controller.stream;
   }
@@ -35,7 +39,7 @@ class ChatRepository extends Repository {
     socketService.emit(SocketEvents.sendMessage, {
       "receiver": reciverId,
       "text": text,
-    });
+    }, onSuccess: (response) {});
   }
 
   Stream<ChatMessage> listenNewMessage() {

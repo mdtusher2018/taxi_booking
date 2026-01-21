@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/role/common/chat/repository/chat_repository.dart';
 import 'package:taxi_booking/role/common/notifications/notifications_repositoty.dart';
+import 'package:taxi_booking/role/common/ride_history/ride_history_repository.dart';
 
 part 'repository.g.dart';
 
@@ -16,4 +17,10 @@ ChatRepository chatRepository(Ref ref) {
 NotificationsRepositoty notificationRepository(Ref ref) {
   final apiService = ref.read(apiServiceProvider);
   return NotificationsRepositoty(apiService);
+}
+
+@riverpod
+RideHistoryRepository rideHistoryRepository(Ref ref) {
+  final apiService = ref.read(apiServiceProvider);
+  return RideHistoryRepository(apiService);
 }

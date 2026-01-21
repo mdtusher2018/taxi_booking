@@ -12,9 +12,5 @@ class DriverAppRoutes {
   static const documentUploadView = '/documentUploadView';
   static const emailVerificationView = '/emailVerificationView';
 
-  static const settingView = '/setting';
-  static const profileView = '/profile';
-
   static const myDriversView = '/myDrivers';
-
 }

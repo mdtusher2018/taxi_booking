@@ -2,7 +2,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -242,9 +241,8 @@ class BookingMapController extends StateNotifier<BookingMapState>
   }
 
   void goToCurrentLocation() async {
-    final permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) return;
-    final position = await Geolocator.getCurrentPosition();
+    final position = await getCurrentLocation();
+    if (position == null) return;
 
     state = state.copyWith(
       currentLocation: LatLng(position.latitude, position.longitude),
@@ -302,7 +300,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
         "latitude": state.pickupLatLng!.latitude,
         "longitude": state.pickupLatLng!.longitude,
       },
-    });
+    }, onSuccess: (response) {});
   }
 
   void initSurgeMultiplier() {
@@ -358,30 +356,33 @@ class BookingMapController extends StateNotifier<BookingMapState>
 
       state = state.copyWith(rideId: rideResponse.data.id);
 
-      socketService.emit(SocketEvents.rideRequest, {
-        "rideId": rideResponse.data.id,
-      });
-      state = state.copyWith(status: RideBookingStatus.searchingDriver);
+      socketService.emit(
+        SocketEvents.rideRequest,
+        {"rideId": rideResponse.data.id},
+        onSuccess: (response) {
+          state = state.copyWith(status: RideBookingStatus.searchingDriver);
 
-      socketService.on(SocketEvents.rideAccepted, (data) {
-        state = state.copyWith(
-          acceptedDriverInfo: RideAcceptResponse.fromJson(data).driverInfo,
-        );
+          socketService.on(SocketEvents.rideAccepted, (data) {
+            state = state.copyWith(
+              acceptedDriverInfo: RideAcceptResponse.fromJson(data).driverInfo,
+            );
 
-        listenAllAfterRideAccepted();
+            listenAllAfterRideAccepted();
 
-        if (state.acceptedDriverInfo != null) {
-          state = state.copyWith(
-            driverLatLng: LatLng(
-              state.acceptedDriverInfo!.location!.coordinates!.last,
-              state.acceptedDriverInfo!.location!.coordinates!.first,
-            ),
-          );
+            if (state.acceptedDriverInfo != null) {
+              state = state.copyWith(
+                driverLatLng: LatLng(
+                  state.acceptedDriverInfo!.location!.coordinates!.last,
+                  state.acceptedDriverInfo!.location!.coordinates!.first,
+                ),
+              );
 
-          onDriverLocationChanged();
-          state = state.copyWith(status: RideBookingStatus.driverOnTheWay);
-        }
-      });
+              onDriverLocationChanged();
+              state = state.copyWith(status: RideBookingStatus.driverOnTheWay);
+            }
+          });
+        },
+      );
     } catch (e) {
       throw Exception(e);
     } finally {

@@ -1,7 +1,8 @@
 enum DriverStatus {
   offline,
   online,
-  haveSelectedRequest,
-  onGoingRide,
-  showTripDetailsSheet,
+  onGoingToPick,
+  reachedPickupLocation,
+  rideStartrd,
+  rideEnd,
 }

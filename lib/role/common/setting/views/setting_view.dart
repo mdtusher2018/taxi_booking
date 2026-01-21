@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_booking/core/routes/common_app_pages.dart';
+import 'package:taxi_booking/main.dart';
 import 'package:taxi_booking/resource/common_dialog/custom_dialog.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/view/my_drivers.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/controller/profile_controller.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/setting/widget/profile_details_widgets.dart';
+import 'package:taxi_booking/role/common/setting/controller/profile_controller.dart';
+import 'package:taxi_booking/role/common/setting/widget/profile_details_widgets.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/my_vehicales_view.dart';
-import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../wallet/views/wallet_view.dart';
+import '../../../driver/featured/wallet/views/wallet_view.dart';
 import '../widget/setting_item_card.dart';
 
-class DriverSettingView extends ConsumerStatefulWidget {
-  const DriverSettingView({super.key});
+class SettingView extends ConsumerStatefulWidget {
+  const SettingView({super.key});
 
   @override
-  ConsumerState<DriverSettingView> createState() => _SettingViewState();
+  ConsumerState<SettingView> createState() => _SettingViewState();
 }
 
-class _SettingViewState extends ConsumerState<DriverSettingView> {
+class _SettingViewState extends ConsumerState<SettingView> {
+  bool isPromoEnabled = true;
   @override
   void initState() {
     super.initState();
@@ -57,8 +59,8 @@ class _SettingViewState extends ConsumerState<DriverSettingView> {
                 }
                 return ProfileHeader(
                   name: data.data.user.fullName,
-                  phone: data.data.phone,
-                  image: data.data.user.identityUploads.selfie,
+                  phone: data.data.user.phone,
+                  image: data.data.user.identityUploads?.selfie ?? "",
                   isVerified: data.data.user.status == "APPROVED",
                 );
               },
@@ -85,7 +87,7 @@ class _SettingViewState extends ConsumerState<DriverSettingView> {
                   data: (data) {
                     if (data != null) {
                       context.push(
-                        DriverAppRoutes.profileView,
+                        CommonAppRoutes.profileView,
                         extra: data.data,
                       );
                     }
@@ -93,39 +95,39 @@ class _SettingViewState extends ConsumerState<DriverSettingView> {
                 );
               },
             ),
+
             SettingItemCard(
               icon: Icon(Icons.credit_card, color: Colors.yellow.shade900),
-
               title: "Wallet",
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => WalletView()),
-                  ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => WalletView()),
+              ),
             ),
 
-            SettingItemCard(
-              icon: Icon(
-                Icons.drive_eta_outlined,
-                color: Colors.yellow.shade900,
-              ),
-              title: "My Vehicales",
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => MyVehiclesView()),
-                  ),
-            ),
-            SettingItemCard(
-              icon: Icon(Icons.person_4, color: Colors.yellow.shade900),
-              title: "My Drivers",
-              onTap: () {
-                Navigator.push(
+            if (ref.watch(appRole.notifier).state == AppRole.driver)
+              SettingItemCard(
+                icon: Icon(
+                  Icons.drive_eta_outlined,
+                  color: Colors.yellow.shade900,
+                ),
+                title: "My Vehicales",
+                onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => MyDriversView()),
-                );
-              },
-            ),
+                  MaterialPageRoute(builder: (_) => MyVehiclesView()),
+                ),
+              ),
+            if (ref.watch(appRole.notifier).state == AppRole.driver)
+              SettingItemCard(
+                icon: Icon(Icons.person_4, color: Colors.yellow.shade900),
+                title: "My Drivers",
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => MyDriversView()),
+                  );
+                },
+              ),
 
             SettingItemCard(
               icon: Icon(Icons.support_agent, color: Colors.yellow.shade900),
