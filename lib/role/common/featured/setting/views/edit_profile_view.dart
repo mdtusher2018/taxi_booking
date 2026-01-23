@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
-import 'package:taxi_booking/role/common/setting/model/profile_response.dart';
-import 'package:taxi_booking/role/common/setting/widget/profile_details_widgets.dart';
+import 'package:taxi_booking/role/common/featured/setting/model/profile_response.dart';
+import 'package:taxi_booking/role/common/featured/setting/widget/profile_details_widgets.dart';
 
 class ProfileView extends StatelessWidget {
   final ProfileData data;

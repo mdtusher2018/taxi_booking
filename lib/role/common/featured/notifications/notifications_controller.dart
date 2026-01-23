@@ -3,8 +3,8 @@ import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
 import 'package:taxi_booking/core/pagination/paginated_async_notifier.dart';
 import 'package:taxi_booking/role/common/di/repository.dart';
-import 'package:taxi_booking/role/common/notifications/notification_model.dart';
-import 'package:taxi_booking/role/common/notifications/notifications_repositoty.dart';
+import 'package:taxi_booking/role/common/featured/notifications/notification_model.dart';
+import 'package:taxi_booking/role/common/featured/notifications/notifications_repositoty.dart';
 
 final myNotificationsControllerProvider =
     AsyncNotifierProvider<

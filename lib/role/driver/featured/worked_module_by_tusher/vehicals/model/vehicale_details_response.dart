@@ -28,6 +28,7 @@ class VehicleData {
   String model;
   int year;
   String color;
+  String category;
   String registrationNumber;
   int numberOfSeats;
   String rentStatus;
@@ -47,6 +48,7 @@ class VehicleData {
     required this.model,
     required this.year,
     required this.color,
+    required this.category,
     required this.registrationNumber,
     required this.numberOfSeats,
     required this.rentStatus,
@@ -68,6 +70,7 @@ class VehicleData {
       model: json['model'],
       year: json['year'],
       color: json['color'],
+      category: json["category"],
       registrationNumber: json['registrationNumber'],
       numberOfSeats: json['numberOfSeats'],
       rentStatus: json['rentStatus'],

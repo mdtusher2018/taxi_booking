@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
+import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/controller/delete_vehicale_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/controller/vehicale_details_controller.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/delete_vehical_response.dart'
+    show DeleteVehicleResponse;
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/vehicale_details_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/edit_vehicale_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +19,12 @@ enum _MenuAction { edit, delete }
 
 class VehicleDetailsView extends ConsumerStatefulWidget {
   final String vehicaleId;
-  const VehicleDetailsView({super.key, required this.vehicaleId});
+  final bool isMyVehicale;
+  const VehicleDetailsView({
+    super.key,
+    required this.vehicaleId,
+    required this.isMyVehicale,
+  });
 
   @override
   ConsumerState<VehicleDetailsView> createState() => _VehicleDetailsViewState();
@@ -35,46 +44,63 @@ class _VehicleDetailsViewState extends ConsumerState<VehicleDetailsView> {
   void _showDeleteConfirmDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder:
-          (_) => AlertDialog(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadiusGeometry.circular(16),
-            ),
-            title: CustomText(
-              title: "Delete Vehicle",
-              fontSize: 16,
-              style: TextStyle(fontWeight: FontWeight.w500),
-            ),
-            content: CustomText(
-              title: "Are you sure you want to delete this vehicle?",
-              fontSize: 14,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: CustomText(title: "Cancel", fontSize: 14),
-              ),
-              TextButton(
-                onPressed: () {
-                  ref
-                      .watch(deleteVehicaleControllerProvider.notifier)
-                      .deleteVehicale(vehicaleId: widget.vehicaleId);
-                },
-                child: CustomText(
-                  title: "Delete",
-                  fontSize: 14,
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(16),
+        ),
+        title: CustomText(
+          title: "Delete Vehicle",
+          fontSize: 16,
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+        content: CustomText(
+          title: "Are you sure you want to delete this vehicle?",
+          fontSize: 14,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: CustomText(title: "Cancel", fontSize: 14),
           ),
+          TextButton(
+            onPressed: () {
+              ref
+                  .watch(deleteVehicaleControllerProvider.notifier)
+                  .deleteVehicale(vehicaleId: widget.vehicaleId);
+            },
+            child: CustomText(
+              title: "Delete",
+              fontSize: 14,
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final vehicleResponse = ref.watch(vehicaleDetailsControllerProvider);
+
+    ref.listen<AsyncValue<DeleteVehicleResponse?>>(
+      deleteVehicaleControllerProvider,
+      (previous, next) {
+        next.when(
+          data: (data) {
+            if (data != null) {
+              context.pop();
+              context.pop();
+            }
+          },
+          error: (error, stackTrace) {
+            CustomToast.showToast(message: error.toString(), isError: true);
+          },
+          loading: () {},
+        );
+      },
+    );
 
     return vehicleResponse.when(
       data: (vehicleResponse) {
@@ -97,48 +123,48 @@ class _VehicleDetailsViewState extends ConsumerState<VehicleDetailsView> {
             appBar: CustomAppBar(
               title: "Vehicle Details",
               actions: [
-                PopupMenuButton<_MenuAction>(
-                  icon: const Icon(Icons.more_vert, size: 28),
-                  onSelected: (value) {
-                    switch (value) {
-                      case _MenuAction.edit:
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => EditVehicleView(vehicle: vehicle),
-                          ),
-                        );
-                        break;
+                if (widget.isMyVehicale)
+                  PopupMenuButton<_MenuAction>(
+                    icon: const Icon(Icons.more_vert, size: 28),
+                    onSelected: (value) {
+                      switch (value) {
+                        case _MenuAction.edit:
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => EditVehicleView(vehicle: vehicle),
+                            ),
+                          );
+                          break;
 
-                      case _MenuAction.delete:
-                        _showDeleteConfirmDialog(context);
-                        break;
-                    }
-                  },
-                  itemBuilder:
-                      (context) => [
-                        PopupMenuItem(
-                          value: _MenuAction.edit,
-                          child: Row(
-                            children: const [
-                              Icon(RemixIcons.edit_2_fill, size: 20),
-                              SizedBox(width: 10),
-                              Text("Edit"),
-                            ],
-                          ),
+                        case _MenuAction.delete:
+                          _showDeleteConfirmDialog(context);
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: _MenuAction.edit,
+                        child: Row(
+                          children: const [
+                            Icon(RemixIcons.edit_2_fill, size: 20),
+                            SizedBox(width: 10),
+                            Text("Edit"),
+                          ],
                         ),
-                        PopupMenuItem(
-                          value: _MenuAction.delete,
-                          child: Row(
-                            children: const [
-                              Icon(Icons.delete, size: 20, color: Colors.red),
-                              SizedBox(width: 10),
-                              Text("Delete"),
-                            ],
-                          ),
+                      ),
+                      PopupMenuItem(
+                        value: _MenuAction.delete,
+                        child: Row(
+                          children: const [
+                            Icon(Icons.delete, size: 20, color: Colors.red),
+                            SizedBox(width: 10),
+                            Text("Delete"),
+                          ],
                         ),
-                      ],
-                ),
+                      ),
+                    ],
+                  ),
                 SizedBox(width: 12),
               ],
             ),
@@ -205,12 +231,10 @@ class _VehicleDetailsViewState extends ConsumerState<VehicleDetailsView> {
 
                         const SizedBox(height: 24),
 
-                        CustomButton(
-                          title: "Manage Vehicle",
-                          onTap: () {
-                            // Navigate to edit / manage page
-                          },
-                        ),
+                        if (widget.isMyVehicale)
+                          CustomButton(title: "Remove Driver", onTap: () {}),
+                        if (!widget.isMyVehicale)
+                          CustomButton(title: "Message Owner", onTap: () {}),
                       ],
                     ),
                   ),
@@ -254,12 +278,11 @@ class _VehiclePhotosState extends State<_VehiclePhotos> {
   late final PageController _controller;
   int _currentIndex = 0;
 
-  List<String> get _images =>
-      [
-        widget.photos.front,
-        widget.photos.rear,
-        widget.photos.interior,
-      ].where((e) => e.isNotEmpty).toList();
+  List<String> get _images => [
+    widget.photos.front,
+    widget.photos.rear,
+    widget.photos.interior,
+  ].where((e) => e.isNotEmpty).toList();
 
   @override
   void initState() {
@@ -334,10 +357,9 @@ class _VehiclePhotosState extends State<_VehiclePhotos> {
                 height: 6,
                 width: _currentIndex == index ? 16 : 6,
                 decoration: BoxDecoration(
-                  color:
-                      _currentIndex == index
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.5),
+                  color: _currentIndex == index
+                      ? Colors.white
+                      : Colors.white.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),

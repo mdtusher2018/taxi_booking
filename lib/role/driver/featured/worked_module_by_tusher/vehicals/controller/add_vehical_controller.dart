@@ -26,6 +26,7 @@ class AddVehicalController extends _$AddVehicalController {
     required String color,
     required String registrationNumber,
     required int numberOfSeats,
+    required String catagory,
 
     // Documents
     required File registrationDocument,
@@ -43,6 +44,7 @@ class AddVehicalController extends _$AddVehicalController {
       model: model,
       year: year,
       color: color,
+      catagory: catagory,
       registrationNumber: registrationNumber,
       numberOfSeats: numberOfSeats,
       registrationDocument: registrationDocument,

@@ -25,7 +25,7 @@ class EditVehicalController extends _$EditVehicalController {
     required int year,
     required String color,
     required String registrationNumber,
-    required int numberOfSeats,
+    required int numberOfSeats,    required String catagory,
 
     // Documents
     required File registrationDocument,
@@ -42,7 +42,7 @@ class EditVehicalController extends _$EditVehicalController {
       vehicleMake: vehicleMake,
       model: model,
       year: year,
-      color: color,
+      color: color,catagory: catagory,
       registrationNumber: registrationNumber,
       numberOfSeats: numberOfSeats,
       registrationDocument: registrationDocument,

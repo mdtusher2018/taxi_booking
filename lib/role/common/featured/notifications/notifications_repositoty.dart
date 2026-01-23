@@ -3,19 +3,19 @@ import 'package:taxi_booking/core/base/repository.dart';
 import 'package:taxi_booking/core/base/result.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/utilitis/common_api_endpoints.dart';
-import 'package:taxi_booking/role/common/ride_history/ride_history_model.dart';
+import 'package:taxi_booking/role/common/featured/notifications/notification_model.dart';
 
-class RideHistoryRepository extends Repository {
+class NotificationsRepositoty extends Repository {
   IApiService apiService;
-  RideHistoryRepository(this.apiService);
-  Future<Result<RideHistoryResponse, Failure>> fetchRideHistory({
+  NotificationsRepositoty(this.apiService);
+  Future<Result<NotificationsResponse, Failure>> fetchMyNotifications({
     required int page,
   }) async {
     return asyncGuard(() async {
       final response = await apiService.get(
-        CommonApiEndPoints.rideHistory(page),
+        CommonApiEndPoints.notification(page),
       );
-      return RideHistoryResponse.fromJson(response);
+      return NotificationsResponse.fromJson(response);
     });
   }
 }

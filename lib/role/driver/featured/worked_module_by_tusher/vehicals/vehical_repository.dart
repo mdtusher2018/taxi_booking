@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/repository.dart';
 import 'package:taxi_booking/core/base/result.dart';
+import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/add_vehical_response.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/all_vehicals_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/delete_vehical_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/edit_vehical_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/my_vehicals_response.dart';
@@ -20,6 +22,7 @@ class VehicalRepository extends Repository {
     required String model,
     required int year,
     required String color,
+    required String catagory,
     required String registrationNumber,
     required int numberOfSeats,
     required File registrationDocument,
@@ -30,6 +33,7 @@ class VehicalRepository extends Repository {
     required File interiorImage,
   }) async {
     return asyncGuard(() async {
+      AppLogger.i("Add Vehicals Called: ==========>>>>>>>>>>>");
       final res = await apiService.multipart(
         DriverApiEndpoints.addVehicale,
         body: {
@@ -37,6 +41,7 @@ class VehicalRepository extends Repository {
           "model": model,
           "year": year,
           "color": color,
+          "category": catagory,
           "registrationNumber": registrationNumber,
           "numberOfSeats": numberOfSeats,
         },
@@ -58,6 +63,7 @@ class VehicalRepository extends Repository {
     required String model,
     required int year,
     required String color,
+    required String catagory,
     required String registrationNumber,
     required int numberOfSeats,
     required File registrationDocument,
@@ -77,6 +83,7 @@ class VehicalRepository extends Repository {
           "color": color,
           "registrationNumber": registrationNumber,
           "numberOfSeats": numberOfSeats,
+          "category": catagory,
         },
         files: {
           'registrationDocument': registrationDocument,
@@ -100,6 +107,18 @@ class VehicalRepository extends Repository {
         DriverApiEndpoints.myVehicales(page),
       );
       return MyVehiclesResponse.fromJson(response);
+    });
+  }
+
+  Future<Result<AllVehiclesResponse, Failure>> getAllVehicals({
+    required int page,
+    int limit = 10,
+  }) async {
+    return asyncGuard(() async {
+      final response = await apiService.get(
+        DriverApiEndpoints.allVehicales(page),
+      );
+      return AllVehiclesResponse.fromJson(response);
     });
   }
 

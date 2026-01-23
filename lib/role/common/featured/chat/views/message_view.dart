@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
-import 'package:taxi_booking/role/common/chat/controller/message_controller.dart';
-import 'package:taxi_booking/role/common/chat/model/message_response_model.dart';
+import 'package:taxi_booking/role/common/featured/chat/controller/message_controller.dart';
+import 'package:taxi_booking/role/common/featured/chat/model/message_response_model.dart';
 
 class MessageView extends ConsumerStatefulWidget {
   final String reciverId;

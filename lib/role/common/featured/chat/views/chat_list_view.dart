@@ -7,7 +7,7 @@ import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/services/storage/storage_key.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
-import 'package:taxi_booking/role/common/chat/controller/chat_list_controller.dart';
+import 'package:taxi_booking/role/common/featured/chat/controller/chat_list_controller.dart';
 
 import '../widget/chat_list_widget.dart';
 

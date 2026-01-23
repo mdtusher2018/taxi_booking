@@ -20,8 +20,8 @@ class ApiClient {
     required String baseUrl,
     required this.localStorage,
     required this.navigatorKey,
-    Duration connectTimeout = const Duration(seconds: 5),
-    Duration receiveTimeout = const Duration(seconds: 3),
+    Duration? connectTimeout,
+    Duration? receiveTimeout,
   }) : dio =
            dio ??
            Dio(
@@ -101,19 +101,12 @@ class ApiClient {
     return _processResponse(res);
   }
 
-  Future<dynamic> sendMultipart(
-    Uri url, {
-    String method = 'POST',
-    Map<String, String>? headers,
+  Future<FormData> getFromData({
+    String bodyFieldName = 'data',
     Map<String, File>? files,
     dynamic body,
-    String bodyFieldName = 'data',
   }) async {
-    final form = FormData();
-
-    if (body != null) {
-      form.fields.add(MapEntry(bodyFieldName, jsonEncode(body)));
-    }
+    FormData form = FormData.fromMap({bodyFieldName: jsonEncode(body)});
 
     if (files != null) {
       for (final e in files.entries) {
@@ -128,10 +121,21 @@ class ApiClient {
         );
       }
     }
+    return form;
+  }
 
+  Future<dynamic> sendMultipart(
+    Uri url, {
+    String method = 'POST',
+    Map<String, String>? headers,
+    Map<String, File>? files,
+    dynamic body,
+    String bodyFieldName = 'data',
+  }) async {
+    FormData from = await getFromData(body: body, files: files);
     final res = await dio.request(
       url.toString(),
-      data: form,
+      data: from,
       options: Options(method: method, headers: headers),
     );
     return _processResponse(res);
@@ -148,10 +152,9 @@ class ApiClient {
 
     if (statusCode >= 200 && statusCode < 300) return data;
 
-    final message =
-        data is Map && data['message'] != null
-            ? data['message'] as String
-            : 'Unknown error';
+    final message = data is Map && data['message'] != null
+        ? data['message'] as String
+        : 'Unknown error';
     throw ApiException(statusCode, message, data: data);
   }
 }

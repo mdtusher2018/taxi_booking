@@ -23,6 +23,9 @@ class DriverApiEndpoints {
   static var addVehicale = "vehicles/create-vehicle";
 
   static String myVehicales(int page) =>
+      "vehicles/my-vehicles?limit=10&page=$page";
+
+  static String allVehicales(int page) =>
       "vehicles/all-vehicles?limit=10&page=$page";
   static String vehicaleDetails(String id) => "vehicles/details/$id";
 

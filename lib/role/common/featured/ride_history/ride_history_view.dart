@@ -8,8 +8,8 @@ import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
-import 'package:taxi_booking/role/common/ride_history/ride_history_controller.dart';
-import 'package:taxi_booking/role/common/ride_history/ride_history_model.dart';
+import 'package:taxi_booking/role/common/featured/ride_history/ride_history_controller.dart';
+import 'package:taxi_booking/role/common/featured/ride_history/ride_history_model.dart';
 
 class RideHistoryView extends ConsumerStatefulWidget {
   const RideHistoryView({super.key});

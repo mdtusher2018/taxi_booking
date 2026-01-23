@@ -1,9 +1,10 @@
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/core/routes/common_app_pages.dart';
-import 'package:taxi_booking/role/common/chat/views/message_view.dart';
-import 'package:taxi_booking/role/common/setting/model/profile_response.dart';
-import 'package:taxi_booking/role/common/setting/views/edit_profile_view.dart';
-import 'package:taxi_booking/role/common/setting/views/setting_view.dart';
+import 'package:taxi_booking/role/common/featured/chat/views/message_view.dart';
+import 'package:taxi_booking/role/common/featured/setting/model/profile_response.dart';
+import 'package:taxi_booking/role/common/featured/setting/views/edit_profile_view.dart';
+import 'package:taxi_booking/role/common/featured/setting/views/privacy_policy.dart';
+import 'package:taxi_booking/role/common/featured/setting/views/setting_view.dart';
 
 final commonAppRoutes = [
   GoRoute(
@@ -22,6 +23,12 @@ final commonAppRoutes = [
     builder: (context, state) {
       final extra = state.extra as ProfileData;
       return ProfileView(data: extra);
+    },
+  ),
+  GoRoute(
+    path: CommonAppRoutes.privacyView,
+    builder: (context, state) {
+      return PrivacyPolicyView();
     },
   ),
 ];

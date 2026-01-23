@@ -3,4 +3,5 @@ class CommonAppRoutes {
   static const notificationView = '/notifications';
   static const settingView = '/settings';
   static const profileView = '/profile';
+  static const privacyView = '/privacy';
 }

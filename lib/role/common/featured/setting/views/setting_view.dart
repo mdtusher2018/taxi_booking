@@ -4,12 +4,13 @@ import 'package:taxi_booking/main.dart';
 import 'package:taxi_booking/resource/common_dialog/custom_dialog.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/view/my_drivers.dart';
-import 'package:taxi_booking/role/common/setting/controller/profile_controller.dart';
-import 'package:taxi_booking/role/common/setting/widget/profile_details_widgets.dart';
+import 'package:taxi_booking/role/common/featured/setting/controller/profile_controller.dart';
+import 'package:taxi_booking/role/common/featured/setting/widget/profile_details_widgets.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/all_vehicales_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/my_vehicales_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../driver/featured/wallet/views/wallet_view.dart';
+import '../../../../driver/featured/wallet/views/wallet_view.dart';
 import '../widget/setting_item_card.dart';
 
 class SettingView extends ConsumerStatefulWidget {
@@ -105,29 +106,81 @@ class _SettingViewState extends ConsumerState<SettingView> {
               ),
             ),
 
+            state.when(
+              loading: () {
+                return SizedBox.shrink();
+              },
+              data: (data) {
+                if (data == null) {
+                  return SizedBox.shrink();
+                }
+
+                if (ref.watch(appRole.notifier).state == AppRole.driver &&
+                    data.data.role == "WithCar") {
+                  return SettingItemCard(
+                    icon: Icon(
+                      Icons.drive_eta_outlined,
+                      color: Colors.yellow.shade900,
+                    ),
+                    title: "My Vehicales",
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MyVehiclesView(isForAssign: false),
+                      ),
+                    ),
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+              error: (error, stackTrace) {
+                return SizedBox.shrink();
+              },
+            ),
+
             if (ref.watch(appRole.notifier).state == AppRole.driver)
               SettingItemCard(
                 icon: Icon(
                   Icons.drive_eta_outlined,
                   color: Colors.yellow.shade900,
                 ),
-                title: "My Vehicales",
+                title: "All Vehicales",
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => MyVehiclesView()),
+                  MaterialPageRoute(builder: (_) => AllVehiclesView()),
                 ),
               ),
-            if (ref.watch(appRole.notifier).state == AppRole.driver)
-              SettingItemCard(
-                icon: Icon(Icons.person_4, color: Colors.yellow.shade900),
-                title: "My Drivers",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => MyDriversView()),
+
+            state.when(
+              loading: () {
+                return SizedBox.shrink();
+              },
+              data: (data) {
+                if (data == null) {
+                  return SizedBox.shrink();
+                }
+
+                if (ref.watch(appRole.notifier).state == AppRole.driver &&
+                    data.data.role == "WithCar") {
+                  return SettingItemCard(
+                    icon: Icon(Icons.person_4, color: Colors.yellow.shade900),
+                    title: "My Drivers",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => MyDriversView()),
+                      );
+                    },
                   );
-                },
-              ),
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+              error: (error, stackTrace) {
+                return SizedBox.shrink();
+              },
+            ),
 
             SettingItemCard(
               icon: Icon(Icons.support_agent, color: Colors.yellow.shade900),
@@ -140,7 +193,7 @@ class _SettingViewState extends ConsumerState<SettingView> {
               icon: Icon(Icons.policy, color: Colors.yellow.shade900),
               title: "Security & Privacy",
               onTap: () {
-                // Open security settings
+                context.push(CommonAppRoutes.privacyView);
               },
             ),
 

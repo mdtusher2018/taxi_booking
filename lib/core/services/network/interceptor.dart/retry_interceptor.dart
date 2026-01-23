@@ -13,7 +13,7 @@ class RetryOnConnectionChangeInterceptor extends Interceptor {
   });
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     final req = err.requestOptions;
     final shouldRetry = _shouldRetry(err);
 
@@ -37,15 +37,18 @@ class RetryOnConnectionChangeInterceptor extends Interceptor {
       final response = await dio.fetch(req);
       return handler.resolve(response);
     } catch (e) {
-      return handler.next(e as DioError);
+      return handler.next(e as DioException);
     }
   }
 
-  bool _shouldRetry(DioError err) {
-    // retry on timeouts and other network errors, not on 4xx server errors
-    return err.type == DioErrorType.connectionTimeout ||
-        err.type == DioErrorType.receiveTimeout ||
-        err.type == DioErrorType.sendTimeout ||
-        err.type == DioErrorType.unknown; // unknown often means network
+  bool _shouldRetry(DioException err) {
+    final data = err.requestOptions.data;
+
+    // 🚫 Do NOT retry multipart/form-data
+    if (data is FormData) return false;
+    return err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.receiveTimeout ||
+        err.type == DioExceptionType.sendTimeout ||
+        err.type == DioExceptionType.unknown;
   }
 }

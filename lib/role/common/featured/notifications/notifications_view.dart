@@ -6,8 +6,8 @@ import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
-import 'package:taxi_booking/role/common/notifications/notification_model.dart';
-import 'package:taxi_booking/role/common/notifications/notifications_controller.dart';
+import 'package:taxi_booking/role/common/featured/notifications/notification_model.dart';
+import 'package:taxi_booking/role/common/featured/notifications/notifications_controller.dart';
 
 class NotificationView extends ConsumerStatefulWidget {
   const NotificationView({super.key});

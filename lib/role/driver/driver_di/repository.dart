@@ -3,7 +3,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/repository/auth_repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/drivers_repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/repository/home_ride_repository.dart';
-import 'package:taxi_booking/role/common/setting/repository/profile_repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/vehical_repository.dart';
 
 part 'repository.g.dart';
@@ -28,12 +27,6 @@ HomeRideRepository homerideRepository(Ref ref) {
     localStorageService: localStorageService,
     socketService: socketService,
   );
-}
-
-@riverpod
-ProfileRepository profileRepository(Ref ref) {
-  final apiService = ref.watch(apiServiceProvider);
-  return ProfileRepository(apiService);
 }
 
 @riverpod

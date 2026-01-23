@@ -6,12 +6,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
+import 'package:taxi_booking/resource/common_widget/custom_drop_down_widget.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text_field_with_label.dart';
+import 'package:taxi_booking/resource/utilitis/common_style.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/controller/add_vehical_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/add_vehical_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/widget/add_edit_view_widgets.dart';
-
 
 class AddVehicleView extends ConsumerStatefulWidget {
   const AddVehicleView({super.key});
@@ -22,6 +23,8 @@ class AddVehicleView extends ConsumerStatefulWidget {
 
 class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
   final ImagePicker _picker = ImagePicker();
+
+  List<String> carCategory = ["TaxiTil", "Comfort", "Premium", "XL", "Pet"];
 
   // Vehicle info
   final vehicleMakeController = TextEditingController(
@@ -39,7 +42,11 @@ class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
   final registrationNumberController = TextEditingController(
     text: kDebugMode ? 'ABC1234' : null,
   );
+
   final seatsController = TextEditingController(text: kDebugMode ? '5' : null);
+  final carCatagoryController = TextEditingController(
+    text: kDebugMode ? 'TaxiTil' : null,
+  );
 
   // Documents
   File? registrationDocument;
@@ -65,6 +72,7 @@ class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
     if (vehicleMakeController.text.isEmpty ||
         modelController.text.isEmpty ||
         yearController.text.isEmpty ||
+        carCatagoryController.text.isEmpty ||
         registrationNumberController.text.isEmpty ||
         seatsController.text.isEmpty ||
         registrationDocument == null ||
@@ -87,6 +95,7 @@ class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
           model: modelController.text.trim(),
           year: int.parse(yearController.text),
           color: colorController.text.trim(),
+          catagory: carCatagoryController.text.trim(),
           registrationNumber: registrationNumberController.text.trim(),
           numberOfSeats: int.parse(seatsController.text),
 
@@ -147,6 +156,23 @@ class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
                     hint: "e.g. C200",
                     controller: modelController,
                   ),
+
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Catagory",
+                      style: CommonStyle.textStyleMedium(size: 16),
+                    ),
+                  ),
+
+                  SizedBox(height: 10),
+                  CustomDropDownWidget(
+                    items: carCategory,
+                    hintText: "Select a catagory",
+                    onChanged: (value) {
+                      if (value != null) carCatagoryController.text = value;
+                    },
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -192,28 +218,23 @@ class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
                   documentTile(
                     title: "Registration Document",
                     file: registrationDocument,
-                    onTap:
-                        () => _pickImage(
-                          (f) => setState(() => registrationDocument = f),
-                        ),
+                    onTap: () => _pickImage(
+                      (f) => setState(() => registrationDocument = f),
+                    ),
                   ),
                   documentTile(
                     title: "Technical Inspection Certificate",
                     file: technicalInspectionCertificate,
-                    onTap:
-                        () => _pickImage(
-                          (f) => setState(
-                            () => technicalInspectionCertificate = f,
-                          ),
-                        ),
+                    onTap: () => _pickImage(
+                      (f) => setState(() => technicalInspectionCertificate = f),
+                    ),
                   ),
                   documentTile(
                     title: "Insurance Document",
                     file: insuranceDocument,
-                    onTap:
-                        () => _pickImage(
-                          (f) => setState(() => insuranceDocument = f),
-                        ),
+                    onTap: () => _pickImage(
+                      (f) => setState(() => insuranceDocument = f),
+                    ),
                   ),
                 ],
               ),
@@ -229,22 +250,20 @@ class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
                   documentTile(
                     title: "Front View",
                     file: frontImage,
-                    onTap:
-                        () => _pickImage((f) => setState(() => frontImage = f)),
+                    onTap: () =>
+                        _pickImage((f) => setState(() => frontImage = f)),
                   ),
                   documentTile(
                     title: "Rear View",
                     file: rearImage,
-                    onTap:
-                        () => _pickImage((f) => setState(() => rearImage = f)),
+                    onTap: () =>
+                        _pickImage((f) => setState(() => rearImage = f)),
                   ),
                   documentTile(
                     title: "Interior",
                     file: interiorImage,
-                    onTap:
-                        () => _pickImage(
-                          (f) => setState(() => interiorImage = f),
-                        ),
+                    onTap: () =>
+                        _pickImage((f) => setState(() => interiorImage = f)),
                   ),
                 ],
               ),

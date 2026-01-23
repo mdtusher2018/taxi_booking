@@ -20,11 +20,10 @@ class MyVehiclesResponse {
       success: json['success'] ?? false,
       statusCode: json['statusCode'] ?? 0,
       message: json['message'] ?? '',
-      meta: Meta.fromJson(json['meta'] ?? {}),
-      data:
-          (json['data'] as List<dynamic>? ?? [])
-              .map((e) => Vehicle.fromJson(e))
-              .toList(),
+      meta: Meta.fromJson(json['data']['meta'] ?? {}),
+      data: (json['data']['data'] as List<dynamic>? ?? [])
+          .map((e) => Vehicle.fromJson(e))
+          .toList(),
     );
   }
 }

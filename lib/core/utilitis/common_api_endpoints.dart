@@ -23,4 +23,5 @@ class CommonApiEndPoints {
   static String rideHistory(int page) => "rides/my-rides?page=$page";
 
   static var getProfile = "users/my-profile";
+  static var privacyPolicy = "admin/get-privacy-policy";
 }

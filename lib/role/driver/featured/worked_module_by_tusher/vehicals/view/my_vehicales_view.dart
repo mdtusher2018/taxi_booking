@@ -11,9 +11,9 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehica
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/vehicale_details_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 class MyVehiclesView extends ConsumerStatefulWidget {
-  const MyVehiclesView({super.key});
+  final bool isForAssign;
+  const MyVehiclesView({super.key, required this.isForAssign});
 
   @override
   ConsumerState<MyVehiclesView> createState() => _MyVehiclesViewState();
@@ -63,13 +63,12 @@ class _MyVehiclesViewState extends ConsumerState<MyVehiclesView> {
       ),
       body: state.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error:
-            (e, _) => Center(
-              child: CustomText(
-                title: e.toString(),
-                style: CommonStyle.textStyleMedium(color: Colors.white),
-              ),
-            ),
+        error: (e, _) => Center(
+          child: CustomText(
+            title: e.toString(),
+            style: CommonStyle.textStyleMedium(color: Colors.white),
+          ),
+        ),
         data: (response) {
           final vehicles = response.items;
 
@@ -95,7 +94,10 @@ class _MyVehiclesViewState extends ConsumerState<MyVehiclesView> {
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
-                return VehicleCard(vehicle: vehicles[index]);
+                return VehicleCard(
+                  vehicle: vehicles[index],
+                  isForAssign: widget.isForAssign,
+                );
               },
             ),
           );
@@ -107,81 +109,96 @@ class _MyVehiclesViewState extends ConsumerState<MyVehiclesView> {
 
 class VehicleCard extends StatelessWidget {
   final Vehicle vehicle;
-  const VehicleCard({super.key, required this.vehicle});
+  final bool isForAssign;
+  const VehicleCard({
+    super.key,
+    required this.vehicle,
+    required this.isForAssign,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(18),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => VehicleDetailsView(vehicaleId: vehicle.id),
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
+    return Column(
+      children: [
+        InkWell(
           borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(.04),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            /// Vehicle Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: CustomNetworkImage(
-                imageUrl: vehicle.photos.front,
-                height: 80,
-                width: 80,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => VehicleDetailsView(
+                  vehicaleId: vehicle.id,
+                  isMyVehicale: true,
+                ),
               ),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-            const SizedBox(width: 14),
-
-            /// Vehicle Info
-            Expanded(
-              child: Column(
-                spacing: 2,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomText(
-                    title: "${vehicle.vehicleMake} ${vehicle.model}",
-                    style: CommonStyle.textStyleMedium(
-                      size: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+            child: Row(
+              children: [
+                /// Vehicle Image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: CustomNetworkImage(
+                    imageUrl: vehicle.photos.front,
+                    height: 80,
+                    width: 80,
                   ),
-                  SizedBox(),
-                  CustomText(
-                    title: "${vehicle.year} • ${vehicle.color}",
-                    style: CommonStyle.textStyleSmall(color: Colors.grey),
-                  ),
+                ),
+                const SizedBox(width: 14),
 
-                  CustomText(
-                    title: "Reg No: ${vehicle.registrationNumber}",
-                    style: CommonStyle.textStyleSmall(
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
+                /// Vehicle Info
+                Expanded(
+                  child: Column(
+                    spacing: 2,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomText(
+                        title: "${vehicle.vehicleMake} ${vehicle.model}",
+                        style: CommonStyle.textStyleMedium(
+                          size: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(),
+                      CustomText(
+                        title: "${vehicle.year} • ${vehicle.color}",
+                        style: CommonStyle.textStyleSmall(color: Colors.grey),
+                      ),
 
-                  _StatusChip(label: vehicle.rentStatus.replaceAll("-", " ")),
-                ],
-              ),
+                      CustomText(
+                        title: "Reg No: ${vehicle.registrationNumber}",
+                        style: CommonStyle.textStyleSmall(
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+
+                      _StatusChip(
+                        label: vehicle.rentStatus.replaceAll("-", " "),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// Status
+              ],
             ),
-
-            /// Status
-          ],
+          ),
         ),
-      ),
+        if (isForAssign) CustomButton(title: "Assign this car", onTap: () {}),
+      ],
     );
   }
 }

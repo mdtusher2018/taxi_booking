@@ -145,3 +145,98 @@ final class RideHistoryRepositoryProvider
 
 String _$rideHistoryRepositoryHash() =>
     r'239f9e977cc8b6e93c1cdc9eb5d786f0eb2bff74';
+
+@ProviderFor(profileRepository)
+final profileRepositoryProvider = ProfileRepositoryProvider._();
+
+final class ProfileRepositoryProvider
+    extends
+        $FunctionalProvider<
+          ProfileRepository,
+          ProfileRepository,
+          ProfileRepository
+        >
+    with $Provider<ProfileRepository> {
+  ProfileRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'profileRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$profileRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<ProfileRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ProfileRepository create(Ref ref) {
+    return profileRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ProfileRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ProfileRepository>(value),
+    );
+  }
+}
+
+String _$profileRepositoryHash() => r'bd5cd140b1b0596f1e9b01ba0cbb03ae06b7b9bc';
+
+@ProviderFor(staticContentRepository)
+final staticContentRepositoryProvider = StaticContentRepositoryProvider._();
+
+final class StaticContentRepositoryProvider
+    extends
+        $FunctionalProvider<
+          StaticContentRepository,
+          StaticContentRepository,
+          StaticContentRepository
+        >
+    with $Provider<StaticContentRepository> {
+  StaticContentRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'staticContentRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$staticContentRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<StaticContentRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  StaticContentRepository create(Ref ref) {
+    return staticContentRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(StaticContentRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<StaticContentRepository>(value),
+    );
+  }
+}
+
+String _$staticContentRepositoryHash() =>
+    r'7c092e21e25e3d8be1ddf8aa22ec37077b3ab0e1';

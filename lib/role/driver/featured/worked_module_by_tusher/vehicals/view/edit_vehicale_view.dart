@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
+import 'package:taxi_booking/resource/common_widget/custom_drop_down_widget.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text_field_with_label.dart';
+import 'package:taxi_booking/resource/utilitis/common_style.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/controller/edit_vehicale_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/edit_vehical_response.dart';
@@ -30,6 +32,8 @@ class _EditVehicleViewState extends ConsumerState<EditVehicleView> {
   final colorController = TextEditingController();
   final registrationNumberController = TextEditingController();
   final seatsController = TextEditingController();
+  List<String> carCategory = ["TaxiTil", "Comfort", "Premium", "XL", "Pet"];
+  final carCatagoryController = TextEditingController();
 
   // Documents
   File? registrationDocument;
@@ -48,6 +52,8 @@ class _EditVehicleViewState extends ConsumerState<EditVehicleView> {
     modelController.text = widget.vehicle.model;
     yearController.text = widget.vehicle.year.toString();
     colorController.text = widget.vehicle.color;
+    carCatagoryController.text = widget.vehicle.category;
+
     registrationNumberController.text = widget.vehicle.registrationNumber;
     seatsController.text = widget.vehicle.numberOfSeats.toString();
   }
@@ -68,6 +74,7 @@ class _EditVehicleViewState extends ConsumerState<EditVehicleView> {
         yearController.text.isEmpty ||
         registrationNumberController.text.isEmpty ||
         seatsController.text.isEmpty ||
+        carCatagoryController.text.isEmpty ||
         registrationDocument == null ||
         technicalInspectionCertificate == null ||
         insuranceDocument == null ||
@@ -90,7 +97,7 @@ class _EditVehicleViewState extends ConsumerState<EditVehicleView> {
           color: colorController.text.trim(),
           registrationNumber: registrationNumberController.text.trim(),
           numberOfSeats: int.parse(seatsController.text),
-
+          catagory: carCatagoryController.text,
           registrationDocument: registrationDocument!,
           technicalInspectionCertificate: technicalInspectionCertificate!,
           insuranceDocument: insuranceDocument!,
@@ -148,6 +155,24 @@ class _EditVehicleViewState extends ConsumerState<EditVehicleView> {
                     hint: "e.g. C200",
                     controller: modelController,
                   ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Catagory",
+                      style: CommonStyle.textStyleMedium(size: 16),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  CustomDropDownWidget(
+                    items: carCategory,
+                    hintText: "Select a catagory",
+                    selectedValue: carCatagoryController.text.isEmpty
+                        ? null
+                        : carCatagoryController.text,
+                    onChanged: (value) {
+                      if (value != null) carCatagoryController.text = value;
+                    },
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -193,29 +218,27 @@ class _EditVehicleViewState extends ConsumerState<EditVehicleView> {
                   documentTile(
                     title: "Front View",
                     file: frontImage,
-                    url:
-                        frontImage == null ? widget.vehicle.photos.front : null,
-                    onTap:
-                        () => _pickImage((f) => setState(() => frontImage = f)),
+                    url: frontImage == null
+                        ? widget.vehicle.photos.front
+                        : null,
+                    onTap: () =>
+                        _pickImage((f) => setState(() => frontImage = f)),
                   ),
                   documentTile(
                     title: "Rear View",
                     file: rearImage,
                     url: rearImage == null ? widget.vehicle.photos.rear : null,
-                    onTap:
-                        () => _pickImage((f) => setState(() => rearImage = f)),
+                    onTap: () =>
+                        _pickImage((f) => setState(() => rearImage = f)),
                   ),
                   documentTile(
                     title: "Interior",
                     file: interiorImage,
-                    url:
-                        interiorImage == null
-                            ? widget.vehicle.photos.interior
-                            : null,
-                    onTap:
-                        () => _pickImage(
-                          (f) => setState(() => interiorImage = f),
-                        ),
+                    url: interiorImage == null
+                        ? widget.vehicle.photos.interior
+                        : null,
+                    onTap: () =>
+                        _pickImage((f) => setState(() => interiorImage = f)),
                   ),
                 ],
               ),

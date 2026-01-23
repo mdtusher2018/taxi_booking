@@ -8,8 +8,8 @@ import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
 import 'package:taxi_booking/core/utilitis/common_api_endpoints.dart';
-import 'package:taxi_booking/role/common/chat/model/chat_list_item_model.dart';
-import 'package:taxi_booking/role/common/chat/model/message_response_model.dart';
+import 'package:taxi_booking/role/common/featured/chat/model/chat_list_item_model.dart';
+import 'package:taxi_booking/role/common/featured/chat/model/message_response_model.dart';
 
 class ChatRepository extends Repository {
   final SocketService socketService;

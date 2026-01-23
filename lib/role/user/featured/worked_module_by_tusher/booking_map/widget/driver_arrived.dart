@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
-import 'package:taxi_booking/role/common/chat/views/message_view.dart';
+import 'package:taxi_booking/role/common/featured/chat/views/message_view.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
 import '../views/cancel_booking_view.dart';

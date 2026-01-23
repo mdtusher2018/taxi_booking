@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
-import 'package:taxi_booking/role/driver/driver_di/repository.dart';
+import 'package:taxi_booking/role/common/di/repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:taxi_booking/role/common/setting/model/profile_response.dart';
-import 'package:taxi_booking/role/common/setting/repository/profile_repository.dart';
+import 'package:taxi_booking/role/common/featured/setting/model/profile_response.dart';
+import 'package:taxi_booking/role/common/featured/setting/repository/profile_repository.dart';
 
 part 'profile_controller.g.dart';
 
