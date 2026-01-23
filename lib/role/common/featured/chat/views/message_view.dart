@@ -2,12 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
+import 'package:taxi_booking/resource/app_colors.dart';
+import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/role/common/featured/chat/controller/message_controller.dart';
 import 'package:taxi_booking/role/common/featured/chat/model/message_response_model.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/my_vehicales_view.dart';
 
 class MessageView extends ConsumerStatefulWidget {
   final String reciverId;
-  const MessageView({super.key, required this.reciverId});
+  final bool isDriverToDriverConversation;
+  const MessageView({
+    super.key,
+    required this.reciverId,
+    required this.isDriverToDriverConversation,
+  });
 
   @override
   ConsumerState<MessageView> createState() => _MessageViewState();
@@ -38,10 +46,7 @@ class _MessageViewState extends ConsumerState<MessageView> {
       if (previous?.errorMessage == null && next.errorMessage != null) {
         ref
             .read(snackbarServiceProvider)
-            .showError(
-              next.errorMessage ?? "Unknown Error Occurred",
-              context: context,
-            );
+            .showError(next.errorMessage ?? "Unknown Error Occurred");
       }
     });
 
@@ -160,18 +165,48 @@ class _ChatAppBar extends StatelessWidget {
           ),
 
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(user?.user.fullName ?? "Loading..."),
-              Text(
-                user?.isOnline == true ? "Online" : "Offline",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: user?.isOnline == true ? Colors.green : Colors.grey,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(user?.user.fullName ?? "Loading..."),
+                Text(
+                  user?.isOnline == true ? "Online" : "Offline",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: user?.isOnline == true ? Colors.green : Colors.grey,
+                  ),
                 ),
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return MyVehiclesView(
+                      isForAssign: true,
+                      driverId: user?.id,
+                    );
+                  },
+                ),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.btnColor,
+                borderRadius: BorderRadius.circular(4),
               ),
-            ],
+
+              child: CustomText(
+                title: "Assign",
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),

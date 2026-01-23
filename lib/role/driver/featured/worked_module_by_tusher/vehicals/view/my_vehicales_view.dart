@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_booking/resource/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
@@ -13,7 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MyVehiclesView extends ConsumerStatefulWidget {
   final bool isForAssign;
-  const MyVehiclesView({super.key, required this.isForAssign});
+  final String? driverId;
+  const MyVehiclesView({super.key, required this.isForAssign, this.driverId});
 
   @override
   ConsumerState<MyVehiclesView> createState() => _MyVehiclesViewState();
@@ -97,6 +99,7 @@ class _MyVehiclesViewState extends ConsumerState<MyVehiclesView> {
                 return VehicleCard(
                   vehicle: vehicles[index],
                   isForAssign: widget.isForAssign,
+                  driverId: widget.driverId ?? "",
                 );
               },
             ),
@@ -107,98 +110,119 @@ class _MyVehiclesViewState extends ConsumerState<MyVehiclesView> {
   }
 }
 
-class VehicleCard extends StatelessWidget {
+class VehicleCard extends ConsumerWidget {
   final Vehicle vehicle;
   final bool isForAssign;
+  final String driverId;
   const VehicleCard({
     super.key,
     required this.vehicle,
     required this.isForAssign,
+    required this.driverId,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        InkWell(
-          borderRadius: BorderRadius.circular(18),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => VehicleDetailsView(
-                  vehicaleId: vehicle.id,
-                  isMyVehicale: true,
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: EdgeInsets.all(isForAssign ? 8 : 1),
+      decoration: BoxDecoration(
+        color: AppColors.black100,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => VehicleDetailsView(
+                    vehicaleId: vehicle.id,
+                    isMyVehicale: true,
+                  ),
                 ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(.04),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(.04),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                /// Vehicle Image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(14),
-                  child: CustomNetworkImage(
-                    imageUrl: vehicle.photos.front,
-                    height: 80,
-                    width: 80,
+              child: Row(
+                children: [
+                  /// Vehicle Image
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: CustomNetworkImage(
+                      imageUrl: vehicle.photos.front,
+                      height: 80,
+                      width: 80,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 14),
+                  const SizedBox(width: 14),
 
-                /// Vehicle Info
-                Expanded(
-                  child: Column(
-                    spacing: 2,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(
-                        title: "${vehicle.vehicleMake} ${vehicle.model}",
-                        style: CommonStyle.textStyleMedium(
-                          size: 16,
-                          fontWeight: FontWeight.w600,
+                  /// Vehicle Info
+                  Expanded(
+                    child: Column(
+                      spacing: 2,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          title: "${vehicle.vehicleMake} ${vehicle.model}",
+                          style: CommonStyle.textStyleMedium(
+                            size: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      SizedBox(),
-                      CustomText(
-                        title: "${vehicle.year} • ${vehicle.color}",
-                        style: CommonStyle.textStyleSmall(color: Colors.grey),
-                      ),
-
-                      CustomText(
-                        title: "Reg No: ${vehicle.registrationNumber}",
-                        style: CommonStyle.textStyleSmall(
-                          color: Colors.grey.shade700,
+                        SizedBox(),
+                        CustomText(
+                          title: "${vehicle.year} • ${vehicle.color}",
+                          style: CommonStyle.textStyleSmall(color: Colors.grey),
                         ),
-                      ),
 
-                      _StatusChip(
-                        label: vehicle.rentStatus.replaceAll("-", " "),
-                      ),
-                    ],
+                        CustomText(
+                          title: "Reg No: ${vehicle.registrationNumber}",
+                          style: CommonStyle.textStyleSmall(
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+
+                        _StatusChip(
+                          label: vehicle.rentStatus.replaceAll("-", " "),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-                /// Status
-              ],
+                  /// Status
+                ],
+              ),
             ),
           ),
-        ),
-        if (isForAssign) CustomButton(title: "Assign this car", onTap: () {}),
-      ],
+
+          if (isForAssign && vehicle.isAvailable) ...[
+            SizedBox(height: 8),
+            CustomButton(
+              title: "Assign this car",
+              onTap: () {
+                ref
+                    .read(myVehiclesControllerProvider.notifier)
+                    .assignDriver(vehicalId: vehicle.id, driverId: driverId);
+              },
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

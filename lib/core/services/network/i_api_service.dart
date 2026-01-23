@@ -45,4 +45,13 @@ abstract class IApiService {
     Map<String, String>? headers,
     bool fullUrl = false,
   });
+  Future<dynamic> multipartMulti(
+    String endpoint, {
+    String method = 'POST',
+    Map<String, List<File>>? files,
+    dynamic body,
+    String bodyFieldName = 'data',
+    Map<String, String>? headers,
+    bool fullUrl = false,
+  });
 }

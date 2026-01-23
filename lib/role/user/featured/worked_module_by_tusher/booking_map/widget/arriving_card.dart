@@ -219,6 +219,7 @@ class _ArrivingCardState extends ConsumerState<ArrivingCard> {
                       builder: (context) {
                         return MessageView(
                           reciverId: state.acceptedDriverInfo?.driverId ?? "",
+                          isDriverToDriverConversation: false,
                         );
                       },
                     ),

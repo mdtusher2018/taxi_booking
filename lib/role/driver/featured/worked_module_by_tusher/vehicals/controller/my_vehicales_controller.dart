@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
+import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/role/driver/driver_di/repository.dart';
 import 'package:taxi_booking/core/pagination/paginated_async_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,5 +28,22 @@ class MyVehiclesController extends PaginatedAsyncNotifier<Vehicle> {
       return FailureResult(error);
     }
     return Success(((result as Success).data as MyVehiclesResponse).data);
+  }
+
+  Future<void> assignDriver({
+    required String vehicalId,
+    required String driverId,
+  }) async {
+    final result = await ref
+        .read(driversRepositoryProvider)
+        .assignDrver(vehicalId: vehicalId, driverId: driverId);
+
+    if (result is FailureResult) {
+      final error = (result as FailureResult).error as Failure;
+      FailureResult(error);
+      ref.read(snackbarServiceProvider).showError(error.message);
+    } else {
+      ref.read(snackbarServiceProvider).showSuccess("Assigned Sucessfully");
+    }
   }
 }

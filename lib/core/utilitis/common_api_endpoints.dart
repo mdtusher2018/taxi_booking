@@ -15,6 +15,7 @@ class CommonApiEndPoints {
   //chat
   static String previousMessage(String reciverId) =>
       "messages/previous-messages/$reciverId";
+  static String uploadFile = "uploads/message-file";
 
   //notifications
   static String notification(int page) =>

@@ -66,48 +66,32 @@ class SocketService {
         AppLogger.e('Socket Error: $e');
         if (e is Map<String, dynamic>) {
           if (e['success'] == false) {
-            CustomToast.showToast(message: e['message'] ?? "");
+            CustomToast.showToast(message: e['message'] ?? "", isError: true);
           }
         }
       });
   }
 
   // ------------------ EMIT ------------------
-  void emit(
-    String event,
-    dynamic data, {
-    required Function(dynamic response)? onSuccess,
-    Function? onError,
-  }) {
+  Future<dynamic> emit(String event, dynamic data) async {
     if (!isConnected) {
       CustomToast.showToast(message: "Socket not connected. Try again later.");
       return;
     }
 
     try {
-      _socket!.emit(event, data);
-      _socket!.once(event, (response) {
-        if (response != null && response['success'] == true) {
-          if (onSuccess != null) {
-            onSuccess(response);
-          }
-        } else {
-          CustomToast.showToast(
-            message: "Socket not connected. Try again later.",
-          );
-          AppLogger.e('Error: ${response['message']}');
-          if (onError != null) {
-            onError(response);
-          }
-        }
-      });
       AppLogger.i("Emit event: $event with $data");
+
+      final response = await _socket!.emitWithAckAsync(event, data);
+
+      return response;
     } catch (e) {
       AppLogger.e('Socket Error: $e');
       if (e is Map<String, dynamic>) {
-        if (e['success'] == false) {
-          CustomToast.showToast(message: e['message'] ?? "");
-        }
+        CustomToast.showToast(
+          message: e['message'] ?? "Unknown Error Occoured",
+          isError: true,
+        );
       }
     }
   }

@@ -87,7 +87,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
             // Success: show snackbar and navigate
             ref
                 .watch(snackbarServiceProvider)
-                .showSuccess("Login successful!", context: context);
+                .showSuccess("Login successful!");
             Future.microtask(() => context.push(DriverAppRoutes.dashboardView));
           }
         },
@@ -95,9 +95,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
           // Optional: show loading indicator if needed
         },
         error: (error, stackTrace) {
-          ref
-              .watch(snackbarServiceProvider)
-              .showError(context: context, error.toString());
+          ref.watch(snackbarServiceProvider).showError(error.toString());
         },
       );
     });

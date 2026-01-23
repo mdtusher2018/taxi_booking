@@ -14,6 +14,7 @@ import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/core/utilitis/user_api_end_points.dart';
 import 'package:taxi_booking/core/utilitis/mixin/map_mixin.dart';
+import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/controllers/booking_map_state.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/model/create_ride_response.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/model/driver_live_location_update.dart';
@@ -300,7 +301,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
         "latitude": state.pickupLatLng!.latitude,
         "longitude": state.pickupLatLng!.longitude,
       },
-    }, onSuccess: (response) {});
+    });
   }
 
   void initSurgeMultiplier() {
@@ -356,35 +357,33 @@ class BookingMapController extends StateNotifier<BookingMapState>
 
       state = state.copyWith(rideId: rideResponse.data.id);
 
-      socketService.emit(
-        SocketEvents.rideRequest,
-        {"rideId": rideResponse.data.id},
-        onSuccess: (response) {
-          state = state.copyWith(status: RideBookingStatus.searchingDriver);
+      await socketService.emit(SocketEvents.rideRequest, {
+        "rideId": rideResponse.data.id,
+      });
 
-          socketService.on(SocketEvents.rideAccepted, (data) {
-            state = state.copyWith(
-              acceptedDriverInfo: RideAcceptResponse.fromJson(data).driverInfo,
-            );
+      state = state.copyWith(status: RideBookingStatus.searchingDriver);
 
-            listenAllAfterRideAccepted();
+      socketService.on(SocketEvents.rideAccepted, (data) {
+        state = state.copyWith(
+          acceptedDriverInfo: RideAcceptResponse.fromJson(data).driverInfo,
+        );
 
-            if (state.acceptedDriverInfo != null) {
-              state = state.copyWith(
-                driverLatLng: LatLng(
-                  state.acceptedDriverInfo!.location!.coordinates!.last,
-                  state.acceptedDriverInfo!.location!.coordinates!.first,
-                ),
-              );
+        listenAllAfterRideAccepted();
 
-              onDriverLocationChanged();
-              state = state.copyWith(status: RideBookingStatus.driverOnTheWay);
-            }
-          });
-        },
-      );
+        if (state.acceptedDriverInfo != null) {
+          state = state.copyWith(
+            driverLatLng: LatLng(
+              state.acceptedDriverInfo!.location!.coordinates!.last,
+              state.acceptedDriverInfo!.location!.coordinates!.first,
+            ),
+          );
+
+          onDriverLocationChanged();
+          state = state.copyWith(status: RideBookingStatus.driverOnTheWay);
+        }
+      });
     } catch (e) {
-      throw Exception(e);
+      CustomToast.showToast(message: e.toString());
     } finally {
       state = state.copyWith(isLoading: false);
     }

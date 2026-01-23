@@ -141,6 +141,50 @@ class ApiClient {
     return _processResponse(res);
   }
 
+  Future<dynamic> sendMultipartMulti(
+    Uri url, {
+    String method = 'POST',
+    Map<String, String>? headers,
+    Map<String, List<File>>? files,
+    dynamic body,
+    String bodyFieldName = 'data',
+  }) async {
+    final formData = FormData();
+
+    // body
+    if (body != null) {
+      formData.fields.add(MapEntry(bodyFieldName, jsonEncode(body)));
+    }
+
+    // multiple files under same field
+    if (files != null) {
+      for (final entry in files.entries) {
+        for (final file in entry.value) {
+          formData.files.add(
+            MapEntry(
+              entry.key,
+              await MultipartFile.fromFile(
+                file.path,
+                filename: file.path.split('/').last,
+              ),
+            ),
+          );
+        }
+      }
+    }
+
+    final res = await dio.request(
+      url.toString(),
+      data: formData,
+      options: Options(
+        method: method,
+        headers: {...?headers, 'Content-Type': 'multipart/form-data'},
+      ),
+    );
+
+    return _processResponse(res);
+  }
+
   dynamic _processResponse(Response r) {
     // global unauthorized handled in interceptors, but re-check
     if (r.statusCode == 401) {

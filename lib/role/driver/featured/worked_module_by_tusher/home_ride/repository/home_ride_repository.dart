@@ -68,16 +68,12 @@ class HomeRideRepository extends Repository {
     socketService.off(SocketEvents.rideRequest);
   }
 
-  void rideAccept({required String rideId}) {
-    socketService.emit(
-      SocketEvents.rideAccepted,
-      {
-        {"accepted": true, "rideId": rideId},
-      },
-      onSuccess: (response) {
-        socketService.off(SocketEvents.rideRequest);
-      },
-    );
+  void rideAccept({required String rideId}) async {
+    await socketService.emit(SocketEvents.rideAccepted, {
+      {"accepted": true, "rideId": rideId},
+    });
+
+    socketService.off(SocketEvents.rideRequest);
   }
 
   void rideDecline({required String rideId}) {
@@ -97,7 +93,7 @@ class HomeRideRepository extends Repository {
       'passengerId': passengerId,
       "rideId": rideId,
       "averageSpeedKmPH": averageSpeedKmPH,
-    }, onSuccess: (response) {});
+    });
   }
 
   Stream<bool> reachedPickupLocation() {
@@ -124,7 +120,7 @@ class HomeRideRepository extends Repository {
       'passengerId': passengerId,
       "rideId": rideId,
       "averageSpeedKmPH": averageSpeedKmPH,
-    }, onSuccess: (response) {});
+    });
   }
 
   void startRide({
@@ -133,21 +129,19 @@ class HomeRideRepository extends Repository {
     required String rideId,
     required double averageSpeedKmPH,
     required Function(dynamic response)? onSuccess,
-  }) {
-    socketService.emit(SocketEvents.rideStarted, {
+  }) async {
+    await socketService.emit(SocketEvents.rideStarted, {
       "latitude": latitude,
       "longitude": longitude,
       "rideId": rideId,
       "averageSpeedKmPH": averageSpeedKmPH,
-    }, onSuccess: onSuccess);
+    });
   }
 
   void endRide({
     required String rideId,
     required Function(dynamic response)? onSuccess,
-  }) {
-    socketService.emit(SocketEvents.rideEnded, {
-      "rideId": rideId,
-    }, onSuccess: onSuccess);
+  }) async {
+    await socketService.emit(SocketEvents.rideEnded, {"rideId": rideId});
   }
 }

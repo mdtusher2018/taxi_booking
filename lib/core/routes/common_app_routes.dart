@@ -11,7 +11,10 @@ final commonAppRoutes = [
     path: CommonAppRoutes.messagingView,
     builder: (context, state) {
       final reciverId = state.extra as Map<String, dynamic>;
-      return MessageView(reciverId: reciverId['id']);
+      return MessageView(
+        reciverId: reciverId['id'],
+        isDriverToDriverConversation: reciverId['isDriverToDriverConversation'],
+      );
     },
   ),
   GoRoute(

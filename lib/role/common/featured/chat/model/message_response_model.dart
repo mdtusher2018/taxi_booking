@@ -1,6 +1,7 @@
 class ChatMessage {
   final String id;
   final String text;
+  final List<MessageImage>? imageUrl;
   final String sender;
   final String receiver;
   final DateTime createdAt;
@@ -9,6 +10,7 @@ class ChatMessage {
   ChatMessage({
     required this.id,
     required this.text,
+    this.imageUrl,
     required this.sender,
     required this.receiver,
     required this.createdAt,
@@ -107,5 +109,16 @@ class PreviousMessageResponse {
               .toList() ??
           [],
     );
+  }
+}
+
+class MessageImage {
+  final String key;
+  final String url;
+
+  MessageImage({required this.key, required this.url});
+
+  factory MessageImage.fromJson(Map<String, dynamic> json) {
+    return MessageImage(key: json['key'], url: json['url']);
   }
 }

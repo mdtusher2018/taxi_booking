@@ -11,7 +11,6 @@ import 'package:taxi_booking/resource/utilitis/common_style.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
 
-
 class OnTheWaySheet extends ConsumerWidget {
   const OnTheWaySheet({super.key});
 
@@ -237,7 +236,10 @@ class OnTheWaySheet extends ConsumerWidget {
 
                                     context.push(
                                       CommonAppRoutes.messagingView,
-                                      extra: {'id': id},
+                                      extra: {
+                                        'id': id,
+                                        'isDriverToDriverConversation': false,
+                                      },
                                     );
                                     ref
                                         .read(

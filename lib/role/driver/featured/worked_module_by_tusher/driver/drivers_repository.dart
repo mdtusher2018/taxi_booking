@@ -16,4 +16,23 @@ class DriversRepository extends Repository {
       return MyDriversResponse.fromJson(response);
     });
   }
+
+  Future<Result<bool, Failure>> assignDrver({
+    required String vehicalId,
+    required String driverId,
+  }) async {
+    return asyncGuard(() async {
+      await apiService.patch(DriverApiEndpoints.assignDriver(vehicalId), {
+        "driverId": driverId,
+      });
+      return true;
+    });
+  }
+
+  Future<Result<bool, Failure>> removeDrver({required String driverId}) async {
+    return asyncGuard(() async {
+      await apiService.delete(DriverApiEndpoints.removeDriver(driverId));
+      return true;
+    });
+  }
 }

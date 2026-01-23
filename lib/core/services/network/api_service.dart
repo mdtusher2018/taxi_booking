@@ -87,4 +87,25 @@ final class ApiService implements IApiService {
       headers: headers,
     );
   }
+
+  Future<dynamic> multipartMulti(
+    String endpoint, {
+    String method = 'POST',
+    Map<String, List<File>>? files, // 👈 multiple files
+    dynamic body,
+    String bodyFieldName = 'data',
+    Map<String, String>? headers,
+    bool fullUrl = false,
+  }) async {
+    final url = _buildUrl(endpoint, fullUrl);
+
+    return _client.sendMultipartMulti(
+      Uri.parse(url),
+      method: method,
+      files: files,
+      body: body,
+      bodyFieldName: bodyFieldName,
+      headers: headers,
+    );
+  }
 }

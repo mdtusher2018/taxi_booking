@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/repository.dart';
@@ -10,6 +11,7 @@ import 'package:taxi_booking/core/services/socket/socket_service.dart';
 import 'package:taxi_booking/core/utilitis/common_api_endpoints.dart';
 import 'package:taxi_booking/role/common/featured/chat/model/chat_list_item_model.dart';
 import 'package:taxi_booking/role/common/featured/chat/model/message_response_model.dart';
+import 'package:taxi_booking/role/common/featured/chat/model/upload_file_response.dart';
 
 class ChatRepository extends Repository {
   final SocketService socketService;
@@ -25,21 +27,30 @@ class ChatRepository extends Repository {
       }
     });
 
-    socketService.emit(
-      SocketEvents.myChatListEmit,
-      {},
-      onSuccess: (response) {},
-    );
+    socketService.emit(SocketEvents.myChatListEmit, {});
 
     return controller.stream;
   }
 
   //Message
-  void sendMessage({required String reciverId, required String text}) {
-    socketService.emit(SocketEvents.sendMessage, {
+  void sendMessage({
+    required String reciverId,
+    String? text,
+    List<File>? files,
+  }) async {
+    List<String>? imageUrls;
+    if (files != null) {
+      final result = await uploadFile(files: files);
+      if (result is Success) {
+        imageUrls = (result as Success).data as List<String>;
+      }
+    }
+
+    await socketService.emit(SocketEvents.sendMessage, {
       "receiver": reciverId,
       "text": text,
-    }, onSuccess: (response) {});
+      if (imageUrls != null) 'imageUrl': imageUrls,
+    });
   }
 
   Stream<ChatMessage> listenNewMessage() {
@@ -66,6 +77,21 @@ class ChatRepository extends Repository {
         CommonApiEndPoints.previousMessage(receiverId),
       );
       return PreviousMessageResponse.fromJson(res);
+    });
+  }
+
+  Future<Result<List<String>, Failure>> uploadFile({
+    required List<File> files,
+    String? text,
+  }) async {
+    return asyncGuard<List<String>>(() async {
+      final res = await apiService.multipartMulti(
+        CommonApiEndPoints.uploadFile,
+        files: {'file': files},
+      );
+      final uploadResponse = UploadFileResponse.fromJson(res);
+      final urls = uploadResponse.data.file.map((e) => e.url).toList();
+      return urls;
     });
   }
 }

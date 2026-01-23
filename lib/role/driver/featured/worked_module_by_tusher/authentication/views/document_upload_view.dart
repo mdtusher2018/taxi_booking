@@ -203,7 +203,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
             // Success: show snackbar and navigate
             ref
                 .watch(snackbarServiceProvider)
-                .showSuccess("Otp sent sucessfully!", context: context);
+                .showSuccess("Otp sent sucessfully!");
             Future.microtask(
               () => context.push(DriverAppRoutes.emailVerificationView),
             );
@@ -213,7 +213,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
         error: (error, stackTrace) {
           ref
               .watch(snackbarServiceProvider)
-              .showError(context: context, error.toString());
+              .showError( error.toString());
         },
       );
     });

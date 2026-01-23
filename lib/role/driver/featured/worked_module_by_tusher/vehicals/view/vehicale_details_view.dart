@@ -231,7 +231,7 @@ class _VehicleDetailsViewState extends ConsumerState<VehicleDetailsView> {
 
                         const SizedBox(height: 24),
 
-                        if (widget.isMyVehicale)
+                        if (widget.isMyVehicale && !vehicle.isAvailable)
                           CustomButton(title: "Remove Driver", onTap: () {}),
                         if (!widget.isMyVehicale)
                           CustomButton(title: "Message Owner", onTap: () {}),

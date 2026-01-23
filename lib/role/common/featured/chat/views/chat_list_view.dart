@@ -79,7 +79,11 @@ class _ChatViewState extends ConsumerState<ChatListView> {
                   AppLogger.d(participant.id);
                   context.push(
                     CommonAppRoutes.messagingView,
-                    extra: {'id': participant.id},
+
+                    extra: {
+                      'id': participant.id,
+                      'isDriverToDriverConversation': true,
+                    },
                   );
                 },
         );

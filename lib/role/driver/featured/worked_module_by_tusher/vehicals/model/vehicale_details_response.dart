@@ -40,6 +40,7 @@ class VehicleData {
   String createdAt;
   String updatedAt;
   VehiclePhotos photos;
+  bool isAvailable;
 
   VehicleData({
     required this.id,
@@ -60,6 +61,7 @@ class VehicleData {
     required this.createdAt,
     required this.updatedAt,
     required this.photos,
+    required this.isAvailable,
   });
 
   factory VehicleData.fromJson(Map<String, dynamic> json) {
@@ -82,6 +84,7 @@ class VehicleData {
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       photos: VehiclePhotos.fromJson(json['photos']),
+      isAvailable: json["isAvailable"] ?? false,
     );
   }
 }

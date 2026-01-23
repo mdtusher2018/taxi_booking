@@ -8,9 +8,6 @@ class DriverApiEndpoints {
   static const String baseImageUrl = CommonApiEndPoints.baseImageUrl;
   static const String baseSocketUrl = CommonApiEndPoints.baseSocketUrl;
 
-  // static const String baseUrl = 'http://10.10.10.5:5000/api/v1/';
-  // static const String baseImageUrl = 'http://10.10.10.5:5000';
-
   static const String login = "auth/login";
 
   static const String signupWithCar = "with-car-drivers/signup";
@@ -29,12 +26,20 @@ class DriverApiEndpoints {
       "vehicles/all-vehicles?limit=10&page=$page";
   static String vehicaleDetails(String id) => "vehicles/details/$id";
 
+  static String deleteVehicale(String vehicalId) {
+    return "vehicles/delete-vehicle/$vehicalId";
+  }
+
   //Drivers
   static String myDrivers(int page) =>
       "with-car-drivers/all-with-car-drivers?page=$page&limit=10";
 
-  static String deleteVehicale(String vehicalId) {
-    return "vehicles/delete-vehicle/$vehicalId";
+  static String removeDriver(String driverId) {
+    return "with-car-drivers/remove-driver/$driverId";
+  }
+
+  static String assignDriver(String vehicalId) {
+    return "with-car-drivers/assign-vehicle/$vehicalId";
   }
 
   //Home Ride

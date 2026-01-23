@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
@@ -75,7 +77,11 @@ class MessageController extends _$MessageController {
     repository.closeListiningNewMessage();
   }
 
-  void sendMessage({required String receiverId, required String text}) {
-    repository.sendMessage(reciverId: receiverId, text: text);
+  void sendMessage({
+    required String receiverId,
+    required String text,
+    List<File>? images,
+  }) {
+    repository.sendMessage(reciverId: receiverId, text: text, files: images);
   }
 }
