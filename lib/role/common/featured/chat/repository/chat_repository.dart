@@ -38,18 +38,20 @@ class ChatRepository extends Repository {
     String? text,
     List<File>? files,
   }) async {
-    List<String>? imageUrls;
+    List<UploadedFile>? imageUrls;
     if (files != null) {
       final result = await uploadFile(files: files);
       if (result is Success) {
-        imageUrls = (result as Success).data as List<String>;
+        imageUrls = (result as Success).data as List<UploadedFile>;
       }
     }
+    AppLogger.i(imageUrls.toString());
 
     await socketService.emit(SocketEvents.sendMessage, {
       "receiver": reciverId,
       "text": text,
-      if (imageUrls != null) 'imageUrl': imageUrls,
+      if (imageUrls != null)
+        "imageUrl": imageUrls.map((e) => e.toJson()).toList(),
     });
   }
 
@@ -80,18 +82,19 @@ class ChatRepository extends Repository {
     });
   }
 
-  Future<Result<List<String>, Failure>> uploadFile({
+  Future<Result<List<UploadedFile>, Failure>> uploadFile({
     required List<File> files,
     String? text,
   }) async {
-    return asyncGuard<List<String>>(() async {
+    return asyncGuard<List<UploadedFile>>(() async {
       final res = await apiService.multipartMulti(
         CommonApiEndPoints.uploadFile,
         files: {'file': files},
       );
+
       final uploadResponse = UploadFileResponse.fromJson(res);
-      final urls = uploadResponse.data.file.map((e) => e.url).toList();
-      return urls;
+
+      return uploadResponse.data.file;
     });
   }
 }

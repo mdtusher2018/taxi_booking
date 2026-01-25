@@ -10,7 +10,7 @@ class ChatMessage {
   ChatMessage({
     required this.id,
     required this.text,
-    this.imageUrl,
+    required this.imageUrl,
     required this.sender,
     required this.receiver,
     required this.createdAt,
@@ -22,6 +22,9 @@ class ChatMessage {
       id: json['_id'] ?? '',
       text: json['text'] ?? '',
       sender: json['sender'] ?? '',
+      imageUrl: (json['imageUrl'] as List<dynamic>?)
+          ?.map((e) => MessageImage.fromJson(e))
+          .toList(),
       receiver: json['receiver'] ?? '',
       seen: json['seen'] ?? false,
       createdAt: json['createdAt'] != null

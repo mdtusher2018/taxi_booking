@@ -6,18 +6,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/models/my_drivers_response.dart';
 
 final myDriversControllerProvider =
-    AsyncNotifierProvider<MyDriversController, PaginationState<Driver>>(
+    AsyncNotifierProvider<MyDriversController, PaginationState<AssignedDriver>>(
       MyDriversController.new,
     );
 
-class MyDriversController extends PaginatedAsyncNotifier<Driver> {
+class MyDriversController extends PaginatedAsyncNotifier<AssignedDriver> {
   @override
-  Future<PaginationState<Driver>> build() async {
-    return PaginationState<Driver>();
+  Future<PaginationState<AssignedDriver>> build() async {
+    return PaginationState<AssignedDriver>();
   }
 
   @override
-  Future<Result<List<Driver>, Failure>> fetchPage(int page) async {
+  Future<Result<List<AssignedDriver>, Failure>> fetchPage(int page) async {
     final repo = ref.watch(driversRepositoryProvider);
     final result = await repo.fetchMyDrivers(page: page);
     if (result is FailureResult) {

@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/services/network/error/api_exception.dart';
 import 'package:taxi_booking/core/services/network/interceptor.dart/auth_interceptor.dart';
 import 'package:taxi_booking/core/services/network/interceptor.dart/logger_interceptor.dart';
@@ -149,7 +150,7 @@ class ApiClient {
     dynamic body,
     String bodyFieldName = 'data',
   }) async {
-    final formData = FormData();
+    final formData = FormData.fromMap({});
 
     // body
     if (body != null) {
@@ -158,7 +159,14 @@ class ApiClient {
 
     // multiple files under same field
     if (files != null) {
-      for (final entry in files.entries) {
+      // 🔐 Clone map entries safely
+      final safeEntries = Map<String, List<File>>.fromEntries(
+        files.entries.map((e) => MapEntry(e.key, List<File>.from(e.value))),
+      );
+
+      for (final entry in safeEntries.entries) {
+        AppLogger.e(entry.toString());
+
         for (final file in entry.value) {
           formData.files.add(
             MapEntry(

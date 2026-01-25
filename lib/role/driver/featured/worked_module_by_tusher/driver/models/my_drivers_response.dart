@@ -4,7 +4,7 @@ class MyDriversResponse {
   final bool success;
   final int statusCode;
   final String message;
-  final Data data;
+  final AssignedDriversData data;
 
   MyDriversResponse({
     required this.success,
@@ -18,209 +18,167 @@ class MyDriversResponse {
       success: json['success'],
       statusCode: json['statusCode'],
       message: json['message'],
-      data: Data.fromJson(json['data']),
+      data: AssignedDriversData.fromJson(json['data']),
     );
   }
 }
 
-class Data {
+class AssignedDriversData {
   final Meta meta;
-  final List<Driver> result;
+  final List<AssignedDriver> result;
 
-  Data({required this.meta, required this.result});
+  AssignedDriversData({required this.meta, required this.result});
 
-  factory Data.fromJson(Map<String, dynamic> json) {
-    return Data(
+  factory AssignedDriversData.fromJson(Map<String, dynamic> json) {
+    return AssignedDriversData(
       meta: Meta.fromJson(json['meta']),
-      result: List<Driver>.from(json['result'].map((x) => Driver.fromJson(x))),
+      result: (json['result'] as List)
+          .map((e) => AssignedDriver.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+class AssignedDriver {
+  final String id;
+  final AssignedBy assignedBy;
+  final Vehicle vehicleId;
+  final Driver driverId;
+  final DateTime assignedAt;
+  final bool isActive;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  AssignedDriver({
+    required this.id,
+    required this.assignedBy,
+    required this.vehicleId,
+    required this.driverId,
+    required this.assignedAt,
+    required this.isActive,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory AssignedDriver.fromJson(Map<String, dynamic> json) {
+    return AssignedDriver(
+      id: json['_id'],
+      assignedBy: AssignedBy.fromJson(json['assignedBy']),
+      vehicleId: Vehicle.fromJson(json['vehicleId']),
+      driverId: Driver.fromJson(json['driverId']),
+      assignedAt: DateTime.parse(json['assignedAt']),
+      isActive: json['isActive'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+    );
+  }
+}
+
+class AssignedBy {
+  final String id;
+  final String role;
+  final UserData user;
+
+  AssignedBy({required this.id, required this.role, required this.user});
+
+  factory AssignedBy.fromJson(Map<String, dynamic> json) {
+    return AssignedBy(
+      id: json['_id'],
+      role: json['role'],
+      user: UserData.fromJson(json['user']),
     );
   }
 }
 
 class Driver {
   final String id;
-  final String email;
-  final String phone;
   final String role;
-  final String provider;
-  final bool isVerified;
-  final bool isActive;
-  final bool isDeleted;
-  final bool isOnline;
-  final String status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final User user;
+  final UserData user;
 
-  Driver({
-    required this.id,
-    required this.email,
-    required this.phone,
-    required this.role,
-    required this.provider,
-    required this.isVerified,
-    required this.isActive,
-    required this.isDeleted,
-    required this.isOnline,
-    required this.status,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.user,
-  });
+  Driver({required this.id, required this.role, required this.user});
 
   factory Driver.fromJson(Map<String, dynamic> json) {
     return Driver(
       id: json['_id'],
-      email: json['email'],
-      phone: json['phone'],
       role: json['role'],
-      provider: json['provider'],
-      isVerified: json['isVerified'] ?? false,
-      isActive: json['isActive'],
-      isDeleted: json['isDeleted'],
-      isOnline: json['isOnline'] ?? false,
-      status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      user: User.fromJson(json['user']),
+      user: UserData.fromJson(json['user']),
     );
   }
 }
 
-class User {
+class UserData {
   final String id;
-  final String fullName;
-  final String email;
   final String phone;
+  final String email;
   final String status;
-  final String? activeVehicleId;
-  final Address address;
-  final DriverLicenseUploads? driverLicenseUploads;
-  final IdentityUploads? identityUploads;
-  final BusinessLicenseDetails? businessLicenseDetails;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
-  User({
+  UserData({
     required this.id,
-    required this.fullName,
-    required this.email,
     required this.phone,
+    required this.email,
     required this.status,
-    this.activeVehicleId,
-    required this.address,
-    this.driverLicenseUploads,
-    this.identityUploads,
-    this.businessLicenseDetails,
-    required this.createdAt,
-    required this.updatedAt,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserData.fromJson(Map<String, dynamic> json) {
+    return UserData(
       id: json['_id'],
-      fullName: json['fullName'],
-      email: json['email'],
       phone: json['phone'],
+      email: json['email'],
       status: json['status'],
-      activeVehicleId: json['activeVehicleId'],
-      address: Address.fromJson(json['address']),
-      driverLicenseUploads:
-          json['driverLicenseUploads'] != null
-              ? DriverLicenseUploads.fromJson(json['driverLicenseUploads'])
-              : null,
-      identityUploads:
-          json['identityUploads'] != null
-              ? IdentityUploads.fromJson(json['identityUploads'])
-              : null,
-      businessLicenseDetails:
-          json['businessLicenseDetails'] != null
-              ? BusinessLicenseDetails.fromJson(json['businessLicenseDetails'])
-              : null,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
 }
 
-class Address {
-  final String street;
-  final String postalCode;
-  final String city;
-  final String country;
+class Vehicle {
+  final String id;
+  final String vehicleOwnerId;
+  final String vehicleMake;
+  final String model;
+  final int year;
+  final String color;
+  final int numberOfSeats;
+  final bool isActive;
+  final VehiclePhotos photos;
 
-  Address({
-    required this.street,
-    required this.postalCode,
-    required this.city,
-    required this.country,
+  Vehicle({
+    required this.id,
+    required this.vehicleOwnerId,
+    required this.vehicleMake,
+    required this.model,
+    required this.year,
+    required this.color,
+    required this.numberOfSeats,
+    required this.isActive,
+    required this.photos,
   });
 
-  factory Address.fromJson(Map<String, dynamic> json) {
-    return Address(
-      street: json['street'],
-      postalCode: json['postalCode'],
-      city: json['city'],
-      country: json['country'],
+  factory Vehicle.fromJson(Map<String, dynamic> json) {
+    return Vehicle(
+      id: json['_id'],
+      vehicleOwnerId: json['vehicleOwnerId'],
+      vehicleMake: json['vehicleMake'],
+      model: json['model'],
+      year: json['year'],
+      color: json['color'],
+      numberOfSeats: json['numberOfSeats'],
+      isActive: json['isActive'],
+      photos: VehiclePhotos.fromJson(json['photos']),
     );
   }
 }
 
-class DriverLicenseUploads {
-  final String? driverLicenseFront;
-  final String? driverLicenseBack;
-  final String? driverPermitFront;
-  final String? driverPermitBack;
+class VehiclePhotos {
+  final String? front;
+  final String? rear;
+  final String? interior;
 
-  DriverLicenseUploads({
-    this.driverLicenseFront,
-    this.driverLicenseBack,
-    this.driverPermitFront,
-    this.driverPermitBack,
-  });
+  VehiclePhotos({this.front, this.rear, this.interior});
 
-  factory DriverLicenseUploads.fromJson(Map<String, dynamic> json) {
-    return DriverLicenseUploads(
-      driverLicenseFront: json['driverLicenseFront'],
-      driverLicenseBack: json['driverLicenseBack'],
-      driverPermitFront: json['driverPermitFront'],
-      driverPermitBack: json['driverPermitBack'],
-    );
-  }
-}
-
-class IdentityUploads {
-  final String? selfie;
-  final String? idFront;
-  final String? idBack;
-
-  IdentityUploads({this.selfie, this.idFront, this.idBack});
-
-  factory IdentityUploads.fromJson(Map<String, dynamic> json) {
-    return IdentityUploads(
-      selfie: json['selfie'],
-      idFront: json['idFront'],
-      idBack: json['idBack'],
-    );
-  }
-}
-
-class BusinessLicenseDetails {
-  final String businessType;
-  final String licenseNumber;
-  final DateTime licenseExpiryDate;
-
-  BusinessLicenseDetails({
-    required this.businessType,
-    required this.licenseNumber,
-    required this.licenseExpiryDate,
-  });
-
-  factory BusinessLicenseDetails.fromJson(Map<String, dynamic> json) {
-    return BusinessLicenseDetails(
-      businessType: json['businessType'],
-      licenseNumber: json['licenseNumber'],
-      licenseExpiryDate: DateTime.parse(json['licenseExpiryDate']),
+  factory VehiclePhotos.fromJson(Map<String, dynamic> json) {
+    return VehiclePhotos(
+      front: json['front'],
+      rear: json['rear'],
+      interior: json['interior'],
     );
   }
 }

@@ -15,20 +15,20 @@ class MyDriversView extends ConsumerStatefulWidget {
 }
 
 class _MyDriversViewState extends ConsumerState<MyDriversView> {
-  ScrollController scrollController = ScrollController();
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(myDriversControllerProvider.notifier).load();
     });
 
-    final controller = ref.read(myDriversControllerProvider.notifier);
     scrollController.addListener(() {
       if (scrollController.position.pixels >
           scrollController.position.maxScrollExtent - 200) {
-        controller.loadMore();
+        ref.read(myDriversControllerProvider.notifier).loadMore();
       }
     });
   }
@@ -36,34 +36,31 @@ class _MyDriversViewState extends ConsumerState<MyDriversView> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(myDriversControllerProvider);
+
     return Scaffold(
       appBar: CustomAppBar(
         title: "Drivers",
-
         centerTitle: true,
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.grey.shade100,
       body: state.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error:
-            (e, _) => Center(
-              child: CustomText(
-                title: e.toString(),
-                style: CommonStyle.textStyleMedium(color: Colors.white),
-              ),
-            ),
+        error: (e, _) => Center(
+          child: CustomText(
+            title: e.toString(),
+            style: CommonStyle.textStyleMedium(color: Colors.white),
+          ),
+        ),
         data: (response) {
           final drivers = response.items;
+          if (drivers.isEmpty) return const _EmptyDriversView();
 
-          if (drivers.isEmpty) {
-            return const _EmptyDriversView();
-          }
           return RefreshIndicator(
-            onRefresh: () async {
-              ref.read(myDriversControllerProvider.notifier).refresh();
-            },
+            onRefresh: () async =>
+                ref.read(myDriversControllerProvider.notifier).refresh(),
             child: ListView.separated(
+              controller: scrollController,
               padding: const EdgeInsets.all(16),
               itemCount: drivers.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
@@ -101,7 +98,7 @@ class _EmptyDriversView extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             CustomText(
-              title: "Add your drivers",
+              title: "Add your drivers to get started",
               style: CommonStyle.textStyleSmall(color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -113,13 +110,14 @@ class _EmptyDriversView extends StatelessWidget {
 }
 
 class DriverCard extends StatelessWidget {
-  final Driver driver;
+  final AssignedDriver driver;
 
   const DriverCard({super.key, required this.driver});
 
   @override
   Widget build(BuildContext context) {
-    final user = driver.user;
+    final user = driver.driverId.user;
+    final vehicle = driver.vehicleId;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -138,12 +136,12 @@ class DriverCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _HeaderSection(driver: driver),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           const Divider(height: 1),
           const SizedBox(height: 12),
           _ContactSection(user: user),
           const SizedBox(height: 12),
-          _ComplianceSection(driver: driver),
+          _ComplianceSection(user: user, vehicle: vehicle),
           const SizedBox(height: 12),
           _FooterSection(driver: driver),
         ],
@@ -153,39 +151,38 @@ class DriverCard extends StatelessWidget {
 }
 
 class _HeaderSection extends StatelessWidget {
-  final Driver driver;
+  final AssignedDriver driver;
 
   const _HeaderSection({required this.driver});
 
   @override
   Widget build(BuildContext context) {
-    final user = driver.user;
-
+    final user = driver.driverId.user;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DriverAvatar(isOnline: driver.isOnline),
+        DriverAvatar(isOnline: driver.isActive),
         const SizedBox(width: 14),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
-                title: user.fullName,
+                title: user.email,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
               const SizedBox(height: 4),
               CustomText(
                 title:
-                    "${driver.role} • ${user.address.city}, ${user.address.country}",
+                    "${driver.driverId.role} • Assigned by ${driver.assignedBy.user.email}",
                 fontSize: 12,
                 color: Colors.grey.shade600,
               ),
               const SizedBox(height: 6),
               Row(
                 children: [
-                  VerificationChip(isVerified: driver.isVerified),
+                  VerificationChip(isVerified: driver.isActive),
                   const SizedBox(width: 10),
                   AccountStatusChip(status: user.status),
                 ],
@@ -193,14 +190,14 @@ class _HeaderSection extends StatelessWidget {
             ],
           ),
         ),
-        AvailabilityChip(status: driver.status),
+        AvailabilityChip(status: driver.isActive ? "Available" : "Busy"),
       ],
     );
   }
 }
 
 class _ContactSection extends StatelessWidget {
-  final User user;
+  final UserData user;
 
   const _ContactSection({required this.user});
 
@@ -216,36 +213,28 @@ class _ContactSection extends StatelessWidget {
 }
 
 class _ComplianceSection extends StatelessWidget {
-  final Driver driver;
+  final UserData user;
+  final Vehicle vehicle;
 
-  const _ComplianceSection({required this.driver});
+  const _ComplianceSection({required this.user, required this.vehicle});
 
   @override
   Widget build(BuildContext context) {
-    final user = driver.user;
-
     return Column(
       children: [
         _InfoRow(
           icon: Icons.directions_car,
-          value:
-              user.activeVehicleId != null
-                  ? "Vehicle Assigned"
-                  : "No Vehicle Assigned",
+          value: vehicle.id.isNotEmpty
+              ? "Vehicle Assigned"
+              : "No Vehicle Assigned",
         ),
-        if (user.businessLicenseDetails?.licenseExpiryDate != null)
-          _InfoRow(
-            icon: Icons.event,
-            value:
-                "License Exp: ${user.businessLicenseDetails!.licenseExpiryDate.toLocal().toString().split(' ').first}",
-          ),
       ],
     );
   }
 }
 
 class _FooterSection extends StatelessWidget {
-  final Driver driver;
+  final AssignedDriver driver;
 
   const _FooterSection({required this.driver});
 
@@ -346,7 +335,6 @@ class AvailabilityChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: _color().withOpacity(0.5),
-
         borderRadius: BorderRadius.circular(20),
       ),
       child: CustomText(
@@ -394,7 +382,7 @@ class AccountStatusChip extends StatelessWidget {
       case 'PENDING_REVIEW':
         return AppColors.mainColor.withOpacity(0.18);
       case 'SUSPENDED':
-        return Colors.red.withOpacity(0.12); // rare / critical
+        return Colors.red.withOpacity(0.12);
       default:
         return AppColors.darkHover.withOpacity(0.12);
     }

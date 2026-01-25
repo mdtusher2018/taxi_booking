@@ -44,6 +44,15 @@ class UploadData {
           .toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'file': file.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
 class UploadedFile {
@@ -55,5 +64,9 @@ class UploadedFile {
 
   factory UploadedFile.fromJson(Map<String, dynamic> json) {
     return UploadedFile(id: json['_id'], key: json['key'], url: json['url']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'_id': id, 'key': key, 'url': url};
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/resource/app_colors.dart';
@@ -23,9 +26,10 @@ class MessageView extends ConsumerStatefulWidget {
 
 class _MessageViewState extends ConsumerState<MessageView> {
   final TextEditingController textEditingController = TextEditingController();
-
-  // Store a reference to the notifier
   late MessageController controller;
+
+  List<File> selectedImages = [];
+  final ImagePicker picker = ImagePicker();
 
   @override
   void initState() {
@@ -73,8 +77,12 @@ class _MessageViewState extends ConsumerState<MessageView> {
             itemBuilder: (context, index) {
               final msg = state.messages[index];
               final isMe = msg.sender != widget.reciverId;
-
-              return _MessageBubble(isMe: isMe, message: msg.text);
+              AppLogger.i(msg.imageUrl.toString());
+              return _MessageBubble(
+                isMe: isMe,
+                message: msg.text,
+                images: msg.imageUrl ?? [],
+              );
             },
           ),
         ),
@@ -84,55 +92,213 @@ class _MessageViewState extends ConsumerState<MessageView> {
             color: Colors.white,
             boxShadow: [BoxShadow(blurRadius: 5, color: Colors.black12)],
           ),
-          child: Row(
+          child: Column(
             children: [
-              Expanded(
-                child: TextField(
-                  controller: textEditingController,
-                  decoration: InputDecoration(
-                    hintText: "Type a message...",
-                    filled: true,
+              if (selectedImages.isNotEmpty)
+                SizedBox(
+                  height: 80,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    itemCount: selectedImages.length,
+                    itemBuilder: (context, index) {
+                      final file = selectedImages[index];
 
-                    fillColor: Colors.grey.shade100,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(width: 8),
-
-              /// Send Button
-              InkWell(
-                onTap: () {
-                  ref
-                      .read(messageControllerProvider.notifier)
-                      .sendMessage(
-                        receiverId: widget.reciverId,
-                        text: textEditingController.text.trim(),
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.file(
+                                file,
+                                height: 70,
+                                width: 70,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              right: 2,
+                              top: 2,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedImages.removeAt(index);
+                                  });
+                                },
+                                child: const CircleAvatar(
+                                  radius: 12,
+                                  backgroundColor: Colors.black54,
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       );
-                  textEditingController.clear();
-                },
-                borderRadius: BorderRadius.circular(30),
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                    color: Colors.blue,
-                    shape: BoxShape.circle,
+                    },
                   ),
-                  child: const Icon(Icons.send, color: Colors.white, size: 20),
                 ),
+              Row(
+                children: [
+                  SizedBox(width: 8),
+                  InkWell(
+                    onTap: pickImages,
+                    child: Icon(Icons.image_rounded, size: 32),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: textEditingController,
+                      decoration: InputDecoration(
+                        hintText: "Type a message...",
+                        filled: true,
+
+                        fillColor: Colors.grey.shade100,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  /// Send Button
+                  InkWell(
+                    onTap: () {
+                      ref
+                          .read(messageControllerProvider.notifier)
+                          .sendMessage(
+                            receiverId: widget.reciverId,
+                            text: textEditingController.text.trim(),
+                            images: selectedImages,
+                          );
+
+                      textEditingController.clear();
+                      selectedImages.clear();
+                    },
+                    borderRadius: BorderRadius.circular(30),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.send,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> pickImages() async {
+    final List<XFile> images = await picker.pickMultiImage(imageQuality: 70);
+
+    if (images.isNotEmpty) {
+      setState(() {
+        selectedImages.addAll(images.map((e) => File(e.path)));
+      });
+    }
+  }
+}
+
+class _MessageBubble extends StatelessWidget {
+  final bool isMe;
+  final String message;
+  final List<MessageImage> images;
+
+  const _MessageBubble({
+    required this.isMe,
+    required this.message,
+    required this.images,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(10),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * .7,
+        ),
+        decoration: BoxDecoration(
+          color: isMe ? Colors.blue : Colors.white,
+          borderRadius: BorderRadius.circular(16).copyWith(
+            bottomLeft: Radius.circular(isMe ? 16 : 0),
+            bottomRight: Radius.circular(isMe ? 0 : 16),
+          ),
+          boxShadow: [
+            BoxShadow(blurRadius: 3, color: Colors.black.withOpacity(.05)),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: isMe
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            /// 🖼 Images
+            if (images.isNotEmpty)
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: images.map((messageImage) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      messageImage.url,
+                      height: 100,
+                      width: 100,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (c, w, p) {
+                        if (p == null) return w;
+                        return const SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.broken_image),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+            /// 📝 Text
+            if (message.trim().isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                message,
+                style: TextStyle(
+                  color: isMe ? Colors.white : Colors.black87,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
@@ -209,44 +375,6 @@ class _ChatAppBar extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _MessageBubble extends StatelessWidget {
-  final bool isMe;
-  final String message;
-
-  const _MessageBubble({required this.isMe, required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * .7,
-        ),
-        decoration: BoxDecoration(
-          color: isMe ? Colors.blue : Colors.white,
-          borderRadius: BorderRadius.circular(16).copyWith(
-            bottomLeft: Radius.circular(isMe ? 16 : 0),
-            bottomRight: Radius.circular(isMe ? 0 : 16),
-          ),
-          boxShadow: [
-            BoxShadow(blurRadius: 3, color: Colors.black.withOpacity(.05)),
-          ],
-        ),
-        child: Text(
-          message,
-          style: TextStyle(
-            color: isMe ? Colors.white : Colors.black87,
-            fontSize: 14,
-          ),
-        ),
       ),
     );
   }

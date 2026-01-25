@@ -1,3 +1,5 @@
+import 'package:taxi_booking/role/common/featured/chat/model/upload_file_response.dart';
+
 class ChatListItem {
   final Chat chat;
   final Message message;
@@ -79,7 +81,7 @@ class Message {
   final String sender;
   final String receiver;
   final String chat;
-  final List<String> imageUrl;
+  final List<UploadedFile> imageUrl;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -103,7 +105,11 @@ class Message {
       sender: json['sender'] ?? "",
       receiver: json['receiver'] ?? "",
       chat: json['chat'] ?? "",
-      imageUrl: List<String>.from(json['imageUrl'] ?? []),
+      imageUrl:
+          (json['imageUrl'] as List<dynamic>?)
+              ?.map((e) => UploadedFile.fromJson(e))
+              .toList() ??
+          [],
       createdAt: DateTime.tryParse(json['createdAt']),
       updatedAt: DateTime.tryParse(json['updatedAt']),
     );
