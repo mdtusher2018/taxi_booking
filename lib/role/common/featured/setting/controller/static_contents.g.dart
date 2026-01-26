@@ -34,7 +34,7 @@ final class StaticContentsControllerProvider
 }
 
 String _$staticContentsControllerHash() =>
-    r'c13c5f8bf0b7d69bd4fd6fa2e732d5d19d3c079b';
+    r'bc49371e1c471d6f09787525aca04017a469bad3';
 
 abstract class _$StaticContentsController extends $AsyncNotifier<dynamic> {
   FutureOr<dynamic> build();

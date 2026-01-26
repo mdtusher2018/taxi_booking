@@ -35,7 +35,7 @@ final class EditVehicalControllerProvider
 }
 
 String _$editVehicalControllerHash() =>
-    r'6d5c4c22dad31549f9e1194f7b76324825663a80';
+    r'1e13c47a63d6e8d445d8dae971200300a9e3602e';
 
 abstract class _$EditVehicalController
     extends $AsyncNotifier<EditVehicleResponse?> {

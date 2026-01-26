@@ -1,20 +1,20 @@
 import 'package:taxi_booking/core/model/pagenation_meta_model.dart';
 
-class MyDriversResponse {
+class AssignedDriversResponse {
   final bool success;
   final int statusCode;
   final String message;
   final AssignedDriversData data;
 
-  MyDriversResponse({
+  AssignedDriversResponse({
     required this.success,
     required this.statusCode,
     required this.message,
     required this.data,
   });
 
-  factory MyDriversResponse.fromJson(Map<String, dynamic> json) {
-    return MyDriversResponse(
+  factory AssignedDriversResponse.fromJson(Map<String, dynamic> json) {
+    return AssignedDriversResponse(
       success: json['success'],
       statusCode: json['statusCode'],
       message: json['message'],
@@ -38,7 +38,6 @@ class AssignedDriversData {
     );
   }
 }
-
 class AssignedDriver {
   final String id;
   final AssignedBy assignedBy;
@@ -77,7 +76,7 @@ class AssignedDriver {
 class AssignedBy {
   final String id;
   final String role;
-  final UserData user;
+  final User user;
 
   AssignedBy({required this.id, required this.role, required this.user});
 
@@ -85,7 +84,7 @@ class AssignedBy {
     return AssignedBy(
       id: json['_id'],
       role: json['role'],
-      user: UserData.fromJson(json['user']),
+      user: User.fromJson(json['user']),
     );
   }
 }
@@ -93,7 +92,7 @@ class AssignedBy {
 class Driver {
   final String id;
   final String role;
-  final UserData user;
+  final User user;
 
   Driver({required this.id, required this.role, required this.user});
 
@@ -101,26 +100,26 @@ class Driver {
     return Driver(
       id: json['_id'],
       role: json['role'],
-      user: UserData.fromJson(json['user']),
+      user: User.fromJson(json['user']),
     );
   }
 }
 
-class UserData {
+class User {
   final String id;
   final String phone;
   final String email;
   final String status;
 
-  UserData({
+  User({
     required this.id,
     required this.phone,
     required this.email,
     required this.status,
   });
 
-  factory UserData.fromJson(Map<String, dynamic> json) {
-    return UserData(
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
       id: json['_id'],
       phone: json['phone'],
       email: json['email'],

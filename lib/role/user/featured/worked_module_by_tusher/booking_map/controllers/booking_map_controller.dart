@@ -10,6 +10,7 @@ import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
+import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/core/utilitis/user_api_end_points.dart';
@@ -352,36 +353,52 @@ class BookingMapController extends StateNotifier<BookingMapState>
       });
       final rideResponse = CreateRideResponse.fromJson(response);
 
+      state = state.copyWith(
+        rideId: rideResponse.data.id,
+        status: RideBookingStatus.paymentAuthoriging,
+        checkoutUrl: rideResponse.data.checkoutUrl,
+      );
       AppLogger.i("Ride created with ID: ${rideResponse.data.id}");
-      AppLogger.i("Passenger ID: ${rideResponse.data.passengerId}");
+    } catch (e) {
+      state = state.copyWith(status: RideBookingStatus.initial);
+      CustomToast.showToast(message: e.toString());
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
+  }
 
-      state = state.copyWith(rideId: rideResponse.data.id);
+  Future<void> rideEmit(PaymentResult? result) async {
+    try {
+      if (result == PaymentResult.success) {
+        state = state.copyWith(isLoading: true);
+        await socketService.emit(SocketEvents.rideRequest, {
+          "rideId": state.rideId,
+        });
 
-      await socketService.emit(SocketEvents.rideRequest, {
-        "rideId": rideResponse.data.id,
-      });
+        state = state.copyWith(status: RideBookingStatus.searchingDriver);
 
-      state = state.copyWith(status: RideBookingStatus.searchingDriver);
-
-      socketService.on(SocketEvents.rideAccepted, (data) {
-        state = state.copyWith(
-          acceptedDriverInfo: RideAcceptResponse.fromJson(data).driverInfo,
-        );
-
-        listenAllAfterRideAccepted();
-
-        if (state.acceptedDriverInfo != null) {
+        socketService.on(SocketEvents.rideAccepted, (data) {
           state = state.copyWith(
-            driverLatLng: LatLng(
-              state.acceptedDriverInfo!.location!.coordinates!.last,
-              state.acceptedDriverInfo!.location!.coordinates!.first,
-            ),
+            acceptedDriverInfo: RideAcceptResponse.fromJson(data).driverInfo,
           );
 
-          onDriverLocationChanged();
-          state = state.copyWith(status: RideBookingStatus.driverOnTheWay);
-        }
-      });
+          listenAllAfterRideAccepted();
+
+          if (state.acceptedDriverInfo != null) {
+            state = state.copyWith(
+              driverLatLng: LatLng(
+                state.acceptedDriverInfo!.location!.coordinates!.last,
+                state.acceptedDriverInfo!.location!.coordinates!.first,
+              ),
+            );
+
+            onDriverLocationChanged();
+            state = state.copyWith(status: RideBookingStatus.driverOnTheWay);
+          }
+        });
+      } else {
+        CustomToast.showToast(message: "Payment Authorization Faield");
+      }
     } catch (e) {
       CustomToast.showToast(message: e.toString());
     } finally {

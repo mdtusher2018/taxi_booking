@@ -2,9 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxi_booking/core/logger/log_helper.dart';
+import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/sheet/searching_driver_sheet.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/views/payment_authorized_webview_page.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/driver_arrived.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/on_the_destination_way.dart';
 import '../../../../../../resource/common_widget/custom_network_image.dart';
@@ -26,7 +29,19 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
     final controller = ref.read(bookingMapControllerProvider.notifier);
     final state = ref.watch(bookingMapControllerProvider);
 
-    ref.listen(bookingMapControllerProvider, (previous, next) {
+    ref.listen(bookingMapControllerProvider, (previous, next) async {
+      if (previous?.checkoutUrl == null && next.checkoutUrl != null) {
+        AppLogger.i("Routing");
+        final paymentResult = await Navigator.push<PaymentResult>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PaymentWebViewPage(checkoutUrl: next.checkoutUrl!),
+          ),
+        );
+
+        ref.read(bookingMapControllerProvider.notifier).rideEmit(paymentResult);
+      }
+
       if (previous?.pickupLatLng != next.pickupLatLng) {
         controller.updateSurgeMultiplier();
         controller.onPicupPickoffLocationChanged();

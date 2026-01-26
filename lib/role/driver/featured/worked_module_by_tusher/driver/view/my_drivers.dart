@@ -2,6 +2,7 @@ import 'package:taxi_booking/resource//app_colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
+import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/controllers/driver_controller.dart';
@@ -109,14 +110,13 @@ class _EmptyDriversView extends StatelessWidget {
   }
 }
 
-class DriverCard extends StatelessWidget {
+class DriverCard extends ConsumerWidget {
   final AssignedDriver driver;
 
   const DriverCard({super.key, required this.driver});
 
   @override
-  Widget build(BuildContext context) {
-    final user = driver.driverId.user;
+  Widget build(BuildContext context, WidgetRef ref) {
     final vehicle = driver.vehicleId;
 
     return Container(
@@ -137,13 +137,37 @@ class DriverCard extends StatelessWidget {
         children: [
           _HeaderSection(driver: driver),
           const SizedBox(height: 12),
+          _VehicleImageSection(vehicle: vehicle),
+          const SizedBox(height: 12),
           const Divider(height: 1),
           const SizedBox(height: 12),
-          _ContactSection(user: user),
+          _ContactSection(user: driver),
           const SizedBox(height: 12),
-          _ComplianceSection(user: user, vehicle: vehicle),
+          _ComplianceSection(vehicle: vehicle),
           const SizedBox(height: 12),
           _FooterSection(driver: driver),
+          const SizedBox(height: 12),
+          Align(
+            alignment: AlignmentGeometry.centerRight,
+            child: SizedBox(
+              height: 40,
+
+              child: FittedBox(
+                child: CustomButton(
+                  title: "Remove Driver",
+                  onTap: () {
+                    ref
+                        .read(myDriversControllerProvider.notifier)
+                        .removeDrver(
+                          driverId: driver.driverId.id,
+                          vehicaleId: driver.vehicleId.id,
+                        );
+                  },
+                  width: 200,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -172,14 +196,14 @@ class _HeaderSection extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
-              const SizedBox(height: 4),
-              CustomText(
-                title:
-                    "${driver.driverId.role} • Assigned by ${driver.assignedBy.user.email}",
-                fontSize: 12,
-                color: Colors.grey.shade600,
-              ),
               const SizedBox(height: 6),
+              // CustomText(
+              //   title:
+              //       "${driver.driverId.role} • Assigned by ${driver.assignedBy.user.email}",
+              //   fontSize: 12,
+              //   color: Colors.grey.shade600,
+              // ),
+              // const SizedBox(height: 6),
               Row(
                 children: [
                   VerificationChip(isVerified: driver.isActive),
@@ -197,7 +221,7 @@ class _HeaderSection extends StatelessWidget {
 }
 
 class _ContactSection extends StatelessWidget {
-  final UserData user;
+  final AssignedDriver user;
 
   const _ContactSection({required this.user});
 
@@ -205,18 +229,17 @@ class _ContactSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _InfoRow(icon: Icons.phone, value: user.phone),
-        _InfoRow(icon: Icons.email, value: user.email),
+        _InfoRow(icon: Icons.phone, value: user.driverId.user.phone),
+        _InfoRow(icon: Icons.email, value: user.driverId.user.email),
       ],
     );
   }
 }
 
 class _ComplianceSection extends StatelessWidget {
-  final UserData user;
   final Vehicle vehicle;
 
-  const _ComplianceSection({required this.user, required this.vehicle});
+  const _ComplianceSection({required this.vehicle});
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +274,7 @@ class _FooterSection extends StatelessWidget {
         ),
         CustomText(
           title:
-              "Updated: ${driver.updatedAt.toLocal().toString().split(' ').first}",
+              "Assigned: ${driver.assignedAt.toLocal().toString().split(' ').first}",
           fontSize: 11,
           color: Colors.grey,
         ),
@@ -404,6 +427,59 @@ class AccountStatusChip extends StatelessWidget {
         fontSize: 10,
         fontWeight: FontWeight.w600,
         color: AppColors.blackColor,
+      ),
+    );
+  }
+}
+
+class _VehicleImageSection extends StatelessWidget {
+  final Vehicle vehicle;
+
+  const _VehicleImageSection({required this.vehicle});
+
+  @override
+  Widget build(BuildContext context) {
+    final imageUrl = vehicle.photos.front;
+
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return Container(
+        height: 160,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Center(
+          child: Icon(
+            Icons.directions_car,
+            size: 48,
+            color: Colors.grey.shade500,
+          ),
+        ),
+      );
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: Image.network(
+        imageUrl,
+        height: 160,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return Container(
+            height: 160,
+            color: Colors.grey.shade200,
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        },
+        errorBuilder: (_, __, ___) {
+          return Container(
+            height: 160,
+            color: Colors.grey.shade200,
+            child: const Icon(Icons.broken_image, size: 40),
+          );
+        },
       ),
     );
   }

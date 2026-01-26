@@ -3,6 +3,7 @@ import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/main.dart';
 import 'package:taxi_booking/resource/common_dialog/custom_dialog.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
+import 'package:taxi_booking/role/common/featured/setting/model/profile_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/view/my_drivers.dart';
 import 'package:taxi_booking/role/common/featured/setting/controller/profile_controller.dart';
 import 'package:taxi_booking/role/common/featured/setting/widget/profile_details_widgets.dart';
@@ -10,7 +11,8 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehica
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/my_vehicales_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../driver/featured/wallet/views/wallet_view.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/wallet/views/wallet_with_car_driver_view.dart';
+import '../../../../driver/featured/worked_module_by_tusher/wallet/views/wallet_without_car_driver_view.dart';
 import '../widget/setting_item_card.dart';
 
 class SettingView extends ConsumerStatefulWidget {
@@ -100,10 +102,20 @@ class _SettingViewState extends ConsumerState<SettingView> {
             SettingItemCard(
               icon: Icon(Icons.credit_card, color: Colors.yellow.shade900),
               title: "Wallet",
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => WalletView()),
-              ),
+              onTap: () {
+                if (state is AsyncData) {
+                  final data = (state as AsyncData).value as ProfileResponse;
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => (data.data.role == "WithCar")
+                          ? WalletWithCarDriverView()
+                          : WalletWithoutCarDriverView(),
+                    ),
+                  );
+                }
+              },
             ),
 
             state.when(

@@ -12,6 +12,7 @@ class BookingMapState {
   final LatLng? dropLatLng;
   final LatLng? currentLocation;
   final LatLng? driverLatLng;
+  final String? checkoutUrl;
 
   final RideBookingStatus status;
   final double routeDistanceKm;
@@ -27,6 +28,7 @@ class BookingMapState {
     this.markers = const {},
     this.polylines = const {},
     this.pickupLatLng,
+    this.checkoutUrl,
     this.dropLatLng,
     this.currentLocation,
     this.driverLatLng,
@@ -45,6 +47,7 @@ class BookingMapState {
     Set<Polyline>? polylines,
     LatLng? pickupLatLng,
     LatLng? dropLatLng,
+    String? checkoutUrl,
     LatLng? currentLocation,
     LatLng? driverLatLng,
     RideBookingStatus? status,
@@ -58,6 +61,7 @@ class BookingMapState {
     return BookingMapState(
       isLoading: isLoading ?? this.isLoading,
       markers: markers ?? this.markers,
+      checkoutUrl: checkoutUrl ?? this.checkoutUrl,
       polylines: polylines ?? this.polylines,
       pickupLatLng: pickupLatLng ?? this.pickupLatLng,
       dropLatLng: dropLatLng ?? this.dropLatLng,

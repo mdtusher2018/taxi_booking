@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'message_controller.dart';
+part of 'wallet_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,51 +9,51 @@ part of 'message_controller.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(MessageController)
-final messageControllerProvider = MessageControllerProvider._();
+@ProviderFor(WalletController)
+final walletControllerProvider = WalletControllerProvider._();
 
-final class MessageControllerProvider
-    extends $NotifierProvider<MessageController, MessageState> {
-  MessageControllerProvider._()
+final class WalletControllerProvider
+    extends $NotifierProvider<WalletController, WalletState> {
+  WalletControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'messageControllerProvider',
+        name: r'walletControllerProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$messageControllerHash();
+  String debugGetCreateSourceHash() => _$walletControllerHash();
 
   @$internal
   @override
-  MessageController create() => MessageController();
+  WalletController create() => WalletController();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(MessageState value) {
+  Override overrideWithValue(WalletState value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<MessageState>(value),
+      providerOverride: $SyncValueProvider<WalletState>(value),
     );
   }
 }
 
-String _$messageControllerHash() => r'17110d4fb1d8caf9b315be5c909928fca5010dd2';
+String _$walletControllerHash() => r'84b9183b7c073eda530596a7b33edde715008a79';
 
-abstract class _$MessageController extends $Notifier<MessageState> {
-  MessageState build();
+abstract class _$WalletController extends $Notifier<WalletState> {
+  WalletState build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<MessageState, MessageState>;
+    final ref = this.ref as $Ref<WalletState, WalletState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<MessageState, MessageState>,
-              MessageState,
+              AnyNotifier<WalletState, WalletState>,
+              WalletState,
               Object?,
               Object?
             >;

@@ -32,7 +32,7 @@ class DriverApiEndpoints {
 
   //Drivers
   static String myDrivers(int page) =>
-      "with-car-drivers/all-with-car-drivers?page=$page&limit=10";
+      "with-car-drivers/my-assigned-drivers?page=$page&limit=10";
 
   static String removeDriver(String driverId) {
     return "with-car-drivers/remove-driver/$driverId";
@@ -44,6 +44,9 @@ class DriverApiEndpoints {
 
   //Home Ride
   static String driverOnline = "with-car-drivers/update-current-location";
+
+  static String walletSummary = "with-car-drivers/calculate-wallet";
+  static String revenueChart = "with-car-drivers/full-year-revenue-reports";
 
   //chat
   static String previousMessage(String reciverId) =>

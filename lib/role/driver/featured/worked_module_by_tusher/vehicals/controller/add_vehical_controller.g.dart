@@ -34,7 +34,7 @@ final class AddVehicalControllerProvider
 }
 
 String _$addVehicalControllerHash() =>
-    r'4745b468241bd42d93ae4cfb26b2eb244a258bf8';
+    r'cc99014bc2bd6b5535171ab23f79976bfc26b52c';
 
 abstract class _$AddVehicalController
     extends $AsyncNotifier<AddVehicleResponse?> {

@@ -8,12 +8,12 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver
 class DriversRepository extends Repository {
   IApiService apiService;
   DriversRepository(this.apiService);
-  Future<Result<MyDriversResponse, Failure>> fetchMyDrivers({
+  Future<Result<AssignedDriversResponse, Failure>> fetchMyDrivers({
     required int page,
   }) async {
     return asyncGuard(() async {
       final response = await apiService.get(DriverApiEndpoints.myDrivers(page));
-      return MyDriversResponse.fromJson(response);
+      return AssignedDriversResponse.fromJson(response);
     });
   }
 
@@ -29,7 +29,10 @@ class DriversRepository extends Repository {
     });
   }
 
-  Future<Result<bool, Failure>> removeDrver({required String driverId}) async {
+  Future<Result<bool, Failure>> removeDrver({
+    required String driverId,
+    required String vehicalId,
+  }) async {
     return asyncGuard(() async {
       await apiService.delete(DriverApiEndpoints.removeDriver(driverId));
       return true;

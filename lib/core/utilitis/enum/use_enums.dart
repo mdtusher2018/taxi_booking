@@ -1,6 +1,7 @@
 enum RideBookingStatus {
   initial,
   rideCreating,
+  paymentAuthoriging,
   searchingDriver,
   driverOnTheWay,
   driverArived,

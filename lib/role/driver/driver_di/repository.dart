@@ -4,6 +4,7 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authen
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/drivers_repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/repository/home_ride_repository.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/vehical_repository.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/wallet/wallet_repository.dart';
 
 part 'repository.g.dart';
 
@@ -37,4 +38,9 @@ VehicalRepository vehicalRepository(Ref ref) {
 @riverpod
 DriversRepository driversRepository(Ref ref) {
   return DriversRepository(ref.watch(apiServiceProvider));
+}
+
+@riverpod
+WalletRepository walletRepository(Ref ref) {
+  return WalletRepository(apiService: ref.watch(apiServiceProvider));
 }
