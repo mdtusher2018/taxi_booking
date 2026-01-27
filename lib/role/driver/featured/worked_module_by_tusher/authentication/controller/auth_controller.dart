@@ -17,10 +17,14 @@ class AuthController extends _$AuthController {
     return null;
   }
 
-  Future<void> login({required String phone, required String password}) async {
+  Future<void> login({
+    required String phone,
+    required String password,
+    required bool rememberMe,
+  }) async {
     state = AsyncLoading();
 
-    final result = await _repo.login(phone, password);
+    final result = await _repo.login(phone, password, rememberMe: rememberMe);
     if (result is FailureResult) {
       final error = (result as FailureResult).error as Failure;
       state = AsyncError(
@@ -53,17 +57,16 @@ class AuthController extends _$AuthController {
         "phone": form.phone,
         "driverLicenseNumber": form.driverLicenseNumber,
         "personalId": form.personalId,
-        "businessLicenseDetails":
-            form.withCar
-                ? {
-                  "businessType": form.businessType,
-                  "organizationNumber": form.organizationNumber,
-                  "taxId": form.taxId,
-                  "licenseNumber": form.licenseNumber,
-                  "issuingMunicipality": form.issuingMunicipality,
-                  "licenseExpiryDate": form.licenseExpiryDate,
-                }
-                : null,
+        "businessLicenseDetails": form.withCar
+            ? {
+                "businessType": form.businessType,
+                "organizationNumber": form.organizationNumber,
+                "taxId": form.taxId,
+                "licenseNumber": form.licenseNumber,
+                "issuingMunicipality": form.issuingMunicipality,
+                "licenseExpiryDate": form.licenseExpiryDate,
+              }
+            : null,
         "bankAccountNumber": "ACC-XXXX", // Add if needed
         "accountHolderName": form.fullName,
         "accountBelongs": "driver",

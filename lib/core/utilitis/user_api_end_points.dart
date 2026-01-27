@@ -21,4 +21,10 @@ class UserApiEndpoints {
   //======================
 
   static var createRide = "rides/create-ride";
+
+  static String paymentConfirmed(String rideId) =>
+      "payment/confirmed-authorization/$rideId";
+  static String payTips(String rideId) => "tips/create-tips/$rideId";
+
+  static String giveReview(String rideId) => "tips/create-tips/$rideId";
 }

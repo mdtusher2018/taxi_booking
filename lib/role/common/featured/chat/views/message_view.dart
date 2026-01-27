@@ -58,7 +58,10 @@ class _MessageViewState extends ConsumerState<MessageView> {
       backgroundColor: const Color(0xffF5F7FA),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(72),
-        child: _ChatAppBar(user: state.receiver),
+        child: _ChatAppBar(
+          user: state.receiver,
+          haveAssignButton: widget.isDriverToDriverConversation,
+        ),
       ),
       body: state.loading
           ? const Center(child: CircularProgressIndicator()) // Loading state
@@ -305,8 +308,8 @@ class _MessageBubble extends StatelessWidget {
 
 class _ChatAppBar extends StatelessWidget {
   final ReceiverUser? user;
-
-  const _ChatAppBar({this.user});
+  final bool haveAssignButton;
+  const _ChatAppBar({this.user, required this.haveAssignButton});
 
   @override
   Widget build(BuildContext context) {
@@ -346,34 +349,35 @@ class _ChatAppBar extends StatelessWidget {
               ],
             ),
           ),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return MyVehiclesView(
-                      isForAssign: true,
-                      driverId: user?.id,
-                    );
-                  },
+          if (haveAssignButton)
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return MyVehiclesView(
+                        isForAssign: true,
+                        driverId: user?.id,
+                      );
+                    },
+                  ),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.btnColor,
+                  borderRadius: BorderRadius.circular(4),
                 ),
-              );
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppColors.btnColor,
-                borderRadius: BorderRadius.circular(4),
-              ),
 
-              child: CustomText(
-                title: "Assign",
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+                child: CustomText(
+                  title: "Assign",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

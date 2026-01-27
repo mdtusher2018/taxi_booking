@@ -85,9 +85,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
         data: (data) {
           if (data != null && data is SignInResponse) {
             // Success: show snackbar and navigate
-            ref
-                .watch(snackbarServiceProvider)
-                .showSuccess("Login successful!");
+            ref.watch(snackbarServiceProvider).showSuccess("Login successful!");
             Future.microtask(() => context.push(DriverAppRoutes.dashboardView));
           }
         },
@@ -183,6 +181,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
                           isChecked: checkRemember,
                           onChanged: (value) {
                             checkRemember = value;
+                            setState(() {});
                           },
                         ),
                         SizedBox(width: 5),
@@ -214,6 +213,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
                         authController.login(
                           phone: loginPhoneController.text.trim(),
                           password: loginPasswordController.text.trim(),
+                          rememberMe: checkRemember,
                         );
                       },
                     ),

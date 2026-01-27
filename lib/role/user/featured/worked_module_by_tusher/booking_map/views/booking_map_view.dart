@@ -6,10 +6,13 @@ import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/give_review_driver_sheet.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/sheet/searching_driver_sheet.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/views/payment_authorized_webview_page.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/driver_arrived.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/on_the_destination_way.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/ride_compleate_card.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/tips_view_sheet.dart';
 import '../../../../../../resource/common_widget/custom_network_image.dart';
 import '../controllers/booking_map_controller.dart';
 import '../sheet/destination_picker_sheet.dart';
@@ -30,7 +33,8 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
     final state = ref.watch(bookingMapControllerProvider);
 
     ref.listen(bookingMapControllerProvider, (previous, next) async {
-      if (previous?.checkoutUrl == null && next.checkoutUrl != null) {
+      if (previous?.checkoutUrl != next.checkoutUrl &&
+          next.checkoutUrl != null) {
         AppLogger.i("Routing");
         final paymentResult = await Navigator.push<PaymentResult>(
           context,
@@ -40,6 +44,20 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
         );
 
         ref.read(bookingMapControllerProvider.notifier).rideEmit(paymentResult);
+      }
+
+      if (previous?.tipCheckoutUrl != next.tipCheckoutUrl &&
+          next.tipCheckoutUrl != null) {
+        // final paymentResult =
+        await Navigator.push<TipResult>(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                PaymentWebViewPage(checkoutUrl: next.tipCheckoutUrl!),
+          ),
+        );
+
+        // ref.read(bookingMapControllerProvider.notifier).rideEmit(paymentResult);
       }
 
       if (previous?.pickupLatLng != next.pickupLatLng) {
@@ -155,6 +173,33 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
                       .onRideCancel(); // Call the function to cancel the ride
                 },
               ),
+            ),
+          if (state.status == RideBookingStatus.rideCompleted)
+            Positioned(
+              bottom: 100, // Position from the bottom of the screen
+              left: 16,
+              right: 16,
+              child: RideCompleatedCard(
+                onCancel: () {
+                  controller
+                      .onRideCancel(); // Call the function to cancel the ride
+                },
+              ),
+            ),
+
+          if (state.status == RideBookingStatus.giveReview)
+            Positioned(
+              bottom: 100, // Position from the bottom of the screen
+              left: 16,
+              right: 16,
+              child: GiveReviewSheet(),
+            ),
+          if (state.status == RideBookingStatus.initial) //   tipprocerssing,
+            Positioned(
+              bottom: 100, // Position from the bottom of the screen
+              left: 16,
+              right: 16,
+              child: GiveTipsSheet(),
             ),
         ],
       ),

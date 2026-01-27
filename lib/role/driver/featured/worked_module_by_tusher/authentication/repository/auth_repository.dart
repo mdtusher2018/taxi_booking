@@ -16,7 +16,11 @@ class AuthRepository extends Repository {
   final ILocalStorageService localStorageService;
   AuthRepository({required this.api, required this.localStorageService});
 
-  Future<Result<SignInResponse, Failure>> login(String phone, String password) {
+  Future<Result<SignInResponse, Failure>> login(
+    String phone,
+    String password, {
+    required bool rememberMe,
+  }) {
     return asyncGuard(() async {
       final res = await api.post(DriverApiEndpoints.login, {
         "phone": phone,
@@ -24,7 +28,12 @@ class AuthRepository extends Repository {
       });
 
       final response = SignInResponse.fromJson(res);
+
       if (response.success) {
+        if (rememberMe) {
+          localStorageService.disableSessionMode(false);
+        }
+        localStorageService.saveKey(StorageKey.rememberMe, rememberMe);
         localStorageService.saveKey(
           StorageKey.accessToken,
           response.data?.accessToken,

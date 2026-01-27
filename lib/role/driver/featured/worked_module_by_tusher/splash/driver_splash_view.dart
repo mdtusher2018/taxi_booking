@@ -1,17 +1,20 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:taxi_booking/core/di/service.dart';
+import 'package:taxi_booking/core/services/storage/storage_key.dart';
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class DriverSplashView extends StatefulWidget {
+class DriverSplashView extends ConsumerStatefulWidget {
   const DriverSplashView({super.key});
 
   @override
-  _DriverSplashViewState createState() => _DriverSplashViewState();
+  ConsumerState<DriverSplashView> createState() => _DriverSplashViewState();
 }
 
-class _DriverSplashViewState extends State<DriverSplashView> {
+class _DriverSplashViewState extends ConsumerState<DriverSplashView> {
   // Animation states
   double logoScale = 0.0;
   double logoOpacity = 0.0;
@@ -52,11 +55,16 @@ class _DriverSplashViewState extends State<DriverSplashView> {
 
     // Wait for text animation
     await Future.delayed(const Duration(milliseconds: 800));
-
-    // Phase 4: Buttons slide up from bottom
-    setState(() {
-      buttonsOpacity = 1.0;
-    });
+    final token = await ref
+        .read(localStorageServiceProvider)
+        .readKey(StorageKey.accessToken);
+    if (token != null) {
+      context.go(DriverAppRoutes.dashboardView);
+    } else {
+      setState(() {
+        buttonsOpacity = 1.0;
+      });
+    }
   }
 
   @override
@@ -111,10 +119,9 @@ class _DriverSplashViewState extends State<DriverSplashView> {
                         opacity: textOpacity,
                         child: AnimatedSlide(
                           duration: const Duration(milliseconds: 800),
-                          offset:
-                              textOpacity == 1.0
-                                  ? Offset.zero
-                                  : const Offset(0, 0.5),
+                          offset: textOpacity == 1.0
+                              ? Offset.zero
+                              : const Offset(0, 0.5),
                           curve: Curves.easeOutCubic,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -145,8 +152,9 @@ class _DriverSplashViewState extends State<DriverSplashView> {
                 opacity: buttonsOpacity,
                 child: AnimatedSlide(
                   duration: const Duration(milliseconds: 1000),
-                  offset:
-                      buttonsOpacity == 1.0 ? Offset.zero : const Offset(0, 1),
+                  offset: buttonsOpacity == 1.0
+                      ? Offset.zero
+                      : const Offset(0, 1),
                   curve: Curves.easeOutCubic,
                   child: Container(
                     padding: EdgeInsets.symmetric(

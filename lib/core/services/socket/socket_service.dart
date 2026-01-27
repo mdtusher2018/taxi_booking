@@ -88,10 +88,9 @@ class SocketService {
     } catch (e) {
       AppLogger.e('Socket Error: $e');
       if (e is Map<String, dynamic>) {
-        CustomToast.showToast(
-          message: e['message'] ?? "Unknown Error Occoured",
-          isError: true,
-        );
+        throw Exception(e['message'] ?? "Unknown Error Occoured");
+      } else {
+        throw Exception("Unknown Error Occoured");
       }
     }
   }

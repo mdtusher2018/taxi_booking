@@ -2,7 +2,18 @@ import 'package:dio/dio.dart';
 
 import '../logger/log_helper.dart';
 
-enum FailureType { timeout, unauthorized, network, unknown }
+enum FailureType {
+  timeout,
+  unauthorized,
+  forbidden,
+  notFound,
+  validation,
+  server,
+  network,
+  cancelled,
+  parsing,
+  unknown,
+}
 
 class Failure {
   final FailureType type;
@@ -53,6 +64,56 @@ class Failure {
           message: 'Unauthorized request. Please login again.',
           code: code,
         );
+      }
+
+      // Cancelled
+      if (e.type == DioExceptionType.cancel) {
+        return Failure(
+          type: FailureType.cancelled,
+          message: 'Request was cancelled.',
+          code: code,
+        );
+      }
+
+      if (e.type == DioExceptionType.badResponse) {
+        final statusCode = e.response?.statusCode;
+
+        switch (statusCode) {
+          case 400:
+            return Failure(
+              type: FailureType.validation,
+              message: 'Invalid request.',
+              code: statusCode.toString(),
+            );
+
+          case 401:
+            return Failure(
+              type: FailureType.unauthorized,
+              message: 'Session expired. Please login again.',
+              code: statusCode.toString(),
+            );
+
+          case 403:
+            return Failure(
+              type: FailureType.forbidden,
+              message: 'You do not have permission to perform this action.',
+              code: statusCode.toString(),
+            );
+
+          case 404:
+            return Failure(
+              type: FailureType.notFound,
+              message: 'Requested resource not found.',
+              code: statusCode.toString(),
+            );
+
+          default:
+            return Failure(
+              type: FailureType.server,
+              message: 'Server error occurred.',
+              code: statusCode.toString(),
+            );
+        }
       }
 
       // Unknown Dio error

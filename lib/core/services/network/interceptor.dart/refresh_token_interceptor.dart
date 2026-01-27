@@ -89,8 +89,8 @@ class RefreshTokenInterceptor extends Interceptor {
     }
   }
 
-  void _logout() {
-    storage.clearAll();
+  void _logout() async {
+    await storage.clearAll();
     navigatorKey.currentContext?.go(
       DriverAppRoutes.authenticationView,
       extra: {"isLogin": true},

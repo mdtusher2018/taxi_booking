@@ -1,3 +1,4 @@
+import 'package:taxi_booking/core/routes/user_app_pages.dart';
 import 'package:taxi_booking/core/services/network/api_client.dart';
 import 'package:taxi_booking/core/services/network/api_service.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
@@ -9,11 +10,14 @@ import 'package:taxi_booking/core/services/storage/local_storage_service.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
 import 'package:taxi_booking/core/routes/driver_app_pages.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:taxi_booking/main.dart';
 part 'service.g.dart';
 
 @Riverpod(keepAlive: true)
 ILocalStorageService localStorageService(Ref ref) {
-  return LocalStorageService();
+  final localStorage = LocalStorageService();
+  localStorage.init();
+  return localStorage;
 }
 
 @Riverpod(keepAlive: true)
@@ -23,10 +27,9 @@ ISnackBarService snackbarService(Ref ref) {
 
 @Riverpod(keepAlive: true)
 ApiClient apiClient(Ref ref) {
-  final navigatorKey = ref
-      .watch(driverAppRouterProvider)
-      .routerDelegate
-      .navigatorKey;
+  final navigatorKey = (ref.read(appRole.notifier).state == AppRole.driver)
+      ? ref.watch(driverAppRouterProvider).routerDelegate.navigatorKey
+      : ref.watch(userAppRouterProvider).routerDelegate.navigatorKey;
   return ApiClient(
     baseUrl: DriverApiEndpoints.baseUrl,
     localStorage: ref.watch(localStorageServiceProvider),

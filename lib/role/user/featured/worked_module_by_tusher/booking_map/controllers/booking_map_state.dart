@@ -13,6 +13,7 @@ class BookingMapState {
   final LatLng? currentLocation;
   final LatLng? driverLatLng;
   final String? checkoutUrl;
+  final String? tipCheckoutUrl;
 
   final RideBookingStatus status;
   final double routeDistanceKm;
@@ -29,6 +30,7 @@ class BookingMapState {
     this.polylines = const {},
     this.pickupLatLng,
     this.checkoutUrl,
+    this.tipCheckoutUrl,
     this.dropLatLng,
     this.currentLocation,
     this.driverLatLng,
@@ -48,6 +50,7 @@ class BookingMapState {
     LatLng? pickupLatLng,
     LatLng? dropLatLng,
     String? checkoutUrl,
+    String? tipCheckoutUrl,
     LatLng? currentLocation,
     LatLng? driverLatLng,
     RideBookingStatus? status,
@@ -62,6 +65,7 @@ class BookingMapState {
       isLoading: isLoading ?? this.isLoading,
       markers: markers ?? this.markers,
       checkoutUrl: checkoutUrl ?? this.checkoutUrl,
+      tipCheckoutUrl: tipCheckoutUrl ?? this.tipCheckoutUrl,
       polylines: polylines ?? this.polylines,
       pickupLatLng: pickupLatLng ?? this.pickupLatLng,
       dropLatLng: dropLatLng ?? this.dropLatLng,

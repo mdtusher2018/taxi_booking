@@ -20,6 +20,7 @@ import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/model/create_ride_response.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/model/driver_live_location_update.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/model/pricing_model.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/model/tips_model.dart';
 import '../model/driver_info_model.dart';
 
 final bookingMapControllerProvider =
@@ -361,7 +362,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
       AppLogger.i("Ride created with ID: ${rideResponse.data.id}");
     } catch (e) {
       state = state.copyWith(status: RideBookingStatus.initial);
-      CustomToast.showToast(message: e.toString());
+      CustomToast.showToast(message: e.toString(), isError: true);
     } finally {
       state = state.copyWith(isLoading: false);
     }
@@ -378,17 +379,67 @@ class BookingMapController extends StateNotifier<BookingMapState>
         state = state.copyWith(status: RideBookingStatus.searchingDriver);
 
         socketService.on(SocketEvents.rideAccepted, (data) {
-          state = state.copyWith(
-            acceptedDriverInfo: RideAcceptResponse.fromJson(data).driverInfo,
-          );
+          final driverInfo = RideAcceptResponse.fromJson(data).driverInfo;
 
-          listenAllAfterRideAccepted();
-
-          if (state.acceptedDriverInfo != null) {
+          socketService.on(SocketEvents.driverCurrentLocation, (data) {
+            AppLogger.i(data.toString());
+            final response = DriverCurrentLocationResponse.fromJson(data);
             state = state.copyWith(
               driverLatLng: LatLng(
-                state.acceptedDriverInfo!.location!.coordinates!.last,
-                state.acceptedDriverInfo!.location!.coordinates!.first,
+                response.driverCurrentLocation.latitude,
+                response.driverCurrentLocation.longitude,
+              ),
+            );
+            onDriverLocationChanged();
+          });
+
+          socketService.on(SocketEvents.driverArrived, (data) {
+            Set<Marker> updatedMarkers = Set<Marker>.from(state.markers);
+
+            updatedMarkers.removeWhere((m) => m.markerId.value == 'pickup');
+            state = state.copyWith(
+              markers: updatedMarkers,
+              status: RideBookingStatus.driverArived,
+            );
+          });
+          socketService.on(SocketEvents.updateDriverLocationAfterRideStart, (
+            data,
+          ) {
+            AppLogger.i(data.toString());
+
+            final response = DriverCurrentLocationResponse.fromJson(data);
+            state = state.copyWith(
+              driverLatLng: LatLng(
+                response.driverCurrentLocation.latitude,
+                response.driverCurrentLocation.longitude,
+              ),
+            );
+            onDriverLocationChanged();
+          });
+
+          socketService.on(SocketEvents.rideStarted, (data) {
+            state = state.copyWith(status: RideBookingStatus.rideStarted);
+            onDriverLocationChanged();
+          });
+
+          socketService.on(SocketEvents.unreadMessage, (data) {});
+          socketService.on(SocketEvents.rideEnded, (data) {
+            AppLogger.i(data.toString());
+            Set<Marker> updatedMarkers = Set<Marker>.from(state.markers);
+
+            updatedMarkers.removeWhere((m) => m.markerId.value == 'drop');
+            state = state.copyWith(
+              markers: updatedMarkers,
+              status: RideBookingStatus.rideCompleted,
+            );
+          });
+
+          if (driverInfo != null) {
+            state = state.copyWith(
+              acceptedDriverInfo: driverInfo,
+              driverLatLng: LatLng(
+                driverInfo.location!.coordinates!.last,
+                driverInfo.location!.coordinates!.first,
               ),
             );
 
@@ -400,39 +451,52 @@ class BookingMapController extends StateNotifier<BookingMapState>
         CustomToast.showToast(message: "Payment Authorization Faield");
       }
     } catch (e) {
-      CustomToast.showToast(message: e.toString());
+      CustomToast.showToast(message: e.toString(), isError: true);
     } finally {
       state = state.copyWith(isLoading: false);
     }
   }
 
-  void listenAllAfterRideAccepted() {
-    socketService.on(SocketEvents.driverCurrentLocation, (data) {
-      final response = DriverCurrentLocationResponse.fromJson(data);
+  Future<void> paymentConfirm() async {
+    final response = await apiService.post(
+      UserApiEndpoints.paymentConfirmed(state.rideId),
+      {},
+    );
+
+    if (response['success'] == true) {
+      state = state.copyWith(status: RideBookingStatus.giveReview);
+    } else {
+      CustomToast.showToast(message: "Payment Confirmed Failed,Try again");
+    }
+  }
+
+  Future<void> giveReview() async {
+    final response = await apiService.post(
+      UserApiEndpoints.giveReview(state.rideId),
+      {},
+    );
+
+    if (response['success'] == true) {
+      state = state.copyWith(status: RideBookingStatus.tipProcessing);
+    } else {
+      CustomToast.showToast(message: "Payment Confirmed Failed,Try again");
+    }
+  }
+
+  Future<void> payTips({required num tipAmount}) async {
+    final response = await apiService.post(
+      UserApiEndpoints.payTips(state.rideId),
+      {"tipAmount": tipAmount},
+    );
+
+    if (response['statusCode'] == 201) {
       state = state.copyWith(
-        driverLatLng: LatLng(
-          response.driverCurrentLocation.latitude,
-          response.driverCurrentLocation.longitude,
-        ),
+        tipCheckoutUrl: TipsResponse.fromJson(response).data.checkoutUrl,
       );
-      onDriverLocationChanged();
-    });
-
-    socketService.on(SocketEvents.driverArrived, (data) {
-      final updatedMarkers = Set<Marker>.from(state.markers);
-      updatedMarkers.removeWhere((m) => m.markerId.value == 'pickup');
-      state = state.copyWith(
-        markers: updatedMarkers,
-        status: RideBookingStatus.driverArived,
+    } else {
+      CustomToast.showToast(
+        message: response['message'] ?? "Field to Tip Compleate, Try again",
       );
-    });
-
-    socketService.on(SocketEvents.rideStarted, (data) {
-      state = state.copyWith(status: RideBookingStatus.rideStarted);
-      onDriverLocationChanged();
-    });
-
-    socketService.on(SocketEvents.unreadMessage, (data) {});
-    socketService.on(SocketEvents.rideEnded, (data) {});
+    }
   }
 }

@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/di/service.dart';
+import 'package:taxi_booking/core/services/storage/storage_key.dart';
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/core/routes/user_app_routes.dart';
 
-class UserSplashView extends StatefulWidget {
+class UserSplashView extends ConsumerStatefulWidget {
   const UserSplashView({super.key});
 
   @override
-  State<UserSplashView> createState() => _UserSplashViewState();
+  ConsumerState<UserSplashView> createState() => _UserSplashViewState();
 }
 
-class _UserSplashViewState extends State<UserSplashView>
+class _UserSplashViewState extends ConsumerState<UserSplashView>
     with SingleTickerProviderStateMixin {
   // Animation states
   double logoScale = 0.0;
@@ -65,9 +68,17 @@ class _UserSplashViewState extends State<UserSplashView>
     await Future.delayed(const Duration(milliseconds: 800));
 
     // Phase 4
-    setState(() {
-      buttonsOpacity = 1.0;
-    });
+    await Future.delayed(const Duration(milliseconds: 800));
+    final token = await ref
+        .read(localStorageServiceProvider)
+        .readKey(StorageKey.accessToken);
+    if (token != null) {
+      context.go(UserAppRoutes.rootView);
+    } else {
+      setState(() {
+        buttonsOpacity = 1.0;
+      });
+    }
   }
 
   @override

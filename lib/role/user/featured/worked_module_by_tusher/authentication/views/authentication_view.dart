@@ -140,6 +140,7 @@ class _AuthenticationViewState extends ConsumerState<UserAuthenticationView> {
                           phone: validationController.loginPhoneController.text,
                           password:
                               validationController.loginPasswordController.text,
+                          rememberMe: authState.rememberMe,
                         );
                       },
                     ),

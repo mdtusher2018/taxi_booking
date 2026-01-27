@@ -86,39 +86,11 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
         path: DriverAppRoutes.dashboardView,
         builder: (context, state) => DriverRootView(),
       ),
-      // GoRoute(
-      //   path: DriverAppRoutes.notificationView,
-      //   builder: (context, state) => const NotificationView(),
-      // ),
-      // GoRoute(
-      //   path: DriverAppRoutes.chatView,
-      //   builder: (context, state) => const ChatListView(),
-      // ),
-      // GoRoute(
-      //   path: DriverAppRoutes.walletView,
-      //   builder: (context, state) => WalletView(),
-      // ),
-      // GoRoute(
-      //   path: DriverAppRoutes.rideHistoryView,
-      //   builder: (context, state) => RideHistoryView(),
-      // ),
-      // GoRoute(
-      //   path: DriverAppRoutes.customerSupportView,
-      //   builder: (context, state) => const CustomerSupportView(),
-      // ),
 
-      // GoRoute(
-      //   path: DriverAppRoutes.paymentView,
-      //   builder: (context, state) => const PaymentView(),
-      // ),
-      // GoRoute(
-      //   path: DriverAppRoutes.callView,
-      //   builder: (context, state) => const CallView(),
-      // ),
-      // GoRoute(
-      //   path: DriverAppRoutes.addTaxiDashboardView,
-      //   builder: (context, state) => const AddTaxiDashboardView(),
-      // ),
+
+
+
+
     ],
   );
 });

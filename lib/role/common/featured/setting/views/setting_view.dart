@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/routes/common_app_pages.dart';
+import 'package:taxi_booking/core/routes/driver_app_routes.dart';
+import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/main.dart';
 import 'package:taxi_booking/resource/common_dialog/custom_dialog.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
@@ -221,7 +224,22 @@ class _SettingViewState extends ConsumerState<SettingView> {
                   message: 'Are you sure you want to log out?',
                   NegativebuttonText: 'Cancel',
                   PositivvebuttonText: "Log out",
-                  onPositiveButtonPressed: () => Navigator.pop(context),
+                  onPositiveButtonPressed: () async {
+                    await ref.read(localStorageServiceProvider).clearAll();
+                    if (mounted) {
+                      if (ref.read(appRole.notifier).state == AppRole.driver) {
+                        context.go(
+                          DriverAppRoutes.authenticationView,
+                          extra: {"isLogin": true},
+                        );
+                      } else {
+                        context.go(
+                          UserAppRoutes.authenticationView,
+                          extra: {"isLogin": true},
+                        );
+                      }
+                    }
+                  },
                   onNegativeButtonPressed: () => Navigator.pop(context),
                 );
               },

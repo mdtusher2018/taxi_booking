@@ -71,6 +71,7 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
     required String phone,
     required String password,
     required BuildContext context,
+    required bool rememberMe,
   }) async {
     try {
       state = state.copyWith(isLoading: true);
@@ -80,6 +81,11 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
       final loginResponse = SignInResponse.fromJson(response);
 
       if (loginResponse.statusCode == 200 && loginResponse.data != null) {
+        if (rememberMe) {
+          localStorage.disableSessionMode(false);
+        }
+        localStorage.saveKey(StorageKey.rememberMe, rememberMe);
+
         final token = loginResponse.data!.accessToken;
         await localStorage.saveKey(StorageKey.accessToken, token);
         context.go(UserAppRoutes.rootView);
