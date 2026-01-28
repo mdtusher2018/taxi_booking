@@ -6,11 +6,11 @@ enum RideBookingStatus {
   driverOnTheWay,
   driverArived,
   rideStarted,
-  rideCompleted,
+  destinationReached,
+  rideEnded,
   rideCancelled,
   giveReview,
   tipProcessing,
   paymentFailed,
   rideFailed,
-  rideEnded,
 }

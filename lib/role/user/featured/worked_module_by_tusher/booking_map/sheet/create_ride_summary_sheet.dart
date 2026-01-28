@@ -49,8 +49,7 @@ class _SummarySheetState extends ConsumerState<SummarySheet> {
       pricing: controller.selectedPriceModel!,
       distanceKm: controller.routeDistanceKm,
       durationMin: controller.tripDurationMin,
-      surgeMultiplier: controller.surgeMultiplier
-      
+      surgeMultiplier: controller.surgeMultiplier,
     );
   }
 

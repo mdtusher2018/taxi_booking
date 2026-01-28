@@ -24,6 +24,8 @@ class SocketEvents {
   static const String updateDriverLocation = 'update-driver-location';
   static const String updateDriverLocationAfterRideStart =
       'ride-start-after-driver-location';
+  static const String driverArrivedDropLocation =
+      'driver-arrived-dropoff-location';
 
   // =========================
   // CHAT / MESSAGE EVENTS

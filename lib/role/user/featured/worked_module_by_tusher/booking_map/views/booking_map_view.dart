@@ -6,18 +6,21 @@ import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
+import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/sheet/ride_end_sheet.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/views/pay_tip_webview.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/give_review_driver_sheet.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/sheet/searching_driver_sheet.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/views/payment_authorized_webview_page.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/driver_arrived.dart';
-import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/on_the_destination_way.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/sheet/on_the_destination_way_sheet.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/ride_compleate_card.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/tips_view_sheet.dart';
 import '../../../../../../resource/common_widget/custom_network_image.dart';
 import '../controllers/booking_map_controller.dart';
 import '../sheet/destination_picker_sheet.dart';
 import '../widget/search_widget.dart';
-import '../widget/arriving_card.dart';
+import '../sheet/arriving_sheet.dart';
 
 class UserBookingMapView extends ConsumerStatefulWidget {
   const UserBookingMapView({super.key});
@@ -49,15 +52,18 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
       if (previous?.tipCheckoutUrl != next.tipCheckoutUrl &&
           next.tipCheckoutUrl != null) {
         // final paymentResult =
-        await Navigator.push<TipResult>(
+        final tipresult = await Navigator.push<TipResult>(
           context,
           MaterialPageRoute(
             builder: (_) =>
-                PaymentWebViewPage(checkoutUrl: next.tipCheckoutUrl!),
+                PayTipWebViewPage(checkoutUrl: next.tipCheckoutUrl!),
           ),
         );
-
-        // ref.read(bookingMapControllerProvider.notifier).rideEmit(paymentResult);
+        if (tipresult == TipResult.success) {
+          ref.read(bookingMapControllerProvider.notifier).rideEnd();
+        } else {
+          CustomToast.showToast(message: "Trip Provide Faild", isError: true);
+        }
       }
 
       if (previous?.pickupLatLng != next.pickupLatLng) {
@@ -144,7 +150,7 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               bottom: 100,
               left: 16,
               right: 16,
-              child: ArrivingCard(
+              child: ArrivingSheet(
                 onCancel: () {
                   controller.onRideCancel();
                 },
@@ -167,14 +173,14 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               bottom: 100, // Position from the bottom of the screen
               left: 16,
               right: 16,
-              child: OnYourWayCard(
+              child: OnYourWaySheet(
                 onCancel: () {
                   controller
                       .onRideCancel(); // Call the function to cancel the ride
                 },
               ),
             ),
-          if (state.status == RideBookingStatus.rideCompleted)
+          if (state.status == RideBookingStatus.destinationReached)
             Positioned(
               bottom: 100, // Position from the bottom of the screen
               left: 16,
@@ -194,12 +200,20 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               right: 16,
               child: GiveReviewSheet(),
             ),
-          if (state.status == RideBookingStatus.initial) //   tipprocerssing,
+          if (state.status ==
+              RideBookingStatus.tipProcessing) //   tipprocerssing,
             Positioned(
               bottom: 100, // Position from the bottom of the screen
               left: 16,
               right: 16,
               child: GiveTipsSheet(),
+            ),
+          if (state.status == RideBookingStatus.rideEnded) //   tipprocerssing,
+            Positioned(
+              bottom: 100, // Position from the bottom of the screen
+              left: 16,
+              right: 16,
+              child: RideEndSheet(),
             ),
         ],
       ),

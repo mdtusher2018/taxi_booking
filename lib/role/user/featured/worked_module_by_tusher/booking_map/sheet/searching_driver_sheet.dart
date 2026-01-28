@@ -5,7 +5,7 @@ import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 
 // Creating a class to handle the Draggable BottomSheet
 class SearchingDriverBottomSheet extends ConsumerStatefulWidget {
-  SearchingDriverBottomSheet({super.key});
+  const SearchingDriverBottomSheet({super.key});
 
   @override
   ConsumerState<SearchingDriverBottomSheet> createState() =>

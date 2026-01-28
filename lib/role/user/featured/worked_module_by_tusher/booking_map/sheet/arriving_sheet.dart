@@ -9,13 +9,13 @@ import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import '../../../../../../resource/common_widget/custom_network_image.dart';
 import '../views/cancel_booking_view.dart';
 
-class ArrivingCard extends ConsumerStatefulWidget {
+class ArrivingSheet extends ConsumerStatefulWidget {
   final VoidCallback? onCancel;
 
-  ArrivingCard({super.key, this.onCancel});
+  ArrivingSheet({super.key, this.onCancel});
 
   @override
-  ConsumerState<ArrivingCard> createState() => _ArrivingCardState();
+  ConsumerState<ArrivingSheet> createState() => _ArrivingCardState();
 
   static Widget _buildActionButton(
     IconData icon,
@@ -38,7 +38,7 @@ class ArrivingCard extends ConsumerStatefulWidget {
   }
 }
 
-class _ArrivingCardState extends ConsumerState<ArrivingCard> {
+class _ArrivingCardState extends ConsumerState<ArrivingSheet> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(bookingMapControllerProvider);
@@ -190,7 +190,7 @@ class _ArrivingCardState extends ConsumerState<ArrivingCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ArrivingCard._buildActionButton(
+              ArrivingSheet._buildActionButton(
                 Icons.close,
                 Colors.grey[200]!,
                 Colors.grey[600]!,
@@ -206,7 +206,7 @@ class _ArrivingCardState extends ConsumerState<ArrivingCard> {
                 },
               ),
 
-              ArrivingCard._buildActionButton(
+              ArrivingSheet._buildActionButton(
                 Icons.chat_bubble_outline,
                 const Color(0xffFFC107),
                 Colors.white,
@@ -226,7 +226,7 @@ class _ArrivingCardState extends ConsumerState<ArrivingCard> {
                   );
                 },
               ),
-              ArrivingCard._buildActionButton(
+              ArrivingSheet._buildActionButton(
                 Icons.phone,
                 const Color(0xffFFC107),
                 Colors.white,

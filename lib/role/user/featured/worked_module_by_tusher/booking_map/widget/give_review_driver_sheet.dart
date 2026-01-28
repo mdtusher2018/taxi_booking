@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:taxi_booking/resource/app_colors/app_colors.dart';
+import 'package:taxi_booking/core/utilitis/image_utils.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
-import 'package:taxi_booking/resource/common_widget/custom_switch_widget.dart';
+import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/controllers/booking_map_controller.dart';
 
 import '../../../../../../resource/utilitis/common_style.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,9 +19,12 @@ class GiveReviewSheet extends ConsumerStatefulWidget {
 class _ProfessionalDriverArrivedCardState
     extends ConsumerState<GiveReviewSheet> {
   double _rating = 3.0;
-  bool _shareMessage = true;
+  final TextEditingController reviewController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(bookingMapControllerProvider);
+    final controller = ref.read(bookingMapControllerProvider.notifier);
+
     return Container(
       height: MediaQuery.sizeOf(context).height * 0.6,
       decoration: const BoxDecoration(
@@ -47,24 +51,27 @@ class _ProfessionalDriverArrivedCardState
             // Driver info
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 24,
                   backgroundImage: NetworkImage(
-                    "https://i.pravatar.cc/150?img=3",
+                    getFullImagePath(state.acceptedDriverInfo?.image ?? ""),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      "Arlene McCoy",
+                      state.acceptedDriverInfo?.name ?? "Unnamed Driver",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text("Driver", style: TextStyle(color: Colors.grey)),
+                    Text(
+                      state.acceptedDriverInfo?.vehicle?.name ?? "car name",
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ],
                 ),
               ],
@@ -126,8 +133,9 @@ class _ProfessionalDriverArrivedCardState
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const TextField(
+              child: TextField(
                 maxLines: 4,
+                controller: reviewController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Hey Arlene! Write your message here ...",
@@ -136,35 +144,59 @@ class _ProfessionalDriverArrivedCardState
             ),
             const SizedBox(height: 20),
 
-            // Toggle
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Expanded(
-                  child: Text(
-                    "Share your message with other taxi passenger.",
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
-                CustomSwitchWidget(
-                  scale: 0.8,
-                  value: _shareMessage,
-                  onChanged: (val) {
-                    setState(() {
-                      _shareMessage = val;
-                    });
-                  },
-                  activeColor: AppColors.mainColor,
-                ),
-              ],
-            ),
+            // // Toggle
+            // Row(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     const Expanded(
+            //       child: Text(
+            //         "Share your message with other taxi passenger.",
+            //         style: TextStyle(fontSize: 14),
+            //       ),
+            //     ),
+            //     CustomSwitchWidget(
+            //       scale: 0.8,
+            //       value: _shareMessage,
+            //       onChanged: (val) {
+            //         setState(() {
+            //           _shareMessage = val;
+            //         });
+            //       },
+            //       activeColor: AppColors.mainColor,
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 20),
 
             // Next button
             CustomButton(
               title: 'Submit Review',
-              onTap: () {},
+              onTap: () {
+                if (_rating <= 0) {
+                  CustomToast.showToast(
+                    message: "Please give a rating ⭐",
+                    isError: true,
+                  );
+
+                  return;
+                }
+
+                // Review validation
+                if (reviewController.text.trim().isEmpty) {
+                  CustomToast.showToast(
+                    message: "Please write a review ✍️",
+                    isError: true,
+                  );
+
+                  return;
+                }
+
+                controller.giveReview(
+                  ratting: _rating,
+                  review: reviewController.text.trim(),
+                );
+              },
               widget: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

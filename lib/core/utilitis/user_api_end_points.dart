@@ -26,5 +26,5 @@ class UserApiEndpoints {
       "payment/confirmed-authorization/$rideId";
   static String payTips(String rideId) => "tips/create-tips/$rideId";
 
-  static String giveReview(String rideId) => "tips/create-tips/$rideId";
+  static String giveReview(String rideId) => "tips/create-feedback/$rideId";
 }

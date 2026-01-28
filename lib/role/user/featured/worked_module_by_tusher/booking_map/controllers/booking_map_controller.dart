@@ -368,6 +368,10 @@ class BookingMapController extends StateNotifier<BookingMapState>
     }
   }
 
+  void rideEnd() {
+    state = state.copyWith(status: RideBookingStatus.rideEnded);
+  }
+
   Future<void> rideEmit(PaymentResult? result) async {
     try {
       if (result == PaymentResult.success) {
@@ -423,16 +427,19 @@ class BookingMapController extends StateNotifier<BookingMapState>
           });
 
           socketService.on(SocketEvents.unreadMessage, (data) {});
-          socketService.on(SocketEvents.rideEnded, (data) {
-            AppLogger.i(data.toString());
-            Set<Marker> updatedMarkers = Set<Marker>.from(state.markers);
 
+          socketService.on(SocketEvents.driverArrivedDropLocation, (data) {
+            Set<Marker> updatedMarkers = Set<Marker>.from(state.markers);
             updatedMarkers.removeWhere((m) => m.markerId.value == 'drop');
             state = state.copyWith(
               markers: updatedMarkers,
-              status: RideBookingStatus.rideCompleted,
+              status: RideBookingStatus.destinationReached,
             );
           });
+
+          // socketService.on(SocketEvents.rideEnded, (data) {
+          //   state = state.copyWith(status: RideBookingStatus.giveReview);
+          // });
 
           if (driverInfo != null) {
             state = state.copyWith(
@@ -470,16 +477,20 @@ class BookingMapController extends StateNotifier<BookingMapState>
     }
   }
 
-  Future<void> giveReview() async {
+  Future<void> giveReview({
+    required num ratting,
+    required String review,
+  }) async {
+    AppLogger.i("ratting: $ratting\n Review: $review");
     final response = await apiService.post(
       UserApiEndpoints.giveReview(state.rideId),
-      {},
+      {"rating": ratting, "note": review},
     );
 
-    if (response['success'] == true) {
+    if (response['statusCode'] == 201) {
       state = state.copyWith(status: RideBookingStatus.tipProcessing);
     } else {
-      CustomToast.showToast(message: "Payment Confirmed Failed,Try again");
+      CustomToast.showToast(message: "Feedback Faield,Try again");
     }
   }
 

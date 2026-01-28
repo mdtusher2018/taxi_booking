@@ -28,16 +28,15 @@ class _PayTipWebViewPageState extends State<PayTipWebViewPage> {
             final url = request.url;
 
             AppLogger.i(url);
-            if (url.contains("confirm-payment")) {
+            if (url.contains("tips/confirmed-tips-payment")) {
               Navigator.pop(context, TipResult.success);
               return NavigationDecision.prevent;
             }
 
-            if (url.contains("payment-failed")) {
+            if (url.contains("failed-tips-payment")) {
               Navigator.pop(context, TipResult.failed);
               return NavigationDecision.prevent;
             }
-
             return NavigationDecision.navigate;
           },
         ),

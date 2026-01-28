@@ -6,17 +6,18 @@ import '../views/cancel_booking_view.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/controllers/booking_map_controller.dart';
 
 // Create the Professional Driver Arrived Card
-class OnYourWayCard extends ConsumerStatefulWidget {
+class OnYourWaySheet extends ConsumerStatefulWidget {
   final VoidCallback? onCancel;
 
-  const OnYourWayCard({super.key, this.onCancel});
+  const OnYourWaySheet({super.key, this.onCancel});
 
   @override
-  ConsumerState<OnYourWayCard> createState() =>
+  ConsumerState<OnYourWaySheet> createState() =>
       _ProfessionalDriverArrivedCardState();
 }
 
-class _ProfessionalDriverArrivedCardState extends ConsumerState<OnYourWayCard> {
+class _ProfessionalDriverArrivedCardState
+    extends ConsumerState<OnYourWaySheet> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(bookingMapControllerProvider);

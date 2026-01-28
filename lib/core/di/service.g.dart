@@ -55,7 +55,7 @@ final class LocalStorageServiceProvider
 }
 
 String _$localStorageServiceHash() =>
-    r'759cc6fa47a6a11e641f9d930754b8a44cf841b4';
+    r'1aa5e2f357005bad352077a5fa5e25f47761c55b';
 
 @ProviderFor(snackbarService)
 final snackbarServiceProvider = SnackbarServiceProvider._();
@@ -142,7 +142,7 @@ final class ApiClientProvider
   }
 }
 
-String _$apiClientHash() => r'76050a8544e84573f94115cab99975bcf1a46263';
+String _$apiClientHash() => r'02da8c86da15406ea914e91949d03c2d1746cc39';
 
 @ProviderFor(apiService)
 final apiServiceProvider = ApiServiceProvider._();
