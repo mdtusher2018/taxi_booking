@@ -11,6 +11,8 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authen
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/views/transport_selection_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/driver/view/my_drivers.dart';
 import 'package:taxi_booking/core/routes/driver_app_routes.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/all_vehicales_view.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/my_vehicales_view.dart';
 
 final driverAppRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -44,6 +46,20 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: DriverAppRoutes.transportSelectionView,
         builder: (context, state) => DriverTransportSelectionView(),
+      ),
+      GoRoute(
+        path: DriverAppRoutes.myVehicals,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final isForAssign = extra?['isForAssign'] ?? false;
+          return MyVehiclesView(isForAssign: isForAssign);
+        },
+      ),
+      GoRoute(
+        path: DriverAppRoutes.allVehicals,
+        builder: (context, state) {
+          return AllVehiclesView();
+        },
       ),
       GoRoute(
         path: DriverAppRoutes.drivingLicenseAndBusinessInfoView,
@@ -86,11 +102,6 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
         path: DriverAppRoutes.dashboardView,
         builder: (context, state) => DriverRootView(),
       ),
-
-
-
-
-
     ],
   );
 });

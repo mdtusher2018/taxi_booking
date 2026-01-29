@@ -1,6 +1,5 @@
-// notifications_response_model.dart
-
 import 'package:taxi_booking/core/model/pagenation_meta_model.dart';
+import 'package:taxi_booking/core/utilitis/api_data_praser_helper.dart';
 
 class NotificationsResponse {
   final bool success;
@@ -17,15 +16,17 @@ class NotificationsResponse {
     required this.data,
   });
 
-  factory NotificationsResponse.fromJson(Map<String, dynamic> json) {
+  factory NotificationsResponse.fromJson(dynamic json) {
     return NotificationsResponse(
-      success: json['success'],
-      statusCode: json['statusCode'],
-      message: json['message'],
-      meta: Meta.fromJson(json['meta']),
-      data: List<NotificationItem>.from(
-        json['data'].map((x) => NotificationItem.fromJson(x)),
-      ),
+      success: JsonHelper.boolVal(json?['success']),
+      statusCode: JsonHelper.intVal(json?['statusCode']),
+      message: JsonHelper.stringVal(json?['message']),
+      meta: Meta.fromJson(json?['meta']),
+      data:
+          (json?['data'] as List<dynamic>?)
+              ?.map((x) => NotificationItem.fromJson(x))
+              .toList() ??
+          [],
     );
   }
 }
@@ -41,9 +42,9 @@ class NotificationItem {
   final String type;
   final String fcmToken;
   final bool forAdmin;
-  final DateTime date;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? date;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   NotificationItem({
     required this.id,
@@ -61,21 +62,21 @@ class NotificationItem {
     required this.updatedAt,
   });
 
-  factory NotificationItem.fromJson(Map<String, dynamic> json) {
+  factory NotificationItem.fromJson(dynamic json) {
     return NotificationItem(
-      id: json['_id'],
-      receiver: json['receiver'],
-      message: json['message'],
-      description: json['description'],
-      reference: json['reference'],
-      read: json['read'],
-      isDeleted: json['isDeleted'],
-      type: json['type'],
-      fcmToken: json['fcmToken'],
-      forAdmin: json['forAdmin'],
-      date: DateTime.parse(json['date']),
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      id: JsonHelper.stringVal(json?['_id']),
+      receiver: JsonHelper.stringVal(json?['receiver']),
+      message: JsonHelper.stringVal(json?['message']),
+      description: JsonHelper.stringVal(json?['description']),
+      reference: JsonHelper.stringVal(json?['reference']),
+      read: JsonHelper.boolVal(json?['read']),
+      isDeleted: JsonHelper.boolVal(json?['isDeleted']),
+      type: JsonHelper.stringVal(json?['type']),
+      fcmToken: JsonHelper.stringVal(json?['fcmToken']),
+      forAdmin: JsonHelper.boolVal(json?['forAdmin']),
+      date: JsonHelper.parseDate(json?['date']),
+      createdAt: JsonHelper.parseDate(json?['createdAt']),
+      updatedAt: JsonHelper.parseDate(json?['updatedAt']),
     );
   }
 }

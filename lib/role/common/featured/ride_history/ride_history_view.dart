@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
@@ -98,9 +99,11 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
                           item.dropOffLocation.coordinates.latitude.toDouble(),
                           item.dropOffLocation.coordinates.longitude.toDouble(),
                         ),
-                        dateFormatted: DateFormat(
-                          'EEE, dd MMM yyyy',
-                        ).format(item.createdAt),
+                        dateFormatted: item.createdAt != null
+                            ? DateFormat(
+                                'EEE, dd MMM yyyy',
+                              ).format(item.createdAt!)
+                            : 'No date',
                         duration: item.estimatedDurationMin.toInt(),
                         distance: item.estimatedDistanceKm.toDouble(),
                         fare: item.fare,
@@ -189,12 +192,14 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
       final date = ride.createdAt;
       String key;
 
-      if (_isToday(date)) {
+      if (isToday(date)) {
         key = 'Today';
-      } else if (_isYesterday(date)) {
+      } else if (isYesterday(date)) {
         key = 'Yesterday';
       } else {
-        key = DateFormat('MMM dd, yyyy').format(date);
+        key = date == null
+            ? 'No date'
+            : DateFormat('MMM dd, yyyy').format(date);
       }
 
       grouped.putIfAbsent(key, () => []);
@@ -202,20 +207,6 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
     }
 
     return grouped;
-  }
-
-  bool _isToday(DateTime date) {
-    final now = DateTime.now();
-    return date.year == now.year &&
-        date.month == now.month &&
-        date.day == now.day;
-  }
-
-  bool _isYesterday(DateTime date) {
-    final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return date.year == yesterday.year &&
-        date.month == yesterday.month &&
-        date.day == yesterday.day;
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:taxi_booking/core/model/pagenation_meta_model.dart';
+import 'package:taxi_booking/core/utilitis/api_data_praser_helper.dart';
 
 class Coordinates {
   num latitude;
@@ -6,8 +7,11 @@ class Coordinates {
 
   Coordinates({required this.latitude, required this.longitude});
 
-  factory Coordinates.fromJson(List<dynamic> json) {
-    return Coordinates(latitude: json[1], longitude: json[0]);
+  factory Coordinates.fromJson(List<dynamic>? json) {
+    return Coordinates(
+      latitude: JsonHelper.doubleVal(json?.elementAt(1), fallback: 0.0),
+      longitude: JsonHelper.doubleVal(json?.elementAt(0), fallback: 0.0),
+    );
   }
 }
 
@@ -22,11 +26,11 @@ class Location {
     required this.address,
   });
 
-  factory Location.fromJson(Map<String, dynamic> json) {
+  factory Location.fromJson(dynamic json) {
     return Location(
-      type: json['type'] ?? '',
-      coordinates: Coordinates.fromJson(json['coordinates'] ?? []),
-      address: json['address'] ?? '',
+      type: JsonHelper.stringVal(json?['type']),
+      coordinates: Coordinates.fromJson(json?['coordinates'] as List<dynamic>?),
+      address: JsonHelper.stringVal(json?['address']),
     );
   }
 }
@@ -46,13 +50,16 @@ class Fare {
     required this.totalFare,
   });
 
-  factory Fare.fromJson(Map<String, dynamic> json) {
+  factory Fare.fromJson(dynamic json) {
     return Fare(
-      baseFare: json['baseFare'] ?? 0.0,
-      distanceFare: json['distanceFare'] ?? 0.0,
-      timeFare: json['timeFare'] ?? 0.0,
-      surgeMultiplier: json['surgeMultiplier'] ?? 1.0,
-      totalFare: json['totalFare'] ?? 0.0,
+      baseFare: JsonHelper.doubleVal(json?['baseFare']),
+      distanceFare: JsonHelper.doubleVal(json?['distanceFare']),
+      timeFare: JsonHelper.doubleVal(json?['timeFare']),
+      surgeMultiplier: JsonHelper.doubleVal(
+        json?['surgeMultiplier'],
+        fallback: 1.0,
+      ),
+      totalFare: JsonHelper.doubleVal(json?['totalFare']),
     );
   }
 }
@@ -64,8 +71,8 @@ class Ride {
   Fare fare;
   num estimatedDistanceKm;
   num estimatedDurationMin;
-  DateTime createdAt;
-  DateTime updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   Ride({
     required this.id,
@@ -78,16 +85,16 @@ class Ride {
     required this.updatedAt,
   });
 
-  factory Ride.fromJson(Map<String, dynamic> json) {
+  factory Ride.fromJson(dynamic json) {
     return Ride(
-      id: json['_id'] ?? '',
-      pickupLocation: Location.fromJson(json['pickupLocation'] ?? {}),
-      dropOffLocation: Location.fromJson(json['dropOffLocation'] ?? {}),
-      fare: Fare.fromJson(json['fare'] ?? {}),
-      estimatedDistanceKm: json['estimatedDistanceKm'] ?? 0.0,
-      estimatedDurationMin: json['estimatedDurationMin'] ?? 0.0,
-      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
+      id: JsonHelper.stringVal(json?['_id']),
+      pickupLocation: Location.fromJson(json?['pickupLocation']),
+      dropOffLocation: Location.fromJson(json?['dropOffLocation']),
+      fare: Fare.fromJson(json?['fare']),
+      estimatedDistanceKm: JsonHelper.doubleVal(json?['estimatedDistanceKm']),
+      estimatedDurationMin: JsonHelper.doubleVal(json?['estimatedDurationMin']),
+      createdAt: JsonHelper.parseDate(json?['createdAt']),
+      updatedAt: JsonHelper.parseDate(json?['updatedAt']),
     );
   }
 }
@@ -107,15 +114,18 @@ class RideHistoryResponse {
     required this.result,
   });
 
-  factory RideHistoryResponse.fromJson(Map<String, dynamic> json) {
+  factory RideHistoryResponse.fromJson(dynamic json) {
+    final data = json?['data'] ?? {};
     return RideHistoryResponse(
-      success: json['success'] ?? false,
-      statusCode: json['statusCode'] ?? 200,
-      message: json['message'] ?? '',
-      meta: Meta.fromJson(json['data']['meta'] ?? {}),
-      result: List<Ride>.from(
-        (json['data']['result'] ?? []).map((x) => Ride.fromJson(x)),
-      ),
+      success: JsonHelper.boolVal(json?['success']),
+      statusCode: JsonHelper.intVal(json?['statusCode'], fallback: 200),
+      message: JsonHelper.stringVal(json?['message']),
+      meta: Meta.fromJson(data['meta']),
+      result:
+          (data['result'] as List<dynamic>?)
+              ?.map((x) => Ride.fromJson(x))
+              .toList() ??
+          [],
     );
   }
 }

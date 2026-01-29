@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
+import 'package:taxi_booking/main.dart';
 import 'package:taxi_booking/resource/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/role/common/featured/chat/controller/message_controller.dart';
@@ -84,7 +85,7 @@ class _MessageViewState extends ConsumerState<MessageView> {
               return _MessageBubble(
                 isMe: isMe,
                 message: msg.text,
-                images: msg.imageUrl ?? [],
+                images: msg.imageUrl,
               );
             },
           ),
@@ -146,66 +147,67 @@ class _MessageViewState extends ConsumerState<MessageView> {
                     },
                   ),
                 ),
-              Row(
-                children: [
-                  SizedBox(width: 8),
-                  InkWell(
-                    onTap: pickImages,
-                    child: Icon(Icons.image_rounded, size: 32),
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      controller: textEditingController,
-                      decoration: InputDecoration(
-                        hintText: "Type a message...",
-                        filled: true,
+              if (ref.read(appRole) == AppRole.user)
+                Row(
+                  children: [
+                    SizedBox(width: 8),
+                    InkWell(
+                      onTap: pickImages,
+                      child: Icon(Icons.image_rounded, size: 32),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: textEditingController,
+                        decoration: InputDecoration(
+                          hintText: "Type a message...",
+                          filled: true,
 
-                        fillColor: Colors.grey.shade100,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
+                          fillColor: Colors.grey.shade100,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(width: 8),
+                    const SizedBox(width: 8),
 
-                  /// Send Button
-                  InkWell(
-                    onTap: () {
-                      ref
-                          .read(messageControllerProvider.notifier)
-                          .sendMessage(
-                            receiverId: widget.reciverId,
-                            text: textEditingController.text.trim(),
-                            images: selectedImages,
-                          );
+                    /// Send Button
+                    InkWell(
+                      onTap: () {
+                        ref
+                            .read(messageControllerProvider.notifier)
+                            .sendMessage(
+                              receiverId: widget.reciverId,
+                              text: textEditingController.text.trim(),
+                              images: selectedImages,
+                            );
 
-                      textEditingController.clear();
-                      selectedImages.clear();
-                    },
-                    borderRadius: BorderRadius.circular(30),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: const BoxDecoration(
-                        color: Colors.blue,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 20,
+                        textEditingController.clear();
+                        selectedImages.clear();
+                      },
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: const BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.send,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
             ],
           ),
         ),

@@ -63,6 +63,7 @@ class _SettingViewState extends ConsumerState<SettingView> {
                     phone: 'loading...',
                   );
                 }
+
                 return ProfileHeader(
                   name: data.data.user.fullName,
                   phone: data.data.user.phone,
@@ -113,8 +114,13 @@ class _SettingViewState extends ConsumerState<SettingView> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => (data.data.role == "WithCar")
-                          ? WalletWithCarDriverView()
-                          : WalletWithoutCarDriverView(),
+                          ? WalletWithCarDriverView(
+                              name: data.data.user.fullName,
+                            )
+                          : WalletWithoutCarDriverView(
+                              id: data.data.user.id,
+                              name: data.data.user.fullName,
+                            ),
                     ),
                   );
                 }

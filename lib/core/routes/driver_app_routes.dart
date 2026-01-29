@@ -13,4 +13,6 @@ class DriverAppRoutes {
   static const emailVerificationView = '/emailVerificationView';
 
   static const myDriversView = '/myDrivers';
+  static const myVehicals = '/myVehicals';
+  static const allVehicals = '/allVehicals';
 }

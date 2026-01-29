@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
@@ -91,7 +92,7 @@ class _NotificationViewState extends ConsumerState<NotificationView> {
                         imageUrl: _resolveIcon(item.type),
                         title: item.message,
                         subtitle: item.description,
-                        dateTime: item.date,
+                        dateTime: item.date ?? DateTime.now(),
                         onTap: () {
                           debugPrint("Tapped notification: ${item.id}");
                         },
@@ -190,12 +191,12 @@ class _NotificationViewState extends ConsumerState<NotificationView> {
       final date = notification.date;
       String key;
 
-      if (_isToday(date)) {
+      if (isToday(date)) {
         key = 'Today';
-      } else if (_isYesterday(date)) {
+      } else if (isYesterday(date)) {
         key = 'Yesterday';
       } else {
-        key = DateFormat('MMM dd, yyyy').format(date);
+        key = DateFormat('MMM dd, yyyy').format(date ?? DateTime.now());
       }
 
       grouped.putIfAbsent(key, () => []);
@@ -203,20 +204,6 @@ class _NotificationViewState extends ConsumerState<NotificationView> {
     }
 
     return grouped;
-  }
-
-  bool _isToday(DateTime date) {
-    final now = DateTime.now();
-    return date.year == now.year &&
-        date.month == now.month &&
-        date.day == now.day;
-  }
-
-  bool _isYesterday(DateTime date) {
-    final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return date.year == yesterday.year &&
-        date.month == yesterday.month &&
-        date.day == yesterday.day;
   }
 }
 

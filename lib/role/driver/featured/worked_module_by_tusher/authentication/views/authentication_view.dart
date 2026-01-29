@@ -69,7 +69,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
   );
   // login
   final TextEditingController loginPhoneController = TextEditingController(
-    text: kDebugMode ? "+8801933141861" : null,
+    text: kDebugMode ? "+8801171291266" : null,
   );
   final TextEditingController loginPasswordController = TextEditingController(
     text: kDebugMode ? "password@!5" : null,

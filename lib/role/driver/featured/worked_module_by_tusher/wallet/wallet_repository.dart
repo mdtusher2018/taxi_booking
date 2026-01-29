@@ -4,6 +4,7 @@ import 'package:taxi_booking/core/base/result.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/wallet/models/revenue_report_response.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/wallet/models/wallet_by_driver_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/wallet/models/wallet_summary_response.dart';
 
 class WalletRepository extends Repository {
@@ -21,6 +22,17 @@ class WalletRepository extends Repository {
     return await asyncGuard(() async {
       final response = await apiService.get(DriverApiEndpoints.revenueChart);
       return RevenueReportResponse.fromJson(response);
+    });
+  }
+
+  Future<Result<DriverWalletByIdResponse, Failure>> fetchDriverWalletById({
+    required String id,
+  }) async {
+    return await asyncGuard(() async {
+      final response = await apiService.get(
+        DriverApiEndpoints.walletByDriverId(id),
+      );
+      return DriverWalletByIdResponse.fromJson(response);
     });
   }
 }

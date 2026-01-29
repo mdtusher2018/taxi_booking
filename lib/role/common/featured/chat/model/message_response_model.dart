@@ -1,10 +1,12 @@
+import 'package:taxi_booking/core/utilitis/api_data_praser_helper.dart';
+
 class ChatMessage {
   final String id;
   final String text;
-  final List<MessageImage>? imageUrl;
+  final List<MessageImage> imageUrl;
   final String sender;
   final String receiver;
-  final DateTime createdAt;
+  final DateTime? createdAt;
   final bool seen;
 
   ChatMessage({
@@ -17,19 +19,19 @@ class ChatMessage {
     required this.seen,
   });
 
-  factory ChatMessage.fromJson(Map<String, dynamic> json) {
+  factory ChatMessage.fromJson(dynamic json) {
     return ChatMessage(
-      id: json['_id'] ?? '',
-      text: json['text'] ?? '',
-      sender: json['sender'] ?? '',
-      imageUrl: (json['imageUrl'] as List<dynamic>?)
-          ?.map((e) => MessageImage.fromJson(e))
-          .toList(),
-      receiver: json['receiver'] ?? '',
-      seen: json['seen'] ?? false,
-      createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
-          : DateTime.now(),
+      id: JsonHelper.stringVal(json?['_id']),
+      text: JsonHelper.stringVal(json?['text']),
+      sender: JsonHelper.stringVal(json?['sender']),
+      receiver: JsonHelper.stringVal(json?['receiver']),
+      seen: JsonHelper.boolVal(json?['seen']),
+      imageUrl:
+          (json?['imageUrl'] as List<dynamic>?)
+              ?.map((e) => MessageImage.fromJson(e))
+              .toList() ??
+          [],
+      createdAt: JsonHelper.parseDate(json?['createdAt']),
     );
   }
 }
@@ -47,12 +49,12 @@ class ReceiverUser {
     required this.isOnline,
   });
 
-  factory ReceiverUser.fromJson(Map<String, dynamic> json) {
+  factory ReceiverUser.fromJson(dynamic json) {
     return ReceiverUser(
-      id: json['_id'] ?? '',
-      role: json['role'] ?? '',
-      user: User.fromJson(json['user'] ?? {}),
-      isOnline: json['isOnline'] ?? false,
+      id: JsonHelper.stringVal(json?['_id']),
+      role: JsonHelper.stringVal(json?['role']),
+      user: User.fromJson(json?['user']),
+      isOnline: JsonHelper.boolVal(json?['isOnline']),
     );
   }
 }
@@ -72,13 +74,18 @@ class User {
     required this.identityUploads,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(dynamic json) {
     return User(
-      id: json['_id'] ?? '',
-      fullName: json['fullName'] ?? 'Unnamed User',
-      phone: json['phone'] ?? '',
-      email: json['email'] ?? '',
-      identityUploads: json['identityUploads']?['selfie'] ?? '',
+      id: JsonHelper.stringVal(json?['_id']),
+      fullName: JsonHelper.stringVal(
+        json?['fullName'],
+        fallback: 'Unnamed User',
+      ),
+      phone: JsonHelper.stringVal(json?['phone']),
+      email: JsonHelper.stringVal(json?['email']),
+      identityUploads: JsonHelper.stringVal(
+        json?['identityUploads']?['selfie'],
+      ),
     );
   }
 }
@@ -98,17 +105,15 @@ class PreviousMessageResponse {
     required this.receiverUser,
   });
 
-  factory PreviousMessageResponse.fromJson(Map<String, dynamic> json) {
+  factory PreviousMessageResponse.fromJson(dynamic json) {
     return PreviousMessageResponse(
-      success: json['success'] ?? false,
-      statusCode: json['statusCode'] ?? 0,
-      message: json['message'] ?? '',
-      receiverUser: ReceiverUser.fromJson(
-        json['data']?['receiverDetails'] ?? {},
-      ),
+      success: JsonHelper.boolVal(json?['success']),
+      statusCode: JsonHelper.intVal(json?['statusCode']),
+      message: JsonHelper.stringVal(json?['message']),
+      receiverUser: ReceiverUser.fromJson(json?['data']?['receiverDetails']),
       data:
-          (json['data']['result'] as List?)
-              ?.map((item) => ChatMessage.fromJson(item))
+          (json?['data']?['result'] as List<dynamic>?)
+              ?.map((e) => ChatMessage.fromJson(e))
               .toList() ??
           [],
     );
@@ -121,7 +126,10 @@ class MessageImage {
 
   MessageImage({required this.key, required this.url});
 
-  factory MessageImage.fromJson(Map<String, dynamic> json) {
-    return MessageImage(key: json['key'], url: json['url']);
+  factory MessageImage.fromJson(dynamic json) {
+    return MessageImage(
+      key: JsonHelper.stringVal(json?['key']),
+      url: JsonHelper.stringVal(json?['url']),
+    );
   }
 }

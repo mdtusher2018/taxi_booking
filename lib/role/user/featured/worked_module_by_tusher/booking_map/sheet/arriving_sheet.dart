@@ -206,25 +206,31 @@ class _ArrivingCardState extends ConsumerState<ArrivingSheet> {
                 },
               ),
 
-              ArrivingSheet._buildActionButton(
-                Icons.chat_bubble_outline,
-                const Color(0xffFFC107),
-                Colors.white,
-                onTap: () {
-                  // Handle chat action
-                  // Get.snackbar('Chat', 'Opening chat with ${driver.name}');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return MessageView(
-                          reciverId: state.acceptedDriverInfo?.driverId ?? "",
-                          isDriverToDriverConversation: false,
-                        );
-                      },
-                    ),
-                  );
-                },
+              Badge(
+                isLabelVisible: state.haveUnreadMessage,
+                child: ArrivingSheet._buildActionButton(
+                  Icons.chat_bubble_outline,
+                  const Color(0xffFFC107),
+                  Colors.white,
+                  onTap: () {
+                    // Handle chat action
+                    // Get.snackbar('Chat', 'Opening chat with ${driver.name}');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MessageView(
+                            reciverId: state.acceptedDriverInfo?.driverId ?? "",
+                            isDriverToDriverConversation: false,
+                          );
+                        },
+                      ),
+                    );
+                    ref
+                        .read(bookingMapControllerProvider.notifier)
+                        .clearUnreadMessage();
+                  },
+                ),
               ),
               ArrivingSheet._buildActionButton(
                 Icons.phone,

@@ -1,3 +1,4 @@
+import 'package:taxi_booking/core/utilitis/api_data_praser_helper.dart';
 import 'package:taxi_booking/role/common/featured/chat/model/upload_file_response.dart';
 
 class ChatListItem {
@@ -11,11 +12,11 @@ class ChatListItem {
     required this.unreadMessageCount,
   });
 
-  factory ChatListItem.fromJson(Map<String, dynamic> json) {
+  factory ChatListItem.fromJson(Map<String, dynamic>? json) {
     return ChatListItem(
-      chat: Chat.fromJson(json['chat']),
-      message: Message.fromJson(json['message']),
-      unreadMessageCount: json['unreadMessageCount'] ?? 0,
+      chat: Chat.fromJson(json?['chat']),
+      message: Message.fromJson(json?['message']),
+      unreadMessageCount: JsonHelper.intVal(json?['unreadMessageCount']),
     );
   }
 }
@@ -24,8 +25,8 @@ class Chat {
   final String id;
   final List<Participant> participants;
   final String status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   Chat({
     required this.id,
@@ -35,15 +36,17 @@ class Chat {
     required this.updatedAt,
   });
 
-  factory Chat.fromJson(Map<String, dynamic> json) {
+  factory Chat.fromJson(dynamic json) {
     return Chat(
-      id: json['_id'],
-      participants: (json['participants'] as List<dynamic>? ?? [])
-          .map((e) => Participant.fromJson(e))
-          .toList(),
-      status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      id: JsonHelper.stringVal(json?['_id']),
+      participants:
+          (json?['participants'] as List<dynamic>?)
+              ?.map((e) => Participant.fromJson(e))
+              .toList() ??
+          [],
+      status: JsonHelper.stringVal(json?['status']),
+      createdAt: JsonHelper.parseDate(json?['createdAt']),
+      updatedAt: JsonHelper.parseDate(json?['updatedAt']),
     );
   }
 }
@@ -63,13 +66,13 @@ class Participant {
     required this.user,
   });
 
-  factory Participant.fromJson(Map<String, dynamic> json) {
+  factory Participant.fromJson(dynamic json) {
     return Participant(
-      id: json['_id'],
-      name: json['name'] ?? "Unnamed User",
-      email: json['email'] ?? "",
-      image: json['image'] ?? "",
-      user: json['user'] ?? "",
+      id: JsonHelper.stringVal(json?['_id']),
+      name: JsonHelper.stringVal(json?['name'], fallback: 'Unnamed User'),
+      email: JsonHelper.stringVal(json?['email']),
+      image: JsonHelper.stringVal(json?['image']),
+      user: JsonHelper.stringVal(json?['user']),
     );
   }
 }
@@ -97,21 +100,21 @@ class Message {
     required this.updatedAt,
   });
 
-  factory Message.fromJson(Map<String, dynamic> json) {
+  factory Message.fromJson(dynamic json) {
     return Message(
-      id: json['_id'],
-      text: json['text'] ?? "",
-      seen: json['seen'] ?? false,
-      sender: json['sender'] ?? "",
-      receiver: json['receiver'] ?? "",
-      chat: json['chat'] ?? "",
+      id: JsonHelper.stringVal(json?['_id']),
+      text: JsonHelper.stringVal(json?['text']),
+      seen: JsonHelper.boolVal(json?['seen']),
+      sender: JsonHelper.stringVal(json?['sender']),
+      receiver: JsonHelper.stringVal(json?['receiver']),
+      chat: JsonHelper.stringVal(json?['chat']),
       imageUrl:
-          (json['imageUrl'] as List<dynamic>?)
+          (json?['imageUrl'] as List<dynamic>?)
               ?.map((e) => UploadedFile.fromJson(e))
               .toList() ??
           [],
-      createdAt: DateTime.tryParse(json['createdAt']),
-      updatedAt: DateTime.tryParse(json['updatedAt']),
+      createdAt: JsonHelper.parseDate(json?['createdAt']),
+      updatedAt: JsonHelper.parseDate(json?['updatedAt']),
     );
   }
 }

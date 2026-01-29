@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:taxi_booking/core/utilitis/image_utils.dart';
 import 'package:taxi_booking/main.dart';
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
@@ -143,7 +144,7 @@ class ProfileHeader extends ConsumerWidget {
           Row(
             children: [
               NetworkCircleAvatar(
-                imageUrl: image,
+                imageUrl: getFullImagePath(image),
                 radius: 40,
                 fallback: Icon(Icons.person, size: 40),
               ),

@@ -185,7 +185,7 @@ class _HeaderSection extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DriverAvatar(isOnline: driver.isActive),
+        DriverAvatar(isOnline: driver.isActive, image: user.image ?? ""),
         const SizedBox(width: 14),
         Expanded(
           child: Column(
@@ -306,8 +306,9 @@ class _InfoRow extends StatelessWidget {
 
 class DriverAvatar extends StatelessWidget {
   final bool isOnline;
+  final String image;
 
-  const DriverAvatar({super.key, required this.isOnline});
+  const DriverAvatar({super.key, required this.isOnline, required this.image});
 
   @override
   Widget build(BuildContext context) {
@@ -316,6 +317,7 @@ class DriverAvatar extends StatelessWidget {
         CircleAvatar(
           radius: 26,
           backgroundColor: Colors.grey.shade300,
+          backgroundImage: NetworkImage(image),
           child: const Icon(Icons.person, size: 30, color: Colors.white),
         ),
         Positioned(

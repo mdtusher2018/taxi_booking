@@ -5,12 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_booking/core/routes/common_app_pages.dart';
+import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
-import 'package:taxi_booking/role/driver/featured/add_taxi_dashboard/views/add_taxi_dashboard_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_going_ride.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_the_way_sheet.dart';
@@ -107,8 +107,9 @@ class DriverHomeView extends ConsumerWidget {
 
                 InkWell(
                   onTap: () {
-                    MaterialPageRoute(
-                      builder: (context) => AddTaxiDashboardView(),
+                    context.push(
+                      DriverAppRoutes.myVehicals,
+                      extra: {"isForAssign": false},
                     );
                   },
 

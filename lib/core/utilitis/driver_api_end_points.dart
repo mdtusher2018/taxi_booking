@@ -46,6 +46,8 @@ class DriverApiEndpoints {
   static String driverOnline = "with-car-drivers/update-current-location";
 
   static String walletSummary = "with-car-drivers/calculate-wallet";
+  static String walletByDriverId(String id) =>
+      "with-car-drivers/driver-wallet/$id";
   static String revenueChart = "with-car-drivers/full-year-revenue-reports";
 
   //chat

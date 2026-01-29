@@ -1,3 +1,5 @@
+import 'package:taxi_booking/core/utilitis/api_data_praser_helper.dart';
+
 class ProfileResponse {
   final bool success;
   final int statusCode;
@@ -11,12 +13,12 @@ class ProfileResponse {
     required this.data,
   });
 
-  factory ProfileResponse.fromJson(Map<String, dynamic> json) {
+  factory ProfileResponse.fromJson(dynamic json) {
     return ProfileResponse(
-      success: json['success'],
-      statusCode: json['statusCode'],
-      message: json['message'],
-      data: ProfileData.fromJson(json['data']),
+      success: JsonHelper.boolVal(json?['success']),
+      statusCode: JsonHelper.intVal(json?['statusCode']),
+      message: JsonHelper.stringVal(json?['message']),
+      data: ProfileData.fromJson(json?['data']),
     );
   }
 }
@@ -28,11 +30,11 @@ class ProfileData {
 
   ProfileData({required this.id, required this.role, required this.user});
 
-  factory ProfileData.fromJson(Map<String, dynamic> json) {
+  factory ProfileData.fromJson(dynamic json) {
     return ProfileData(
-      id: json['_id'],
-      role: json['role'],
-      user: User.fromJson(json['user']),
+      id: JsonHelper.stringVal(json?['_id']),
+      role: JsonHelper.stringVal(json?['role']),
+      user: User.fromJson(json?['user'] ?? {}),
     );
   }
 }
@@ -86,9 +88,12 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['_id'],
-      fullName: json['fullName'] ?? json['fullname'] ?? "Unnamed User",
-      phone: json['phone'],
+      id: JsonHelper.stringVal(json['_id']),
+      fullName: JsonHelper.stringVal(
+        json['fullName'] ?? json['fullname'],
+        fallback: "Unnamed User",
+      ),
+      phone: JsonHelper.stringVal(json['phone'], fallback: "No number"),
       email: json['email'],
       status: json['status'],
       dateOfBirth: json['dateOfBirth'],
@@ -134,12 +139,12 @@ class Address {
     required this.country,
   });
 
-  factory Address.fromJson(Map<String, dynamic> json) {
+  factory Address.fromJson(dynamic json) {
     return Address(
-      street: json['street'],
-      postalCode: json['postalCode'],
-      city: json['city'],
-      country: json['country'],
+      street: JsonHelper.stringVal(json?['street']),
+      postalCode: JsonHelper.stringVal(json?['postalCode']),
+      city: JsonHelper.stringVal(json?['city']),
+      country: JsonHelper.stringVal(json?['country']),
     );
   }
 }
@@ -157,12 +162,12 @@ class DriverLicenseUploads {
     required this.driverPermitBack,
   });
 
-  factory DriverLicenseUploads.fromJson(Map<String, dynamic> json) {
+  factory DriverLicenseUploads.fromJson(dynamic json) {
     return DriverLicenseUploads(
-      driverLicenseFront: json['driverLicenseFront'],
-      driverLicenseBack: json['driverLicenseBack'],
-      driverPermitFront: json['driverPermitFront'],
-      driverPermitBack: json['driverPermitBack'],
+      driverLicenseFront: JsonHelper.stringVal(json?['driverLicenseFront']),
+      driverLicenseBack: JsonHelper.stringVal(json?['driverLicenseBack']),
+      driverPermitFront: JsonHelper.stringVal(json?['driverPermitFront']),
+      driverPermitBack: JsonHelper.stringVal(json?['driverPermitBack']),
     );
   }
 }
@@ -178,11 +183,11 @@ class IdentityUploads {
     required this.idBack,
   });
 
-  factory IdentityUploads.fromJson(Map<String, dynamic> json) {
+  factory IdentityUploads.fromJson(dynamic json) {
     return IdentityUploads(
-      selfie: json['selfie'],
-      idFront: json['idFront'],
-      idBack: json['idBack'],
+      selfie: JsonHelper.stringVal(json?['selfie']),
+      idFront: JsonHelper.stringVal(json?['idFront']),
+      idBack: JsonHelper.stringVal(json?['idBack']),
     );
   }
 }
@@ -210,17 +215,23 @@ class BusinessLicenseDetails {
     this.companyRegistrationCertificate,
   });
 
-  factory BusinessLicenseDetails.fromJson(Map<String, dynamic> json) {
+  factory BusinessLicenseDetails.fromJson(dynamic json) {
     return BusinessLicenseDetails(
-      businessType: json['businessType'],
-      organizationNumber: json['organizationNumber'],
-      taxId: json['taxId'],
-      licenseNumber: json['licenseNumber'],
-      issuingMunicipality: json['issuingMunicipality'],
-      licenseExpiryDate: json['licenseExpiryDate'],
-      operatingLicenseDocument: json['operatingLicenseDocument'],
-      commercialInsuranceCertificate: json['commercialInsuranceCertificate'],
-      companyRegistrationCertificate: json['companyRegistrationCertificate'],
+      businessType: JsonHelper.stringVal(json?['businessType']),
+      organizationNumber: JsonHelper.stringVal(json?['organizationNumber']),
+      taxId: JsonHelper.stringVal(json?['taxId']),
+      licenseNumber: JsonHelper.stringVal(json?['licenseNumber']),
+      issuingMunicipality: JsonHelper.stringVal(json?['issuingMunicipality']),
+      licenseExpiryDate: JsonHelper.stringVal(json?['licenseExpiryDate']),
+      operatingLicenseDocument: JsonHelper.stringVal(
+        json?['operatingLicenseDocument'],
+      ),
+      commercialInsuranceCertificate: JsonHelper.stringVal(
+        json?['commercialInsuranceCertificate'],
+      ),
+      companyRegistrationCertificate: JsonHelper.stringVal(
+        json?['companyRegistrationCertificate'],
+      ),
     );
   }
 }
@@ -236,11 +247,18 @@ class Location {
     required this.address,
   });
 
-  factory Location.fromJson(Map<String, dynamic> json) {
+  factory Location.fromJson(dynamic json) {
+    List<double> coords = [];
+    if (json?['coordinates'] is List) {
+      coords = (json['coordinates'] as List)
+          .map((e) => JsonHelper.doubleVal(e))
+          .toList();
+    }
+
     return Location(
-      type: json['type'],
-      coordinates: List<double>.from(json['coordinates']),
-      address: json['address'],
+      type: JsonHelper.stringVal(json?['type']),
+      coordinates: coords,
+      address: JsonHelper.stringVal(json?['address']),
     );
   }
 }

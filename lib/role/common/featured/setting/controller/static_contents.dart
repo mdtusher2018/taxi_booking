@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
 import 'package:taxi_booking/role/common/di/repository.dart';
-import 'package:taxi_booking/role/common/featured/setting/repository/privacy_policy_model.dart';
+import 'package:taxi_booking/role/common/featured/setting/model/privacy_policy_model.dart';
 import 'package:taxi_booking/role/common/featured/setting/repository/static_content_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

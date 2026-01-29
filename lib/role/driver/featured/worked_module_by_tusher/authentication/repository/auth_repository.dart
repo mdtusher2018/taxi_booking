@@ -29,6 +29,13 @@ class AuthRepository extends Repository {
 
       final response = SignInResponse.fromJson(res);
 
+      if (response.data?.user.role == "User") {
+        throw UnauthorizedException(
+          "Access denied: This account is not authorized to use the Driver app.",
+          requiredPermission: "Driver access",
+        );
+      }
+
       if (response.success) {
         if (rememberMe) {
           localStorageService.disableSessionMode(false);

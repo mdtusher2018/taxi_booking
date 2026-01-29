@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/wallet/controller/wallet_controller.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/wallet/models/wallet_by_driver_response.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/wallet/widgets/resueable_widgets.dart';
 
 class WalletWithoutCarDriverView extends ConsumerStatefulWidget {
-  const WalletWithoutCarDriverView({super.key});
-
+  const WalletWithoutCarDriverView({
+    super.key,
+    required this.id,
+    required this.name,
+  });
+  final String id;
+  final String name;
   @override
   ConsumerState<WalletWithoutCarDriverView> createState() => _WalletViewState();
 }
 
-class _WalletViewState extends ConsumerState<WalletWithoutCarDriverView> {
+class _WalletViewState extends ConsumerState<WalletWithoutCarDriverView>
+    with WalletReuseableWidgets {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    ref.read(walletControllerProvider.notifier).fetchWalletData();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref
+          .read(walletControllerProvider.notifier)
+          .driverWalletByIdData(driverId: widget.id);
+    });
   }
 
   @override
@@ -39,7 +52,7 @@ class _WalletViewState extends ConsumerState<WalletWithoutCarDriverView> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _driverCard(walletState),
+            _driverCard(walletState, name: widget.name),
             const SizedBox(height: 16),
             _thisMonthCard(walletState),
             const SizedBox(height: 16),
@@ -47,7 +60,7 @@ class _WalletViewState extends ConsumerState<WalletWithoutCarDriverView> {
             const SizedBox(height: 16),
             _trendCard(walletState),
             const SizedBox(height: 16),
-            _recentTrips(),
+            _recentTrips(walletState),
           ],
         ),
       ),
@@ -55,69 +68,41 @@ class _WalletViewState extends ConsumerState<WalletWithoutCarDriverView> {
   }
 
   // ---------------- DRIVER CARD ----------------
-  Widget _driverCard(WalletState state) {
-    if (state.loadingSummary) {
+  Widget _driverCard(WalletState state, {required String name}) {
+    if (state.loadingByDriverId) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.summaryError != null) {
-      return CustomText(title: state.summaryError!);
+    if (state.driverWalletByIdError != null) {
+      return CustomText(title: state.driverWalletByIdError!);
     }
 
-    final summary = state.summary;
+    final driverWalletByIdData = state.driverWalletByIdData;
 
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomText(
-            title: "—",
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          CustomText(title: "Driver . ID : ${"summary"}"),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: const Color(0xffFFF3CC),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.orange),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CustomText(title: "Total Earning"),
-                    const SizedBox(height: 4),
-                    CustomText(
-                      title: "\$${summary?.data.totalRevenue ?? 0}",
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return driverCard(
+      name: name,
+      totalEarn: driverWalletByIdData?.data.driverTotalEarning ?? 0,
     );
   }
 
   // ---------------- THIS MONTH CARD ----------------
   Widget _thisMonthCard(WalletState state) {
-    final summary = state.summary;
+    if (state.loadingByDriverId) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-    return _card(
+    if (state.driverWalletByIdError != null) {
+      return CustomText(title: state.driverWalletByIdError!);
+    }
+
+    final driverWalletByIdData = state.driverWalletByIdData;
+
+    return card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const CustomText(title: "This Month"),
-          CustomText(title: "summary?.data.month"),
+          CustomText(title: DateFormat.MMMM().format(DateTime.now())),
 
           const SizedBox(height: 12),
 
@@ -126,14 +111,21 @@ class _WalletViewState extends ConsumerState<WalletWithoutCarDriverView> {
             children: [
               _AmountTile(
                 title: "Gross",
-                value: "\$${summary?.data.monthlyGrowth ?? 0}",
+                value:
+                    "\$${(driverWalletByIdData?.data.isMonthEarningSummary.gross ?? 0).toStringAsFixed(2)}",
               ),
               _AmountTile(
                 title: "Commission",
-                value: "-\$${0}",
+                value:
+                    "-\$${(driverWalletByIdData?.data.isMonthEarningSummary.commission ?? 0).toStringAsFixed(2)}",
                 color: Colors.red,
               ),
-              _AmountTile(title: "Net", value: "\$${0}", color: Colors.green),
+              _AmountTile(
+                title: "Net",
+                value:
+                    "\$${(driverWalletByIdData?.data.isMonthEarningSummary.net ?? 0).toStringAsFixed(2)}",
+                color: Colors.green,
+              ),
             ],
           ),
         ],
@@ -143,26 +135,35 @@ class _WalletViewState extends ConsumerState<WalletWithoutCarDriverView> {
 
   // ---------------- STATS ROW ----------------
   Widget _statsRow(WalletState state) {
-    final summary = state.summary;
+    if (state.loadingByDriverId) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.driverWalletByIdError != null) {
+      return CustomText(title: state.driverWalletByIdError!);
+    }
+
+    final data = state.driverWalletByIdData;
 
     return Row(
       children: [
         Expanded(
-          child: _smallStatCard(
+          child: smallStatCard(
             icon: Icons.location_on,
             title: "Trips",
-            value: "${0}",
-            sub: "⭐ ${0} avg rating",
+            value: "${data?.data.isMonthSummary.totalTrips ?? 0}",
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _smallStatCard(
-            icon: Icons.attach_money,
-            title: "Monthly Revenue",
-            value: "\$${summary?.data.monthlyRevenue ?? 0}",
-            sub: "+${summary?.data.monthlyRevenue ?? 0}%",
-            subColor: Colors.green,
+          child: smallStatCard(
+            icon: Icons.star,
+            title: "Avg. rating",
+            value: (data?.data.isMonthSummary.avgRating ?? 0.0).toStringAsFixed(
+              1,
+            ),
+
+            subColor: AppColors.btnColor,
           ),
         ),
       ],
@@ -171,57 +172,30 @@ class _WalletViewState extends ConsumerState<WalletWithoutCarDriverView> {
 
   // ---------------- TREND ----------------
   Widget _trendCard(WalletState state) {
-    if (state.loadingChart) {
+    if (state.loadingByDriverId) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.chartError != null) {
+    if (state.driverWalletByIdError != null) {
       return CustomText(title: state.chartError!);
     }
-
-    final chart = state.chart?.data ?? [];
-
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CustomText(
-            title: "6 month Trends",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 12),
-
-          SizedBox(
-            height: 160,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: chart.map((e) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: e.revenue.toDouble(), // normalize if needed
-                      width: 10,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    CustomText(title: e.month),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-        ],
-      ),
-    );
+    return graphChart(state.driverWalletByIdData?.data.fullYearData ?? []);
   }
 
   // ---------------- RECENT TRIPS ----------------
-  Widget _recentTrips() {
-    return _card(
+  Widget _recentTrips(WalletState state) {
+    if (state.loadingByDriverId) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.driverWalletByIdError != null) {
+      return CustomText(title: state.driverWalletByIdError!);
+    }
+
+    final List<RecentTrip> data =
+        state.driverWalletByIdData?.data.recentTrips ?? [];
+
+    return card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -230,85 +204,59 @@ class _WalletViewState extends ConsumerState<WalletWithoutCarDriverView> {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
-          ...List.generate(3, (index) => _tripTile()),
-        ],
-      ),
-    );
-  }
 
-  Widget _tripTile() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.withOpacity(0.5)),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomText(title: "#001  14:30"),
-              CustomText(title: "⭐ 4.8"),
-            ],
-          ),
-          SizedBox(height: 6),
-          CustomText(title: "📍 Downtown"),
-          CustomText(title: "📍 Airport"),
-          SizedBox(height: 6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomText(title: "\$25.60  -\$4.60"),
-              CustomText(
-                title: "\$24.22 net",
-                style: TextStyle(color: Colors.green),
+          ...List.generate(data.length, (index) {
+            final trip = data[index];
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.withOpacity(0.5)),
+                borderRadius: BorderRadius.circular(12),
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Trip id + time
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CustomText(
+                        title:
+                            "#${trip.id.substring(trip.id.length - 4)}  "
+                            "${DateFormat('HH:mm').format(trip.createdAt)}",
+                      ),
+                      CustomText(title: trip.status),
+                    ],
+                  ),
 
-  // ---------------- REUSABLE ----------------
-  Widget _card({required Widget child}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: child,
-    );
-  }
+                  const SizedBox(height: 6),
 
-  Widget _smallStatCard({
-    required IconData icon,
-    required String title,
-    required String value,
-    required String sub,
-    Color subColor = Colors.grey,
-  }) {
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: Colors.green),
-          const SizedBox(height: 8),
-          CustomText(title: title),
-          CustomText(
-            title: value,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          CustomText(
-            title: sub,
-            style: TextStyle(color: subColor),
-          ),
+                  /// Addresses
+                  CustomText(title: "📍 ${trip.pickupAddress}", maxLines: 1),
+                  CustomText(title: "📍 ${trip.dropOffAddress}", maxLines: 1),
+
+                  const SizedBox(height: 6),
+
+                  /// Amounts
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CustomText(
+                        title:
+                            "Distance:  ${trip.distanceKm.toStringAsFixed(2)} KM  ",
+                      ),
+                      CustomText(
+                        title: "Earn: \$${(trip.tipAmount).toStringAsFixed(2)}",
+                        style: const TextStyle(color: Colors.green),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );

@@ -38,6 +38,7 @@ class AssignedDriversData {
     );
   }
 }
+
 class AssignedDriver {
   final String id;
   final AssignedBy assignedBy;
@@ -109,21 +110,27 @@ class User {
   final String id;
   final String phone;
   final String email;
+  final String name;
+  final String? image;
   final String status;
 
   User({
     required this.id,
     required this.phone,
     required this.email,
+    required this.name,
+    required this.image,
     required this.status,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['_id'],
-      phone: json['phone'],
-      email: json['email'],
-      status: json['status'],
+      phone: json['phone'] ?? "no number",
+      email: json['email'] ?? "no email",
+      name: json['fullName'] ?? "Unnamed Driver",
+      image: json['image'],
+      status: json['status'] ?? "none",
     );
   }
 }

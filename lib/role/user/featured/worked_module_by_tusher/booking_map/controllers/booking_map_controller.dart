@@ -372,6 +372,10 @@ class BookingMapController extends StateNotifier<BookingMapState>
     state = state.copyWith(status: RideBookingStatus.rideEnded);
   }
 
+  void clearUnreadMessage() {
+    state = state.copyWith(haveUnreadMessage: false);
+  }
+
   Future<void> rideEmit(PaymentResult? result) async {
     try {
       if (result == PaymentResult.success) {
@@ -395,6 +399,10 @@ class BookingMapController extends StateNotifier<BookingMapState>
               ),
             );
             onDriverLocationChanged();
+          });
+
+          socketService.on(SocketEvents.newMessage, (data) {
+            state = state.copyWith(haveUnreadMessage: true);
           });
 
           socketService.on(SocketEvents.driverArrived, (data) {

@@ -8,6 +8,7 @@ class BookingMapState {
   final Set<Marker> markers;
   final Set<Polyline> polylines;
 
+  final bool haveUnreadMessage;
   final LatLng? pickupLatLng;
   final LatLng? dropLatLng;
   final LatLng? currentLocation;
@@ -28,6 +29,7 @@ class BookingMapState {
     this.isLoading = false,
     this.markers = const {},
     this.polylines = const {},
+    this.haveUnreadMessage = false,
     this.pickupLatLng,
     this.checkoutUrl,
     this.tipCheckoutUrl,
@@ -48,6 +50,7 @@ class BookingMapState {
     Set<Marker>? markers,
     Set<Polyline>? polylines,
     LatLng? pickupLatLng,
+    bool? haveUnreadMessage,
     LatLng? dropLatLng,
     String? checkoutUrl,
     String? tipCheckoutUrl,
@@ -63,6 +66,7 @@ class BookingMapState {
   }) {
     return BookingMapState(
       isLoading: isLoading ?? this.isLoading,
+      haveUnreadMessage: haveUnreadMessage ?? this.haveUnreadMessage,
       markers: markers ?? this.markers,
       checkoutUrl: checkoutUrl ?? this.checkoutUrl,
       tipCheckoutUrl: tipCheckoutUrl ?? this.tipCheckoutUrl,

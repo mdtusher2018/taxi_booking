@@ -4,5 +4,6 @@ enum DriverStatus {
   onGoingToPick,
   reachedPickupLocation,
   rideStartrd,
+  reachedDestinationLocation,
   rideEnd,
 }

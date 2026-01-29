@@ -1,3 +1,5 @@
+import 'package:taxi_booking/core/utilitis/api_data_praser_helper.dart';
+
 class UploadFileResponse {
   final bool success;
   final int statusCode;
@@ -11,20 +13,20 @@ class UploadFileResponse {
     required this.data,
   });
 
-  factory UploadFileResponse.fromJson(Map<String, dynamic> json) {
+  factory UploadFileResponse.fromJson(dynamic json) {
     return UploadFileResponse(
-      success: json['success'],
-      statusCode: json['statusCode'],
-      message: json['message'],
-      data: UploadData.fromJson(json['data']),
+      success: JsonHelper.boolVal(json?['success']),
+      statusCode: JsonHelper.intVal(json?['statusCode']),
+      message: JsonHelper.stringVal(json?['message']),
+      data: UploadData.fromJson(json?['data']),
     );
   }
 }
 
 class UploadData {
   final String id;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final List<UploadedFile> file;
 
   UploadData({
@@ -34,22 +36,24 @@ class UploadData {
     required this.file,
   });
 
-  factory UploadData.fromJson(Map<String, dynamic> json) {
+  factory UploadData.fromJson(dynamic json) {
     return UploadData(
-      id: json['_id'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      file: (json['file'] as List)
-          .map((e) => UploadedFile.fromJson(e))
-          .toList(),
+      id: JsonHelper.stringVal(json?['_id']),
+      createdAt: JsonHelper.parseDate(json?['createdAt']),
+      updatedAt: JsonHelper.parseDate(json?['updatedAt']),
+      file:
+          (json?['file'] as List<dynamic>?)
+              ?.map((e) => UploadedFile.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
       'file': file.map((e) => e.toJson()).toList(),
     };
   }
@@ -62,8 +66,12 @@ class UploadedFile {
 
   UploadedFile({required this.id, required this.key, required this.url});
 
-  factory UploadedFile.fromJson(Map<String, dynamic> json) {
-    return UploadedFile(id: json['_id'], key: json['key'], url: json['url']);
+  factory UploadedFile.fromJson(dynamic json) {
+    return UploadedFile(
+      id: JsonHelper.stringVal(json?['_id']),
+      key: JsonHelper.stringVal(json?['key']),
+      url: JsonHelper.stringVal(json?['url']),
+    );
   }
 
   Map<String, dynamic> toJson() {

@@ -1,3 +1,5 @@
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/wallet/models/monthly_revenue_model.dart';
+
 class RevenueReportResponse {
   final bool success;
   final int statusCode;
@@ -20,16 +22,5 @@ class RevenueReportResponse {
           .map((e) => MonthlyRevenue.fromJson(e))
           .toList(),
     );
-  }
-}
-
-class MonthlyRevenue {
-  final String month;
-  final num revenue;
-
-  MonthlyRevenue({required this.month, required this.revenue});
-
-  factory MonthlyRevenue.fromJson(Map<String, dynamic> json) {
-    return MonthlyRevenue(month: json['month'], revenue: json['revenue']);
   }
 }

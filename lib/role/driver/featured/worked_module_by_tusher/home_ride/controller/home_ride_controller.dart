@@ -201,9 +201,12 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     ) {
       state = state.copyWith(haveUnreadMessage: true);
     });
-    
+
     repository.reachedPickupLocation().listen((response) {
       state = state.copyWith(status: DriverStatus.reachedPickupLocation);
+    });
+    repository.reachedDestinationLocation().listen((response) {
+      state = state.copyWith(status: DriverStatus.reachedDestinationLocation);
     });
 
     state = state.copyWith(

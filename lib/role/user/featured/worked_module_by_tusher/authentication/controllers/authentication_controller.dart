@@ -80,6 +80,13 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
       final response = await apiService.post(UserApiEndpoints.login, body);
       final loginResponse = SignInResponse.fromJson(response);
 
+      if (loginResponse.data?.user.role != "User") {
+        throw UnauthorizedException(
+          "Access denied: This account is not authorized to use the User app.",
+          requiredPermission: "User access",
+        );
+      }
+
       if (loginResponse.statusCode == 200 && loginResponse.data != null) {
         if (rememberMe) {
           localStorage.disableSessionMode(false);

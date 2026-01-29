@@ -7,6 +7,7 @@ import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
 import 'package:taxi_booking/core/services/storage/i_local_storage_service.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
+import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/common/featured/chat/model/message_response_model.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/driver_online_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
@@ -69,11 +70,15 @@ class HomeRideRepository extends Repository {
   }
 
   void rideAccept({required String rideId}) async {
-    await socketService.emit(SocketEvents.rideAccepted, {
-      {"accepted": true, "rideId": rideId},
-    });
+    try {
+      await socketService.emit(SocketEvents.rideAccepted, {
+        {"accepted": true, "rideId": rideId},
+      });
 
-    socketService.off(SocketEvents.rideRequest);
+      socketService.off(SocketEvents.rideRequest);
+    } catch (e) {
+      CustomToast.showToast(message: e.toString(), isError: true);
+    }
   }
 
   void rideDecline({required String rideId}) {
@@ -102,6 +107,17 @@ class HomeRideRepository extends Repository {
       if (data != null) {
         controller.add(true);
         socketService.off(SocketEvents.driverArrived);
+      }
+    });
+    return controller.stream;
+  }
+
+  Stream<bool> reachedDestinationLocation() {
+    final StreamController<bool> controller = StreamController<bool>();
+    socketService.on(SocketEvents.driverArrivedDropLocation, (data) {
+      if (data != null) {
+        controller.add(true);
+        socketService.off(SocketEvents.driverArrivedDropLocation);
       }
     });
     return controller.stream;
