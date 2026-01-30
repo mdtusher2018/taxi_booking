@@ -6,6 +6,7 @@ import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/services/storage/storage_key.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
+import 'package:taxi_booking/main.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/role/common/featured/chat/controller/chat_list_controller.dart';
 
@@ -82,7 +83,8 @@ class _ChatViewState extends ConsumerState<ChatListView> {
 
                     extra: {
                       'id': participant.id,
-                      'isDriverToDriverConversation': true,
+                      'oldChatting': true,
+                      'hideMessageTextfield': ref.read(appRole) == AppRole.user,
                     },
                   );
                 },

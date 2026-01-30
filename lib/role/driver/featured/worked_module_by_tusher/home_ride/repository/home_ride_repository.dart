@@ -139,12 +139,11 @@ class HomeRideRepository extends Repository {
     });
   }
 
-  void startRide({
+  Future<void> startRide({
     required double latitude,
     required double longitude,
     required String rideId,
     required double averageSpeedKmPH,
-    required Function(dynamic response)? onSuccess,
   }) async {
     await socketService.emit(SocketEvents.rideStarted, {
       "latitude": latitude,

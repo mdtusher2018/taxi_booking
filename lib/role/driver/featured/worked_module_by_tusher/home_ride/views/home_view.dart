@@ -132,7 +132,8 @@ class DriverHomeView extends ConsumerWidget {
             Positioned(bottom: 0, left: 0, right: 0, child: RequestListSheet()),
 
           /// ---------------- ON THE WAY SHEET ----------------
-          if (state.status == DriverStatus.onGoingToPick)
+          if (state.status == DriverStatus.onGoingToPick ||
+              state.status == DriverStatus.reachedPickupLocation)
             Positioned(bottom: 0, left: 0, right: 0, child: OnTheWaySheet()),
 
           /// ---------------- ONGOING RIDE SHEET ----------------

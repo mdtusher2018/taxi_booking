@@ -203,13 +203,41 @@ class _SettingViewState extends ConsumerState<SettingView> {
               },
             ),
 
-            SettingItemCard(
-              icon: Icon(Icons.support_agent, color: Colors.yellow.shade900),
-              title: "Customer Support",
-              onTap: () {
-                // Open customer support page or chat
+            state.when(
+              loading: () {
+                return SizedBox.shrink();
+              },
+              data: (data) {
+                if (data == null) {
+                  return SizedBox.shrink();
+                }
+
+                if (data.adminInfo?.adminId != null) {
+                  return SettingItemCard(
+                    icon: Icon(
+                      Icons.support_agent,
+                      color: Colors.yellow.shade900,
+                    ),
+                    title: "Customer Support",
+                    onTap: () {
+                      context.push(
+                        CommonAppRoutes.messagingView,
+                        extra: {
+                          'id': data.adminInfo!.adminId,
+                          'oldChatting': true,
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+              error: (error, stackTrace) {
+                return SizedBox.shrink();
               },
             ),
+
             SettingItemCard(
               icon: Icon(Icons.policy, color: Colors.yellow.shade900),
               title: "Security & Privacy",

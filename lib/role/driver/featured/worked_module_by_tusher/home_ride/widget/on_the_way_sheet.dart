@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/core/routes/common_app_pages.dart';
+import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
 import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
+import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/model/ride_request_response.dart';
 
@@ -236,10 +238,7 @@ class OnTheWaySheet extends ConsumerWidget {
 
                                     context.push(
                                       CommonAppRoutes.messagingView,
-                                      extra: {
-                                        'id': id,
-                                        'isDriverToDriverConversation': false,
-                                      },
+                                      extra: {'id': id},
                                     );
                                     ref
                                         .read(
@@ -270,13 +269,26 @@ class OnTheWaySheet extends ConsumerWidget {
                           title: "Start Ride",
                           border: Border.all(
                             width: 2,
-                            color: AppColors.btnColor,
+                            color:
+                                ref.watch(homeRideControllerProvider).status ==
+                                    DriverStatus.onGoingToPick
+                                ? AppColors.btnColor.withOpacity(0.5)
+                                : AppColors.btnColor,
                           ),
-                          onTap: () {
-                            ref
-                                .read(homeRideControllerProvider.notifier)
-                                .startRide(rideId: request.rideInfo.id);
-                          },
+                          onTap:
+                              (ref.watch(homeRideControllerProvider).status ==
+                                  DriverStatus.onGoingToPick)
+                              ? () {
+                                  CustomToast.showToast(
+                                    message:
+                                        "You need to reached in 50 meter of pickup location to start ride",
+                                  );
+                                }
+                              : () {
+                                  ref
+                                      .read(homeRideControllerProvider.notifier)
+                                      .startRide(rideId: request.rideInfo.id);
+                                },
                         ),
                       ],
                     )

@@ -1,8 +1,9 @@
 // ArrivingCard
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/utilitis/launch_url.dart';
-import 'package:taxi_booking/role/common/featured/chat/views/message_view.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/controllers/booking_map_controller.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 
@@ -213,19 +214,11 @@ class _ArrivingCardState extends ConsumerState<ArrivingSheet> {
                   const Color(0xffFFC107),
                   Colors.white,
                   onTap: () {
-                    // Handle chat action
-                    // Get.snackbar('Chat', 'Opening chat with ${driver.name}');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return MessageView(
-                            reciverId: state.acceptedDriverInfo?.driverId ?? "",
-                            isDriverToDriverConversation: false,
-                          );
-                        },
-                      ),
+                    context.push(
+                      CommonAppRoutes.messagingView,
+                      extra: {'id': state.acceptedDriverInfo?.driverId ?? ""},
                     );
+
                     ref
                         .read(bookingMapControllerProvider.notifier)
                         .clearUnreadMessage();

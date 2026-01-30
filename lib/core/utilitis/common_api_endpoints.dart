@@ -24,4 +24,5 @@ class CommonApiEndPoints {
 
   static var getProfile = "users/my-profile";
   static var privacyPolicy = "admin/get-privacy-policy";
+  static var adminInfo = "users/admin-support-info";
 }

@@ -26,7 +26,7 @@ Future<void> appinitalized() async {
 }
 
 final appRole = StateProvider<AppRole>((ref) {
-  return AppRole.user;
+  return AppRole.driver;
 });
 
 void main() async {

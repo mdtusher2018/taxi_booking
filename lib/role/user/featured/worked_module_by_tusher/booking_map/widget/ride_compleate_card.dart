@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
-import 'package:taxi_booking/role/common/featured/chat/views/message_view.dart';
 import '../views/cancel_booking_view.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/controllers/booking_map_controller.dart';
 
@@ -271,18 +272,10 @@ class _ProfessionalDriverArrivedCardState
                   onTap: () {
                     // Handle chat action
                     // Get.snackbar('Chat', 'Opening chat with ${driver.name}');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return MessageView(
-                            reciverId:
-                                state.acceptedDriverInfo?.driverId ??
-                                "", //custom
-                            isDriverToDriverConversation: false,
-                          );
-                        },
-                      ),
+
+                    context.push(
+                      CommonAppRoutes.messagingView,
+                      extra: {'id': state.acceptedDriverInfo?.driverId ?? ""},
                     );
                   },
                 ),

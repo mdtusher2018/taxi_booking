@@ -1,16 +1,19 @@
 import 'package:taxi_booking/core/utilitis/api_data_praser_helper.dart';
+import 'package:taxi_booking/role/common/featured/setting/model/support_info_model.dart';
 
 class ProfileResponse {
   final bool success;
   final int statusCode;
   final String message;
   final ProfileData data;
+  SupportInfoResponse? adminInfo;
 
   ProfileResponse({
     required this.success,
     required this.statusCode,
     required this.message,
     required this.data,
+    this.adminInfo,
   });
 
   factory ProfileResponse.fromJson(dynamic json) {

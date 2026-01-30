@@ -14,11 +14,14 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehica
 
 class MessageView extends ConsumerStatefulWidget {
   final String reciverId;
-  final bool isDriverToDriverConversation;
+  final bool oldChatting;
+  final bool hideMessageTextfield;
+
   const MessageView({
     super.key,
     required this.reciverId,
-    required this.isDriverToDriverConversation,
+    required this.oldChatting,
+    required this.hideMessageTextfield,
   });
 
   @override
@@ -61,7 +64,7 @@ class _MessageViewState extends ConsumerState<MessageView> {
         preferredSize: const Size.fromHeight(72),
         child: _ChatAppBar(
           user: state.receiver,
-          haveAssignButton: widget.isDriverToDriverConversation,
+          haveAssignButton: widget.oldChatting,
         ),
       ),
       body: state.loading
@@ -147,7 +150,8 @@ class _MessageViewState extends ConsumerState<MessageView> {
                     },
                   ),
                 ),
-              if (ref.read(appRole) == AppRole.user)
+              if ((!widget.hideMessageTextfield) ||
+                  state.receiver?.role == "Admin")
                 Row(
                   children: [
                     SizedBox(width: 8),
@@ -308,13 +312,13 @@ class _MessageBubble extends StatelessWidget {
   }
 }
 
-class _ChatAppBar extends StatelessWidget {
+class _ChatAppBar extends ConsumerWidget {
   final ReceiverUser? user;
   final bool haveAssignButton;
   const _ChatAppBar({this.user, required this.haveAssignButton});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
       backgroundColor: Colors.white,
       title: Row(
@@ -351,7 +355,7 @@ class _ChatAppBar extends StatelessWidget {
               ],
             ),
           ),
-          if (haveAssignButton)
+          if (haveAssignButton && ref.read(appRole) == AppRole.driver)
             InkWell(
               onTap: () {
                 Navigator.push(

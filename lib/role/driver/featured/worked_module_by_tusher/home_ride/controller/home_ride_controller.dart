@@ -48,9 +48,13 @@ class HomeRideController extends _$HomeRideController with MapMixin {
           cameraMove(latLng);
 
           /// 🔁 REDRAW ROUTE IF RIDE IS ACTIVE
-          if (state.status == DriverStatus.onGoingToPick &&
-              state.selectedRide != null) {
-            _drawRouteToPickup(state.selectedRide!);
+          if (state.selectedRide != null &&
+              (state.status == DriverStatus.onGoingToPick ||
+                  state.status == DriverStatus.rideStartrd)) {
+            _drawRoute(
+              ride: state.selectedRide!,
+              toDropOff: state.status == DriverStatus.rideStartrd,
+            );
           }
 
           state = state.copyWith(
@@ -70,32 +74,46 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     state = state.copyWith(markers: {}, polylines: {}, driverLocation: null);
   }
 
-  Future<void> _drawRouteToPickup(RideRequestResponse ride) async {
+  Future<void> _drawRoute({
+    required RideRequestResponse ride,
+    required bool toDropOff,
+  }) async {
     LatLng? driverLatLng = state.driverLocation;
 
     if (driverLatLng == null) {
       final position = await getCurrentLocation();
       if (position == null) return;
-
       driverLatLng = LatLng(position.latitude, position.longitude);
     }
 
     final pickupLatLng = LatLng(
-      ride.rideInfo.pickupLocation.coordinates[1], // latitude
-      ride.rideInfo.pickupLocation.coordinates[0], // longitude
+      ride.rideInfo.pickupLocation.coordinates[1],
+      ride.rideInfo.pickupLocation.coordinates[0],
     );
 
-    /// Pickup marker
-    final pickupMarker = Marker(
-      markerId: const MarkerId("pickup"),
-      position: pickupLatLng,
-      icon: pickupIcon ?? BitmapDescriptor.defaultMarker,
+    final dropoffLatLng = LatLng(
+      ride.rideInfo.dropOffLocation.coordinates[1],
+      ride.rideInfo.dropOffLocation.coordinates[0],
     );
+
+    final marker = toDropOff
+        ? Marker(
+            markerId: const MarkerId('drop-off'),
+            position: dropoffLatLng,
+            icon: BitmapDescriptor.defaultMarker,
+          )
+        : Marker(
+            markerId: const MarkerId('pickup'),
+            position: pickupLatLng,
+            icon: pickupIcon ?? BitmapDescriptor.defaultMarker,
+          );
 
     final result = await polylinePoints.getRouteBetweenCoordinatesV2(
       request: RoutesApiRequest(
         origin: PointLatLng(driverLatLng.latitude, driverLatLng.longitude),
-        destination: PointLatLng(pickupLatLng.latitude, pickupLatLng.longitude),
+        destination: toDropOff
+            ? PointLatLng(dropoffLatLng.latitude, dropoffLatLng.longitude)
+            : PointLatLng(pickupLatLng.latitude, pickupLatLng.longitude),
         travelMode: TravelMode.driving,
       ),
     );
@@ -106,21 +124,21 @@ class HomeRideController extends _$HomeRideController with MapMixin {
       return;
     }
 
-    final routePoints = result.primaryRoute!.polylinePoints!
-        .map((p) => LatLng(p.latitude, p.longitude))
-        .toList();
-
     final polyline = Polyline(
       polylineId: const PolylineId('route'),
       color: Colors.blue,
       width: 5,
-      points: routePoints,
+      points: result.primaryRoute!.polylinePoints!
+          .map((p) => LatLng(p.latitude, p.longitude))
+          .toList(),
     );
 
     state = state.copyWith(
       markers: {
-        ...state.markers.where((m) => m.markerId.value != "pickup"),
-        pickupMarker,
+        ...state.markers.where(
+          (m) => m.markerId.value != 'pickup' && m.markerId.value != 'drop-off',
+        ),
+        marker,
       },
       polylines: {polyline},
     );
@@ -194,7 +212,8 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     repository.rideAccept(rideId: ride.rideInfo.id);
 
     _startLocationUpdates(ride.rideInfo.id, ride.passengerInfo.id);
-    _drawRouteToPickup(ride);
+
+    _drawRoute(ride: ride, toDropOff: false);
 
     repository.listenMessageBadge(receiverId: ride.passengerInfo.id).listen((
       chatMessage,
@@ -203,7 +222,10 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     });
 
     repository.reachedPickupLocation().listen((response) {
-      state = state.copyWith(status: DriverStatus.reachedPickupLocation);
+      state = state.copyWith(
+        status: DriverStatus.reachedPickupLocation,
+        markers: {...state.markers.where((m) => m.markerId.value != 'pickup')},
+      );
     });
     repository.reachedDestinationLocation().listen((response) {
       state = state.copyWith(status: DriverStatus.reachedDestinationLocation);
@@ -256,16 +278,18 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     final position = await getCurrentLocation();
 
     if (position != null) {
-      repository.startRide(
+      await repository.startRide(
         latitude: position.latitude,
         longitude: position.longitude,
 
         rideId: rideId,
         averageSpeedKmPH: 1,
-        onSuccess: (response) {
-          state = state.copyWith(status: DriverStatus.rideStartrd);
-        },
       );
+
+      state = state.copyWith(status: DriverStatus.rideStartrd, polylines: {});
+
+      // 🔥 force immediate destination route
+      _drawRoute(ride: state.selectedRide!, toDropOff: true);
     }
   }
 

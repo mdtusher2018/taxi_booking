@@ -13,7 +13,8 @@ final commonAppRoutes = [
       final reciverId = state.extra as Map<String, dynamic>;
       return MessageView(
         reciverId: reciverId['id'],
-        isDriverToDriverConversation: reciverId['isDriverToDriverConversation'],
+        oldChatting: reciverId['oldChatting'] ?? false,
+        hideMessageTextfield: reciverId['hideMessageTextfield'] ?? false,
       );
     },
   ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/utilitis/launch_url.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
-import 'package:taxi_booking/role/common/featured/chat/views/message_view.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
 import '../views/cancel_booking_view.dart';
@@ -192,17 +193,12 @@ class _ProfessionalDriverArrivedCardState
                 const Color(0xffFFC107),
                 Colors.white,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return MessageView(
-                          reciverId: state.acceptedDriverInfo?.driverId ?? "",
-                          isDriverToDriverConversation: false,
-                        );
-                      },
-                    ),
-                  );
+                  
+                     context.push(
+                      CommonAppRoutes.messagingView,
+                      extra: {'id': state.acceptedDriverInfo?.driverId ?? ""},
+                    );
+     
                 },
               ),
               DriverArrivedCard._buildActionButton(
