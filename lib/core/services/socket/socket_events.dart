@@ -28,6 +28,11 @@ class SocketEvents {
       'driver-arrived-dropoff-location';
 
   // =========================
+  // PAYMENT EVENTS
+  // =========================
+  static const String driverRecivedPayment = 'driver-payment-confirmation';
+
+  // =========================
   // CHAT / MESSAGE EVENTS
   // =========================
 

@@ -59,7 +59,7 @@ class _DriverSplashViewState extends ConsumerState<DriverSplashView> {
         .read(localStorageServiceProvider)
         .readKey(StorageKey.accessToken);
     if (token != null) {
-      context.go(DriverAppRoutes.dashboardView);
+      context.go(DriverAppRoutes.driverRoot);
     } else {
       setState(() {
         buttonsOpacity = 1.0;

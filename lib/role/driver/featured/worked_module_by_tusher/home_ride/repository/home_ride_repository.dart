@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/repository.dart';
 import 'package:taxi_booking/core/base/result.dart';
+import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
 import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
@@ -115,10 +116,12 @@ class HomeRideRepository extends Repository {
   Stream<bool> reachedDestinationLocation() {
     final StreamController<bool> controller = StreamController<bool>();
     socketService.on(SocketEvents.driverArrivedDropLocation, (data) {
-      if (data != null) {
-        controller.add(true);
-        socketService.off(SocketEvents.driverArrivedDropLocation);
-      }
+      AppLogger.d(
+        tag: "===============>>>>>>>>>>>>>>>>",
+        "Driver reached drop-off location",
+      );
+      controller.add(true);
+      socketService.off(SocketEvents.driverArrivedDropLocation);
     });
     return controller.stream;
   }
@@ -153,10 +156,24 @@ class HomeRideRepository extends Repository {
     });
   }
 
-  void endRide({
-    required String rideId,
-    required Function(dynamic response)? onSuccess,
-  }) async {
-    await socketService.emit(SocketEvents.rideEnded, {"rideId": rideId});
+  Future<bool?> endRide({required String rideId}) async {
+    try {
+      await socketService.emit(SocketEvents.rideEnded, {"rideId": rideId});
+      return true;
+    } catch (e) {
+      CustomToast.showToast(message: e.toString());
+    }
+    return null;
+  }
+
+  Stream<bool> listenForPaymentConfirm() {
+    final StreamController<bool> controller = StreamController<bool>();
+    socketService.on(SocketEvents.driverRecivedPayment, (data) {
+      if (data != null) {
+        controller.add(true);
+        socketService.off(SocketEvents.driverRecivedPayment);
+      }
+    });
+    return controller.stream;
   }
 }

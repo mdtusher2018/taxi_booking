@@ -6,4 +6,5 @@ enum DriverStatus {
   rideStartrd,
   reachedDestinationLocation,
   rideEnd,
+  paymentRecived
 }

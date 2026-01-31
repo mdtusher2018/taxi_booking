@@ -25,7 +25,7 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       GoRoute(
-        path: DriverAppRoutes.dashboardView,
+        path: DriverAppRoutes.driverRoot,
         builder: (context, state) => DriverRootView(),
       ),
       GoRoute(
@@ -99,7 +99,7 @@ final driverAppRouterProvider = Provider<GoRouter>((ref) {
 
       //old
       GoRoute(
-        path: DriverAppRoutes.dashboardView,
+        path: DriverAppRoutes.driverRoot,
         builder: (context, state) => DriverRootView(),
       ),
     ],

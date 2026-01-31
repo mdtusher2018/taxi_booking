@@ -150,9 +150,12 @@ class OngoingRideSheet extends ConsumerWidget {
 
   Widget _endRideButton(WidgetRef ref, String rideId) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: CustomButton(title: "End Ride", onTap: () {
-      ref.read(homeRideControllerProvider.notifier).endRide(rideId: rideId);
-    }),
+    child: CustomButton(
+      title: "Cancle Ride",
+      onTap: () {
+        // ref.read(homeRideControllerProvider.notifier).endRide(rideId: rideId);
+      },
+    ),
   );
 }
 

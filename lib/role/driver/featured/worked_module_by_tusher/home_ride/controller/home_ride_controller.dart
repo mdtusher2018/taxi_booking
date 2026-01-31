@@ -228,7 +228,15 @@ class HomeRideController extends _$HomeRideController with MapMixin {
       );
     });
     repository.reachedDestinationLocation().listen((response) {
-      state = state.copyWith(status: DriverStatus.reachedDestinationLocation);
+      repository.listenForPaymentConfirm().listen((response) {
+        state = state.copyWith(status: DriverStatus.paymentRecived);
+      });
+      state = state.copyWith(
+        status: DriverStatus.reachedDestinationLocation,
+        markers: {
+          ...state.markers.where((m) => m.markerId.value != 'drop-off'),
+        },
+      );
     });
 
     state = state.copyWith(
@@ -297,12 +305,9 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     final position = await getCurrentLocation();
 
     if (position != null) {
-      repository.endRide(
-        rideId: rideId,
-        onSuccess: (response) {
-          state = state.copyWith(status: DriverStatus.rideEnd);
-        },
-      );
+      await repository.endRide(rideId: rideId);
+
+      state = state.copyWith(status: DriverStatus.rideEnd);
     }
   }
 }

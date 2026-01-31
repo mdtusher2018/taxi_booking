@@ -14,7 +14,9 @@ import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_going_ride.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_the_way_sheet.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/payment_recived_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/request_bottom_sheet.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/trip_details_bottom_sheet.dart';
 
 class DriverHomeView extends ConsumerWidget {
   const DriverHomeView({super.key});
@@ -23,7 +25,15 @@ class DriverHomeView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.read(homeRideControllerProvider.notifier);
     final state = ref.watch(homeRideControllerProvider);
-
+    ref.listen(homeRideControllerProvider, (previous, next) {
+      if (next.status == DriverStatus.rideEnd) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const PaymentRecivedView(),
+        );
+      }
+    });
     return Scaffold(
       body: Stack(
         children: [
@@ -139,6 +149,15 @@ class DriverHomeView extends ConsumerWidget {
           /// ---------------- ONGOING RIDE SHEET ----------------
           if (state.status == DriverStatus.rideStartrd)
             Positioned(bottom: 0, left: 0, right: 0, child: OngoingRideSheet()),
+
+          /// ---------------- END RIDE SHEET ----------------
+          if (state.status == DriverStatus.reachedDestinationLocation)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: WaitingForPaymentConfirmSheet(),
+            ),
         ],
       ),
     );

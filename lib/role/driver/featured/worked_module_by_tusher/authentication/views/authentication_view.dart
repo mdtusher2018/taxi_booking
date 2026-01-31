@@ -86,7 +86,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
           if (data != null && data is SignInResponse) {
             // Success: show snackbar and navigate
             ref.watch(snackbarServiceProvider).showSuccess("Login successful!");
-            Future.microtask(() => context.push(DriverAppRoutes.dashboardView));
+            Future.microtask(() => context.push(DriverAppRoutes.driverRoot));
           }
         },
         loading: () {

@@ -1,7 +1,7 @@
 class DriverAppRoutes {
   static const splashView = '/splash';
 
-  static const dashboardView = '/dashboard';
+  static const driverRoot = '/dashboard';
 
   static const homeView = '/home';
 

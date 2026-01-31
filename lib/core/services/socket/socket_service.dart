@@ -83,7 +83,7 @@ class SocketService {
       AppLogger.i("Emit event: $event with $data");
 
       final response = await _socket!.emitWithAckAsync(event, data);
-
+      AppLogger.i("Emit event: $event with response: $response");
       return response;
     } catch (e) {
       AppLogger.e('Socket Error: $e');
