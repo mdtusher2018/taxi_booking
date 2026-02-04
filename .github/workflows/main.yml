@@ -28,8 +28,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+
+
+
       - name: User Build APK
-        run: flutter build apk --release --dart-define=APP_ROLE=user
+        run: flutter build apk --dart-define=APP_ROLE=user
 
       - name: Upload User APK
         uses: actions/upload-artifact@v4

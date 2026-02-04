@@ -33,14 +33,13 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-             multiDexEnabled = true
+        multiDexEnabled = true
     }
+
 
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
-            minifyEnabled = false
-            shrinkResources = false
         }
     }
 }

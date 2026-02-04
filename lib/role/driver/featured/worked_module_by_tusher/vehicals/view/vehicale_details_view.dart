@@ -13,7 +13,6 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehica
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/vehicale_details_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/edit_vehicale_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:remixicon/remixicon.dart';
 
 enum _MenuAction { edit, delete }
 
@@ -147,7 +146,7 @@ class _VehicleDetailsViewState extends ConsumerState<VehicleDetailsView> {
                         value: _MenuAction.edit,
                         child: Row(
                           children: const [
-                            Icon(RemixIcons.edit_2_fill, size: 20),
+                            Icon(Icons.edit, size: 20),
                             SizedBox(width: 10),
                             Text("Edit"),
                           ],

@@ -32,7 +32,7 @@ final appRole = StateProvider<AppRole>((ref) {
 });
 
 void main() async {
-  appinitalized();
+  await appinitalized();
   runApp(const ProviderScope(child: MyApp()));
 }
 
