@@ -84,6 +84,9 @@ class SocketService {
 
       final response = await _socket!.emitWithAckAsync(event, data);
       AppLogger.i("Emit event: $event with response: $response");
+      if (response?['success'] == false) {
+        throw Exception(response['message'] ?? "Unknown error");
+      }
       return response;
     } catch (e) {
       AppLogger.e('Socket Error: $e');

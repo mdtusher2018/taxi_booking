@@ -1,7 +1,10 @@
 // Show the Searching Driver Bottom Sheet
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/controllers/booking_map_controller.dart';
 
 // Creating a class to handle the Draggable BottomSheet
 class SearchingDriverBottomSheet extends ConsumerStatefulWidget {
@@ -50,9 +53,14 @@ class _SearchingDriverBottomSheetState
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       InkWell(
-                        onTap: () {
-                          // Handle cancel action (close the bottom sheet)
-                          Navigator.of(context).pop();
+                        onTap: () async {
+                          final result = await ref
+                              .read(bookingMapControllerProvider.notifier)
+                              .onRideCancel();
+                          if (result && mounted) {
+                            ref.invalidate(bookingMapControllerProvider);
+                            context.go(UserAppRoutes.rootView);
+                          }
                         },
                         child: const Icon(Icons.cancel),
                       ),

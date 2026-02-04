@@ -15,6 +15,8 @@ class SocketEvents {
   static const String rideStarted = 'ride-started';
   static const String rideEnded = 'ride-ended';
   static const String rideCancelled = 'ride-cancelled';
+  static const String rideCancelledPassenger = 'ride-cancelled-passenger';
+  static const String rideCancelledDriver = 'ride-cancelled-driver';
 
   // =========================
   // DRIVER EVENTS

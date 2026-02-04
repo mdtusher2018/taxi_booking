@@ -227,8 +227,17 @@ class BookingMapController extends StateNotifier<BookingMapState>
     state = state.copyWith(status: RideBookingStatus.initial);
   }
 
-  void onRideCancel() {
-    state = state.copyWith(status: RideBookingStatus.initial);
+  Future<bool> onRideCancel() async {
+    try {
+      await socketService.emit(SocketEvents.rideCancelled, {
+        "rideId": state.rideId,
+      });
+      state = state.copyWith(status: RideBookingStatus.initial);
+      return true;
+    } catch (e) {
+      CustomToast.showToast(message: e.toString());
+      return false;
+    }
   }
 
   void selectedPriceModel({required PricingModel selectedPriceModel}) {
@@ -464,9 +473,11 @@ class BookingMapController extends StateNotifier<BookingMapState>
         });
       } else {
         CustomToast.showToast(message: "Payment Authorization Faield");
+        state = state.copyWith(status: RideBookingStatus.initial);
       }
     } catch (e) {
       CustomToast.showToast(message: e.toString(), isError: true);
+      state = state.copyWith(status: RideBookingStatus.initial);
     } finally {
       state = state.copyWith(isLoading: false);
     }
