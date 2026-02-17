@@ -11,7 +11,7 @@ class SocketEvents {
   // RIDE EVENTS
   // =========================
   static const String rideRequest = 'ride-request';
-  static const String rideAccepted = 'accept-ride';
+  static const String rideAccepted = 'ride-accepted';
   static const String rideStarted = 'ride-started';
   static const String rideEnded = 'ride-ended';
   static const String rideCancelled = 'ride-cancelled';

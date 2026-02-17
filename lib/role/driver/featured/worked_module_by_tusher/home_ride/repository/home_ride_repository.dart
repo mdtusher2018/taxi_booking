@@ -45,9 +45,22 @@ class HomeRideRepository extends Repository {
     final StreamController<RideRequestResponse> controller =
         StreamController<RideRequestResponse>();
     socketService.on(SocketEvents.rideRequest, (data) {
+      AppLogger.i(data.toString());
       if (data != null) {
-        final rideRequestResponse = RideRequestResponse.fromJson(data);
-        controller.add(rideRequestResponse);
+        // final rideRequestResponse = RideRequestResponse.fromJson(data);
+        // controller.add(rideRequestResponse);
+
+        if (data is List && data.isNotEmpty) {
+          final rideMap = data[0];
+          if (rideMap is Map<String, dynamic>) {
+            final rideRequest = RideRequestResponse.fromJson(rideMap);
+
+            controller.add(rideRequest);
+          }
+        } else {
+          final rideRequestResponse = RideRequestResponse.fromJson(data);
+          controller.add(rideRequestResponse);
+        }
       }
     });
 
@@ -169,6 +182,7 @@ class HomeRideRepository extends Repository {
   Stream<bool> listenForPaymentConfirm() {
     final StreamController<bool> controller = StreamController<bool>();
     socketService.on(SocketEvents.driverRecivedPayment, (data) {
+      AppLogger.d(data.toString());
       if (data != null) {
         controller.add(true);
         socketService.off(SocketEvents.driverRecivedPayment);

@@ -310,7 +310,7 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
             const SizedBox(height: 30),
             CustomButton(
               title: "Submit",
-              isLoading: ref.read(authControllerProvider).isLoading,
+              isLoading: ref.watch(authControllerProvider).isLoading,
               onTap: _submit,
             ),
           ],

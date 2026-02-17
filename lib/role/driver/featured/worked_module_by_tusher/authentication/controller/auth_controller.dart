@@ -4,6 +4,7 @@ import 'package:taxi_booking/role/driver/driver_di/repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/models/sign_in_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/models/signup_from_model.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/models/signup_response.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/authentication/repository/auth_repository.dart';
 part 'auth_controller.g.dart';
 
@@ -98,7 +99,7 @@ class AuthController extends _$AuthController {
         error.stackTrace ?? StackTrace.fromString("No trace found"),
       );
     } else if (result is Success) {
-      state = AsyncData((result as Success).data as SignInResponse);
+      state = AsyncData((result as Success).data as SignupResponse);
     }
     return;
   }

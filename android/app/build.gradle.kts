@@ -10,6 +10,10 @@ plugins {
 }
 
 android {
+
+    useLibrary("org.apache.http.legacy")
+
+
     namespace = "com.example.taxi_booking"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
@@ -42,6 +46,8 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    
 }
 
 

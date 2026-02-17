@@ -317,8 +317,10 @@ class BookingMapController extends StateNotifier<BookingMapState>
 
   void initSurgeMultiplier() {
     socketService.on(SocketEvents.liveCountUpdate, (data) {
+      AppLogger.d(data.toString());
       final calculatedSurge =
-          (data['rideRequestCount'] ?? 0) / (data['availableDriverCount'] ?? 1);
+          (data[0]['rideRequestCount'] ?? 0) /
+          (data[0]['availableDriverCount'] ?? 1);
 
       state = state.copyWith(
         surgeMultiplier: (calculatedSurge > 1) ? calculatedSurge : 1,
@@ -386,6 +388,8 @@ class BookingMapController extends StateNotifier<BookingMapState>
   }
 
   Future<void> rideEmit(PaymentResult? result) async {
+    AppLogger.d("============>>>>>>Ride Emiting");
+    AppLogger.d(result.toString());
     try {
       if (result == PaymentResult.success) {
         state = state.copyWith(isLoading: true);
@@ -396,11 +400,12 @@ class BookingMapController extends StateNotifier<BookingMapState>
         state = state.copyWith(status: RideBookingStatus.searchingDriver);
 
         socketService.on(SocketEvents.rideAccepted, (data) {
-          final driverInfo = RideAcceptResponse.fromJson(data).driverInfo;
+          AppLogger.d(data.toString());
+          final driverInfo = RideAcceptResponse.fromJson(data[0]).driverInfo;
 
           socketService.on(SocketEvents.driverCurrentLocation, (data) {
             AppLogger.i(data.toString());
-            final response = DriverCurrentLocationResponse.fromJson(data);
+            final response = DriverCurrentLocationResponse.fromJson(data[0]);
             state = state.copyWith(
               driverLatLng: LatLng(
                 response.driverCurrentLocation.latitude,
@@ -428,7 +433,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
           ) {
             AppLogger.i(data.toString());
 
-            final response = DriverCurrentLocationResponse.fromJson(data);
+            final response = DriverCurrentLocationResponse.fromJson(data[0]);
             state = state.copyWith(
               driverLatLng: LatLng(
                 response.driverCurrentLocation.latitude,
@@ -476,6 +481,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
         state = state.copyWith(status: RideBookingStatus.initial);
       }
     } catch (e) {
+      AppLogger.d("============>>>>>>Ride Emiting failed");
       CustomToast.showToast(message: e.toString(), isError: true);
       state = state.copyWith(status: RideBookingStatus.initial);
     } finally {
