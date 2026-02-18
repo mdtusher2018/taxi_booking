@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/resource/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
@@ -169,7 +171,8 @@ class _ProfessionalDriverArrivedCardState extends ConsumerState<GiveTipsSheet> {
           // No Thanks button
           CustomButton(
             onTap: () {
-              Navigator.pop(context);
+              ref.invalidate(bookingMapControllerProvider);
+              context.go(UserAppRoutes.rootView);
             },
             buttonColor: Color(0xffEAECF0),
             titleColor: AppColors.blackColor,
