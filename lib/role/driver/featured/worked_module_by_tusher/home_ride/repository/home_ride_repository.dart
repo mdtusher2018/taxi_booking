@@ -85,7 +85,7 @@ class HomeRideRepository extends Repository {
 
   void rideAccept({required String rideId}) async {
     try {
-      await socketService.emit(SocketEvents.rideAccepted, {
+      await socketService.emit(SocketEvents.acceptRide, {
         {"accepted": true, "rideId": rideId},
       });
 

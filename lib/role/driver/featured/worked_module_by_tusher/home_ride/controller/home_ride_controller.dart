@@ -230,6 +230,7 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     repository.reachedDestinationLocation().listen((response) {
       repository.listenForPaymentConfirm().listen((response) {
         state = state.copyWith(status: DriverStatus.paymentRecived);
+        
       });
       state = state.copyWith(
         status: DriverStatus.reachedDestinationLocation,
@@ -252,7 +253,7 @@ class HomeRideController extends _$HomeRideController with MapMixin {
   void _startLocationUpdates(String rideId, String passengerId) {
     _locationTimer?.cancel();
 
-    _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+    _locationTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
       final position = await getCurrentLocation();
 
       if (position != null && state.status == DriverStatus.onGoingToPick) {

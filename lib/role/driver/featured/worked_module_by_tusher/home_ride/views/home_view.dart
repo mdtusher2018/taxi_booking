@@ -16,6 +16,7 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_r
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/on_the_way_sheet.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/payment_recived_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/request_bottom_sheet.dart';
+import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/ride_compleate_sheet.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/trip_details_bottom_sheet.dart';
 
 class DriverHomeView extends ConsumerWidget {
@@ -157,6 +158,13 @@ class DriverHomeView extends ConsumerWidget {
               left: 0,
               right: 0,
               child: WaitingForPaymentConfirmSheet(),
+            ),
+          if (state.status == DriverStatus.paymentRecived)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: RideCompleateSheet(),
             ),
         ],
       ),
