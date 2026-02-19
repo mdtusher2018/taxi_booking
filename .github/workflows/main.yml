@@ -37,7 +37,7 @@ jobs:
       - name: Upload User APK
         uses: actions/upload-artifact@v4
         with:
-          name: release-flutter-apk
+          name: release-flutter-apk-user
           path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Driver Build APK
@@ -47,7 +47,7 @@ jobs:
       - name: Upload Driver APK
         uses: actions/upload-artifact@v4
         with:
-          name: release-flutter-apk
+          name: release-flutter-apk-driver
           path: build/app/outputs/flutter-apk/app-release.apk
 
 
