@@ -229,7 +229,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
 
   Future<bool> onRideCancel() async {
     try {
-      await socketService.emit(SocketEvents.rideCancelled, {
+      await socketService.emit(SocketEvents.rideCancelledPassenger, {
         "rideId": state.rideId,
       });
       state = state.copyWith(status: RideBookingStatus.initial);

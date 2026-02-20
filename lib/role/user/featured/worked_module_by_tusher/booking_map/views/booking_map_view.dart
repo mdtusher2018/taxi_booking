@@ -1,8 +1,10 @@
 // booking_map_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
+import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
@@ -151,8 +153,14 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               left: 16,
               right: 16,
               child: ArrivingSheet(
-                onCancel: () {
-                  controller.onRideCancel();
+                onCancel: () async {
+                  final result = await ref
+                      .read(bookingMapControllerProvider.notifier)
+                      .onRideCancel();
+                  if (result && mounted) {
+                    ref.invalidate(bookingMapControllerProvider);
+                    context.go(UserAppRoutes.rootView);
+                  }
                 },
               ),
             ),
@@ -162,9 +170,14 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               left: 16,
               right: 16,
               child: DriverArrivedCard(
-                onCancel: () {
-                  controller
-                      .onRideCancel(); // Call the function to cancel the ride
+                onCancel: () async {
+                  final result = await ref
+                      .read(bookingMapControllerProvider.notifier)
+                      .onRideCancel();
+                  if (result && mounted) {
+                    ref.invalidate(bookingMapControllerProvider);
+                    context.go(UserAppRoutes.rootView);
+                  }
                 },
               ),
             ),
@@ -174,9 +187,14 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               left: 16,
               right: 16,
               child: OnYourWaySheet(
-                onCancel: () {
-                  controller
-                      .onRideCancel(); // Call the function to cancel the ride
+                onCancel: () async {
+                  final result = await ref
+                      .read(bookingMapControllerProvider.notifier)
+                      .onRideCancel();
+                  if (result && mounted) {
+                    ref.invalidate(bookingMapControllerProvider);
+                    context.go(UserAppRoutes.rootView);
+                  }
                 },
               ),
             ),
@@ -186,9 +204,14 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               left: 16,
               right: 16,
               child: RideCompleatedCard(
-                onCancel: () {
-                  controller
-                      .onRideCancel(); // Call the function to cancel the ride
+                onCancel: () async {
+                  final result = await ref
+                      .read(bookingMapControllerProvider.notifier)
+                      .onRideCancel();
+                  if (result && mounted) {
+                    ref.invalidate(bookingMapControllerProvider);
+                    context.go(UserAppRoutes.rootView);
+                  }
                 },
               ),
             ),
