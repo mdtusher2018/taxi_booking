@@ -158,7 +158,7 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
                       .read(bookingMapControllerProvider.notifier)
                       .onRideCancel();
                   if (result && mounted) {
-                    ref.invalidate(bookingMapControllerProvider);
+                    //ref.invalidate(bookingMapControllerProvider);
                     context.go(UserAppRoutes.rootView);
                   }
                 },
@@ -175,7 +175,7 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
                       .read(bookingMapControllerProvider.notifier)
                       .onRideCancel();
                   if (result && mounted) {
-                    ref.invalidate(bookingMapControllerProvider);
+                    //ref.invalidate(bookingMapControllerProvider);
                     context.go(UserAppRoutes.rootView);
                   }
                 },
@@ -192,7 +192,7 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
                       .read(bookingMapControllerProvider.notifier)
                       .onRideCancel();
                   if (result && mounted) {
-                    ref.invalidate(bookingMapControllerProvider);
+                    //ref.invalidate(bookingMapControllerProvider);
                     context.go(UserAppRoutes.rootView);
                   }
                 },
@@ -209,7 +209,7 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
                       .read(bookingMapControllerProvider.notifier)
                       .onRideCancel();
                   if (result && mounted) {
-                    ref.invalidate(bookingMapControllerProvider);
+                    //ref.invalidate(bookingMapControllerProvider);
                     context.go(UserAppRoutes.rootView);
                   }
                 },

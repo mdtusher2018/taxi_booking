@@ -58,7 +58,7 @@ class _SearchingDriverBottomSheetState
                               .read(bookingMapControllerProvider.notifier)
                               .onRideCancel();
                           if (result && mounted) {
-                            ref.invalidate(bookingMapControllerProvider);
+                            // ref.invalidate(bookingMapControllerProvider);
                             context.go(UserAppRoutes.rootView);
                           }
                         },

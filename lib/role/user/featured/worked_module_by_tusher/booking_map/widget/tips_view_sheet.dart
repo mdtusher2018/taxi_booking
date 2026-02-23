@@ -171,7 +171,7 @@ class _ProfessionalDriverArrivedCardState extends ConsumerState<GiveTipsSheet> {
           // No Thanks button
           CustomButton(
             onTap: () {
-              ref.invalidate(bookingMapControllerProvider);
+              // ref.invalidate(bookingMapControllerProvider);
               context.go(UserAppRoutes.rootView);
             },
             buttonColor: Color(0xffEAECF0),

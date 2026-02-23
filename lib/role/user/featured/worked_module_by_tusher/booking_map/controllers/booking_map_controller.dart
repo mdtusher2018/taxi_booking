@@ -51,6 +51,8 @@ class BookingMapController extends StateNotifier<BookingMapState>
 
     goToCurrentLocation();
     initSurgeMultiplier();
+    pickupLocationController.clear();
+    dropLocationController.clear();
   }
 
   final TextEditingController dropLocationController = TextEditingController();
@@ -232,7 +234,9 @@ class BookingMapController extends StateNotifier<BookingMapState>
       await socketService.emit(SocketEvents.rideCancelledPassenger, {
         "rideId": state.rideId,
       });
-      state = state.copyWith(status: RideBookingStatus.initial);
+      state = BookingMapState();
+      _init();
+
       return true;
     } catch (e) {
       CustomToast.showToast(message: e.toString());
@@ -332,6 +336,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
     required num distanceFare,
     required num timeFare,
     required num totalFare,
+    required VoidCallback onSucessCall,
   }) async {
     try {
       state = state.copyWith(isLoading: true);
@@ -365,6 +370,7 @@ class BookingMapController extends StateNotifier<BookingMapState>
       });
       final rideResponse = CreateRideResponse.fromJson(response);
 
+      onSucessCall();
       state = state.copyWith(
         rideId: rideResponse.data.id,
         status: RideBookingStatus.paymentAuthoriging,

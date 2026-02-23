@@ -167,24 +167,6 @@ class _ArrivingCardState extends ConsumerState<ArrivingSheet> {
 
           const SizedBox(height: 12),
 
-          // Total Fare Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Total Tip:",
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-              Text(
-                "driver.price",
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-
           const SizedBox(height: 12),
 
           // Action Buttons

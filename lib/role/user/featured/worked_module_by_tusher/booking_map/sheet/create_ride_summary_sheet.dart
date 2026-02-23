@@ -174,17 +174,21 @@ class _SummarySheetState extends ConsumerState<SummarySheet> {
 
                     CustomButton(
                       title: 'Continue',
-
+                      isLoading: state.isLoading,
                       onTap: () async {
                         if (_distanceFare != null &&
                             _timeFare != null &&
                             _totalFare != null) {
-                          Navigator.popUntil(context, (route) => route.isFirst);
-
                           await controller.createRide(
                             distanceFare: _distanceFare!,
                             timeFare: _timeFare!,
                             totalFare: _totalFare!,
+                            onSucessCall: () {
+                              Navigator.popUntil(
+                                context,
+                                (route) => route.isFirst,
+                              );
+                            },
                           );
                         } else {
                           CustomToast.showToast(
