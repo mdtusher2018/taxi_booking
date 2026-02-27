@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
 
-import '../logger/log_helper.dart';
-
 enum FailureType {
   timeout,
   unauthorized,
@@ -68,49 +66,53 @@ class Failure {
 
       // Cancelled
       if (e.type == DioExceptionType.cancel) {
+        final message = e.response?.data['message'];
         return Failure(
           type: FailureType.cancelled,
-          message: 'Request was cancelled.',
+          message: message ?? 'Request was cancelled.',
           code: code,
         );
       }
 
       if (e.type == DioExceptionType.badResponse) {
         final statusCode = e.response?.statusCode;
+        final message = e.response?.data['message'];
 
         switch (statusCode) {
           case 400:
             return Failure(
               type: FailureType.validation,
-              message: 'Invalid request.',
+              message: message ?? 'Invalid request.',
               code: statusCode.toString(),
             );
 
           case 401:
             return Failure(
               type: FailureType.unauthorized,
-              message: 'Session expired. Please login again.',
+              message: message ?? 'Session expired. Please login again.',
               code: statusCode.toString(),
             );
 
           case 403:
             return Failure(
               type: FailureType.forbidden,
-              message: 'You do not have permission to perform this action.',
+              message:
+                  message ??
+                  'You do not have permission to perform this action.',
               code: statusCode.toString(),
             );
 
           case 404:
             return Failure(
               type: FailureType.notFound,
-              message: 'Requested resource not found.',
+              message: message ?? 'Requested resource not found.',
               code: statusCode.toString(),
             );
 
           default:
             return Failure(
               type: FailureType.server,
-              message: 'Server error occurred.',
+              message: message ?? 'Server error occurred.',
               code: statusCode.toString(),
             );
         }
@@ -149,10 +151,7 @@ class Failure {
 
         return (message: message, code: errorMap['statusCode']?.toString());
       }
-    } catch (e, stackTrace) {
-      AppLogger.e(e.toString());
-      AppLogger.e(stackTrace.toString());
-
+    } catch (e) {
       return null;
     }
 

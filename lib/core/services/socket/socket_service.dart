@@ -86,17 +86,14 @@ class SocketService {
         event,
         data,
         ack: (response) {
-          AppLogger.i("Emit event: $event with response: $response");
           if (response?['success'] == false) {
-            AppLogger.i(response['message'] ?? "Unknown error");
             throw Exception(response['message'] ?? "Unknown error");
           }
-          AppLogger.i("Emit response: $response");
+
           return response;
         },
       );
     } catch (e) {
-      AppLogger.e('Socket Error: $e');
       if (e is Map<String, dynamic>) {
         throw Exception(e['message'] ?? "Unknown Error Occoured");
       } else {

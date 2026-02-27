@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
 
 class CustomRadioTile<T> extends StatelessWidget {
@@ -50,16 +49,6 @@ class CustomRadioTile<T> extends StatelessWidget {
               child:
                   title ??
                   Text(titleText, style: CommonStyle.textStyleMedium(size: 16)),
-            ),
-            Radio<T>(
-              value: value,
-              groupValue: groupValue,
-              activeColor: AppColors.mainColor,
-              onChanged: (newVal) {
-                if (newVal != null) {
-                  onChanged(newVal);
-                }
-              },
             ),
           ],
         ),

@@ -22,8 +22,10 @@ class ChatRepository extends Repository {
     final controller = StreamController<List<ChatListItem>>();
     socketService.on(SocketEvents.myChatListListen(userId), (data) {
       if (data != null && data is List) {
-        final chats = data.map((e) => ChatListItem.fromJson(e)).toList();
-        controller.add(chats);
+        final chatJson = (data[0] as List)[0];
+        AppLogger.w("=============>>>>>>>>>" + chatJson.toString());
+        final chats = ChatListItem.fromJson(chatJson);
+        controller.add([chats]);
       }
     });
 
@@ -39,13 +41,12 @@ class ChatRepository extends Repository {
     List<File>? files,
   }) async {
     List<UploadedFile>? imageUrls;
-    if (files != null) {
+    if (files != null && files.isNotEmpty) {
       final result = await uploadFile(files: files);
       if (result is Success) {
         imageUrls = (result as Success).data as List<UploadedFile>;
       }
     }
-    AppLogger.i(imageUrls.toString());
 
     await socketService.emit(SocketEvents.sendMessage, {
       "receiver": reciverId,
@@ -60,7 +61,7 @@ class ChatRepository extends Repository {
     socketService.on(SocketEvents.newMessage, (data) {
       AppLogger.i(data.toString());
       if (data != null) {
-        final chat = ChatMessage.fromJson(data);
+        final chat = ChatMessage.fromJson(data[0]);
         controller.add(chat);
       }
     });

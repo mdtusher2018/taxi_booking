@@ -7,7 +7,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
-import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
 import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
@@ -120,7 +119,6 @@ class HomeRideController extends _$HomeRideController with MapMixin {
 
     if (result.primaryRoute?.polylinePoints == null ||
         result.primaryRoute!.polylinePoints!.isEmpty) {
-      AppLogger.e("❌ Route not found: ${result.errorMessage}");
       return;
     }
 
@@ -230,7 +228,6 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     repository.reachedDestinationLocation().listen((response) {
       repository.listenForPaymentConfirm().listen((response) {
         state = state.copyWith(status: DriverStatus.paymentRecived);
-        
       });
       state = state.copyWith(
         status: DriverStatus.reachedDestinationLocation,

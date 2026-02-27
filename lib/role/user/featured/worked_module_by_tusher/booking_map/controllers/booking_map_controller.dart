@@ -321,7 +321,6 @@ class BookingMapController extends StateNotifier<BookingMapState>
 
   void initSurgeMultiplier() {
     socketService.on(SocketEvents.liveCountUpdate, (data) {
-      AppLogger.d(data.toString());
       final calculatedSurge =
           (data[0]['rideRequestCount'] ?? 0) /
           (data[0]['availableDriverCount'] ?? 1);
@@ -394,8 +393,6 @@ class BookingMapController extends StateNotifier<BookingMapState>
   }
 
   Future<void> rideEmit(PaymentResult? result) async {
-    AppLogger.d("============>>>>>>Ride Emiting");
-    AppLogger.d(result.toString());
     try {
       if (result == PaymentResult.success) {
         state = state.copyWith(isLoading: true);
@@ -406,11 +403,9 @@ class BookingMapController extends StateNotifier<BookingMapState>
         state = state.copyWith(status: RideBookingStatus.searchingDriver);
 
         socketService.on(SocketEvents.rideAccepted, (data) {
-          AppLogger.d(data.toString());
           final driverInfo = RideAcceptResponse.fromJson(data[0]).driverInfo;
 
           socketService.on(SocketEvents.driverCurrentLocation, (data) {
-            AppLogger.i(data.toString());
             final response = DriverCurrentLocationResponse.fromJson(data[0]);
             state = state.copyWith(
               driverLatLng: LatLng(
@@ -437,8 +432,6 @@ class BookingMapController extends StateNotifier<BookingMapState>
           socketService.on(SocketEvents.updateDriverLocationAfterRideStart, (
             data,
           ) {
-            AppLogger.i(data.toString());
-
             final response = DriverCurrentLocationResponse.fromJson(data[0]);
             state = state.copyWith(
               driverLatLng: LatLng(
@@ -487,7 +480,6 @@ class BookingMapController extends StateNotifier<BookingMapState>
         state = state.copyWith(status: RideBookingStatus.initial);
       }
     } catch (e) {
-      AppLogger.d("============>>>>>>Ride Emiting failed");
       CustomToast.showToast(message: e.toString(), isError: true);
       state = state.copyWith(status: RideBookingStatus.initial);
     } finally {
@@ -512,7 +504,6 @@ class BookingMapController extends StateNotifier<BookingMapState>
     required num ratting,
     required String review,
   }) async {
-    AppLogger.i("ratting: $ratting\n Review: $review");
     final response = await apiService.post(
       UserApiEndpoints.giveReview(state.rideId),
       {"rating": ratting, "note": review},

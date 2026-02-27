@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:taxi_booking/core/logger/log_helper.dart';
+
 import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
@@ -40,7 +40,6 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
     ref.listen(bookingMapControllerProvider, (previous, next) async {
       if (previous?.checkoutUrl != next.checkoutUrl &&
           next.checkoutUrl != null) {
-        AppLogger.i("Routing");
         final paymentResult = await Navigator.push<PaymentResult>(
           context,
           MaterialPageRoute(

@@ -6,6 +6,7 @@ import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
+import 'package:taxi_booking/role/common/featured/chat/views/message_view.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/controller/delete_vehicale_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/controller/vehicale_details_controller.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/model/delete_vehical_response.dart'
@@ -238,7 +239,23 @@ class _VehicleDetailsViewState extends ConsumerState<VehicleDetailsView> {
                             },
                           ),
                         if (!widget.isMyVehicale)
-                          CustomButton(title: "Message Owner", onTap: () {}),
+                          CustomButton(
+                            title: "Message Owner",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return MessageView(
+                                      reciverId: owner.id,
+                                      hideMessageTextfield: false,
+                                      oldChatting: false,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
                       ],
                     ),
                   ),

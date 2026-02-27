@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:taxi_booking/core/logger/log_helper.dart';
+
 import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -27,7 +27,6 @@ class _PayTipWebViewPageState extends State<PayTipWebViewPage> {
           onNavigationRequest: (request) {
             final url = request.url;
 
-            AppLogger.i(url);
             if (url.contains("tips/confirmed-tips-payment")) {
               Navigator.pop(context, TipResult.success);
               return NavigationDecision.prevent;

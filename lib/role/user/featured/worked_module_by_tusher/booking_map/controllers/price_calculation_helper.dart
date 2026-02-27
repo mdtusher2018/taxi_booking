@@ -1,4 +1,3 @@
-import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/model/pricing_model.dart';
 
 double distanceFare({
@@ -18,8 +17,6 @@ double totalFare({
   required double durationMin,
   required double surgeMultiplier,
 }) {
-  AppLogger.d(surgeMultiplier.toString());
-
   if (surgeMultiplier.isInfinite || surgeMultiplier.isNaN) {
     surgeMultiplier = 1;
   }
