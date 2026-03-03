@@ -213,14 +213,6 @@ class OnTheWaySheet extends ConsumerWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _actionIcon(
-                                icon: Icons.close,
-                                label: 'Cancel',
-
-                                onTap: () {
-                                  // TODO: cancel ride logic
-                                },
-                              ),
                               Badge(
                                 isLabelVisible: ref
                                     .read(homeRideControllerProvider)

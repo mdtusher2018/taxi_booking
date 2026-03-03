@@ -80,7 +80,7 @@ class HomeRideRepository extends Repository {
   }
 
   void stopListenToRideRequest() {
-    socketService.off(SocketEvents.rideRequest);
+    socketService.off(SocketEvents.disconnect);
   }
 
   void rideAccept({required String rideId}) async {
@@ -95,8 +95,11 @@ class HomeRideRepository extends Repository {
     }
   }
 
-  void rideDecline({required String rideId}) {
-    throw UnimplementedError("rideDecline is not implemented yet");
+  void rideDecline({required String rideId, required String reason}) {
+    socketService.emit(SocketEvents.rideCancelledDriver, {
+      "rideId": rideId,
+      "reason": reason,
+    });
   }
 
   void updateDriverLocation({
@@ -118,6 +121,18 @@ class HomeRideRepository extends Repository {
   Stream<bool> reachedPickupLocation() {
     final StreamController<bool> controller = StreamController<bool>();
     socketService.on(SocketEvents.driverArrived, (data) {
+      if (data != null) {
+        controller.add(true);
+        socketService.off(SocketEvents.driverArrived);
+      }
+    });
+    return controller.stream;
+  }
+
+  Stream<bool> rideCancel() {
+    final StreamController<bool> controller = StreamController<bool>();
+    socketService.on(SocketEvents.rideCancelledPassenger, (data) {
+      AppLogger.d(data.toString());
       if (data != null) {
         controller.add(true);
         socketService.off(SocketEvents.driverArrived);

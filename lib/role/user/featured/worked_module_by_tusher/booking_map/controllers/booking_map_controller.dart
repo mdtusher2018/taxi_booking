@@ -229,10 +229,11 @@ class BookingMapController extends StateNotifier<BookingMapState>
     state = state.copyWith(status: RideBookingStatus.initial);
   }
 
-  Future<bool> onRideCancel() async {
+  Future<bool> onRideCancel({String? reason}) async {
     try {
       await socketService.emit(SocketEvents.rideCancelledPassenger, {
         "rideId": state.rideId,
+        "reason": ?reason,
       });
       state = BookingMapState();
       _init();
@@ -312,10 +313,11 @@ class BookingMapController extends StateNotifier<BookingMapState>
 
   void updateSurgeMultiplier() {
     socketService.emit(SocketEvents.liveCountUpdate, {
-      "location": {
-        "latitude": state.pickupLatLng!.latitude,
-        "longitude": state.pickupLatLng!.longitude,
-      },
+      if (state.pickupLatLng != null)
+        "location": {
+          "latitude": state.pickupLatLng!.latitude,
+          "longitude": state.pickupLatLng!.longitude,
+        },
     });
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:taxi_booking/resource/app_colors.dart';
+
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/controller/home_ride_controller.dart';
@@ -109,7 +109,6 @@ class OngoingRideSheet extends ConsumerWidget {
             ],
           ),
         ),
-        _ActionIcon(icon: Icons.support_agent, label: "Support"),
       ],
     ),
   );
@@ -157,25 +156,4 @@ class OngoingRideSheet extends ConsumerWidget {
       },
     ),
   );
-}
-
-class _ActionIcon extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  const _ActionIcon({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: Colors.grey.shade200,
-          child: Icon(icon, color: AppColors.blackColor),
-        ),
-        const SizedBox(height: 6),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
-    );
-  }
 }

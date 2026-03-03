@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -126,4 +127,44 @@ bool isYesterday(DateTime? date) {
   return date?.year == yesterday.year &&
       date?.month == yesterday.month &&
       date?.day == yesterday.day;
+}
+
+void confirmAppClose(bool didPop, result, BuildContext context) async {
+  if (didPop) {
+    return;
+  }
+
+  final bool shouldPop = await onWillPop(context);
+  if (context.mounted && shouldPop) {
+    Navigator.pop(context);
+  }
+}
+
+Future<bool> onWillPop(BuildContext context) async {
+  // If there are routes in stack, pop normally
+  if (Navigator.of(context).canPop()) {
+    Navigator.of(context).pop();
+    return false;
+  }
+
+  // If at root, show exit confirmation
+  final shouldExit = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Exit App"),
+      content: const Text("Are you sure you want to exit?"),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text("No"),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: const Text("Yes"),
+        ),
+      ],
+    ),
+  );
+
+  return shouldExit ?? false;
 }

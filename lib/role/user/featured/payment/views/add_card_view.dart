@@ -79,7 +79,9 @@ class _AddCardViewState extends State<AddCardView> {
               CustomButton(
                 title: 'Add Card',
                 onTap: () {
-                  Navigator.pop(context); // back to PaymentView
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
                 },
               ),
             ],

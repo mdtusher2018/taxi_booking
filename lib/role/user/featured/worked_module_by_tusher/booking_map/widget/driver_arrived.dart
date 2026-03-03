@@ -11,9 +11,7 @@ import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_
 
 // Create the Professional Driver Arrived Card
 class DriverArrivedCard extends ConsumerStatefulWidget {
-  final VoidCallback? onCancel;
-
-  DriverArrivedCard({super.key, this.onCancel});
+  DriverArrivedCard({super.key});
 
   @override
   ConsumerState<DriverArrivedCard> createState() =>
@@ -81,7 +79,16 @@ class _ProfessionalDriverArrivedCardState
               Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  onTap: widget.onCancel,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return CancelBookingView();
+                        },
+                      ),
+                    );
+                  },
                   child: const Icon(Icons.close, color: Colors.grey),
                 ),
               ),
@@ -193,12 +200,10 @@ class _ProfessionalDriverArrivedCardState
                 const Color(0xffFFC107),
                 Colors.white,
                 onTap: () {
-                  
-                     context.push(
-                      CommonAppRoutes.messagingView,
-                      extra: {'id': state.acceptedDriverInfo?.driverId ?? ""},
-                    );
-     
+                  context.push(
+                    CommonAppRoutes.messagingView,
+                    extra: {'id': state.acceptedDriverInfo?.driverId ?? ""},
+                  );
                 },
               ),
               DriverArrivedCard._buildActionButton(

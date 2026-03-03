@@ -13,14 +13,11 @@ class TakeRewardViewView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CustomAppBar(
-        title: 'Reward Points',
-      ),
+      appBar: const CustomAppBar(title: 'Reward Points'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-
             const Spacer(),
             Align(
               alignment: Alignment.center,
@@ -54,7 +51,7 @@ class TakeRewardViewView extends StatelessWidget {
             // Description
             CustomText(
               title:
-              'Thank you for riding with us. These points have been added to your account and can be redeemed for discounts or special offers.',
+                  'Thank you for riding with us. These points have been added to your account and can be redeemed for discounts or special offers.',
               style: CommonStyle.textStyleMedium(size: 14, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -62,10 +59,7 @@ class TakeRewardViewView extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Display total points earned
-            CustomText(
-              title: '3.0',
-              style: CommonStyle.textStyleLarge(),
-            ),
+            CustomText(title: '3.0', style: CommonStyle.textStyleLarge()),
 
             const SizedBox(height: 20),
 
@@ -73,7 +67,9 @@ class TakeRewardViewView extends StatelessWidget {
             CustomButton(
               title: 'Claim Reward',
               onTap: () {
-                Navigator.pop(context);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
               },
             ),
           ],

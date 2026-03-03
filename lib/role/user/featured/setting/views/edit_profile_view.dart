@@ -61,20 +61,19 @@ class _EditProfileViewState extends State<EditProfileView> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(18),
-                    child:
-                        selectedImage != null
-                            ? Image.file(
-                              selectedImage!,
-                              width: 120,
-                              height: 120,
-                              fit: BoxFit.cover,
-                            )
-                            : Image.network(
-                              "https://i.pravatar.cc/150?img=1",
-                              width: 120,
-                              height: 120,
-                              fit: BoxFit.cover,
-                            ),
+                    child: selectedImage != null
+                        ? Image.file(
+                            selectedImage!,
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.network(
+                            "https://i.pravatar.cc/150?img=1",
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                   Positioned(
                     bottom: 0,
@@ -138,7 +137,9 @@ class _EditProfileViewState extends State<EditProfileView> {
               onTap: () {
                 CustomToast.showToast(message: 'Profile updated successfully');
 
-                Navigator.pop(context);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
 
                 debugPrint("Updated Profile:");
                 debugPrint("Name: ${nameController.text}");

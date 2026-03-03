@@ -1,15 +1,15 @@
 // booking_map_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/sheet/ride_end_sheet.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/views/cancel_booking_view.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/views/pay_tip_webview.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/widget/give_review_driver_sheet.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/sheet/searching_driver_sheet.dart';
@@ -151,34 +151,14 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               bottom: 100,
               left: 16,
               right: 16,
-              child: ArrivingSheet(
-                onCancel: () async {
-                  final result = await ref
-                      .read(bookingMapControllerProvider.notifier)
-                      .onRideCancel();
-                  if (result && mounted) {
-                    //ref.invalidate(bookingMapControllerProvider);
-                    context.go(UserAppRoutes.rootView);
-                  }
-                },
-              ),
+              child: ArrivingSheet(),
             ),
           if (state.status == RideBookingStatus.driverArived)
             Positioned(
               bottom: 100, // Position from the bottom of the screen
               left: 16,
               right: 16,
-              child: DriverArrivedCard(
-                onCancel: () async {
-                  final result = await ref
-                      .read(bookingMapControllerProvider.notifier)
-                      .onRideCancel();
-                  if (result && mounted) {
-                    //ref.invalidate(bookingMapControllerProvider);
-                    context.go(UserAppRoutes.rootView);
-                  }
-                },
-              ),
+              child: DriverArrivedCard(),
             ),
           if (state.status == RideBookingStatus.rideStarted)
             Positioned(
@@ -187,13 +167,14 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               right: 16,
               child: OnYourWaySheet(
                 onCancel: () async {
-                  final result = await ref
-                      .read(bookingMapControllerProvider.notifier)
-                      .onRideCancel();
-                  if (result && mounted) {
-                    //ref.invalidate(bookingMapControllerProvider);
-                    context.go(UserAppRoutes.rootView);
-                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return CancelBookingView();
+                      },
+                    ),
+                  );
                 },
               ),
             ),
@@ -202,17 +183,7 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
               bottom: 100, // Position from the bottom of the screen
               left: 16,
               right: 16,
-              child: RideCompleatedCard(
-                onCancel: () async {
-                  final result = await ref
-                      .read(bookingMapControllerProvider.notifier)
-                      .onRideCancel();
-                  if (result && mounted) {
-                    //ref.invalidate(bookingMapControllerProvider);
-                    context.go(UserAppRoutes.rootView);
-                  }
-                },
-              ),
+              child: RideCompleatedCard(),
             ),
 
           if (state.status == RideBookingStatus.giveReview)

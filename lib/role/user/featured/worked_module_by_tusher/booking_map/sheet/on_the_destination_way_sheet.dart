@@ -7,9 +7,9 @@ import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_
 
 // Create the Professional Driver Arrived Card
 class OnYourWaySheet extends ConsumerStatefulWidget {
-  final VoidCallback? onCancel;
+  final VoidCallback onCancel;
 
-  const OnYourWaySheet({super.key, this.onCancel});
+  const OnYourWaySheet({super.key, required this.onCancel});
 
   @override
   ConsumerState<OnYourWaySheet> createState() =>

@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_checkbox_with_title.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text_field.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
+import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/controllers/booking_map_controller.dart';
 import '../../../../../../resource/utilitis/common_style.dart';
 
-class CancelBookingView extends StatefulWidget {
+class CancelBookingView extends ConsumerStatefulWidget {
   const CancelBookingView({super.key});
 
   @override
-  State<CancelBookingView> createState() => _CancelBookingViewState();
+  ConsumerState<CancelBookingView> createState() => _CancelBookingViewState();
 }
 
-class _CancelBookingViewState extends State<CancelBookingView> {
+class _CancelBookingViewState extends ConsumerState<CancelBookingView> {
   final List<String> _reasons = [
     'Waiting for long time',
     'Wrong address shown',
@@ -82,7 +86,7 @@ class _CancelBookingViewState extends State<CancelBookingView> {
             SizedBox(height: 20),
             CustomButton(
               title: 'Submit Reason',
-              onTap: () {
+              onTap: () async {
                 String? reasonToSubmit = _selectedReason;
 
                 if (isOthersSelected &&
@@ -99,13 +103,16 @@ class _CancelBookingViewState extends State<CancelBookingView> {
                   return;
                 }
 
-                debugPrint("Reason submitted: $reasonToSubmit");
-                CustomToast.showToast(
-                  message:
-                      "Reason submitted successfully, please wait for admin approval",
-                  isError: false,
-                );
-                Navigator.pop(context);
+                final result = await ref
+                    .read(bookingMapControllerProvider.notifier)
+                    .onRideCancel(reason: reasonToSubmit);
+                if (result && mounted) {
+                  // ref.invalidate(bookingMapControllerProvider);
+                  context.go(UserAppRoutes.rootView);
+                }
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
               },
             ),
           ],

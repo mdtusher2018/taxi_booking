@@ -13,9 +13,7 @@ import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_
 
 // Create the Professional Driver Arrived Card
 class RideCompleatedCard extends ConsumerStatefulWidget {
-  final VoidCallback? onCancel;
-
-  const RideCompleatedCard({super.key, this.onCancel});
+  const RideCompleatedCard({super.key});
 
   @override
   ConsumerState<RideCompleatedCard> createState() =>

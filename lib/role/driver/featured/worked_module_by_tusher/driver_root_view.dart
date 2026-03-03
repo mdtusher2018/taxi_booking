@@ -43,7 +43,6 @@ class _DriverDashboardViewState extends ConsumerState<DriverRootView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     connectSocketCall();
   }
@@ -66,24 +65,31 @@ class _DriverDashboardViewState extends ConsumerState<DriverRootView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
-      backgroundColor: Colors.grey,
-      body: Builder(
-        builder: (context) {
-          return screens[selectedIndex];
+      backgroundColor: Colors.transparent,
+      body: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          confirmAppClose(didPop, result, context);
         },
+
+        child: screens[selectedIndex],
       ),
       bottomNavigationBar: Builder(
         builder: (context) {
           return Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              CustomPaint(
-                size: Size(MediaQuery.of(context).size.width, 80),
-                painter: BNBCustomPainter(),
-              ),
-              SizedBox(
+              // CustomPaint(
+              //   size: Size(MediaQuery.of(context).size.width, 80),
+              //   painter: BNBCustomPainter(),
+              // ),
+              Container(
                 height: 100,
+
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [BoxShadow(blurRadius: 1)],
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: List.generate(icons.length, (index) {
@@ -140,51 +146,4 @@ class _DriverDashboardViewState extends ConsumerState<DriverRootView> {
       ),
     );
   }
-}
-
-class BNBCustomPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Path path = Path();
-    path.moveTo(0, 0);
-
-    // left side
-    path.lineTo(size.width * 0.30, 0);
-
-    // upward curve শুরু
-    path.quadraticBezierTo(size.width * 0.37, 0, size.width * 0.40, -20);
-
-    // deep arc upward
-    path.arcToPoint(
-      Offset(size.width * 0.60, -20),
-      radius: const Radius.circular(45),
-      clockwise: true,
-    );
-
-    // right side curve শেষ
-    path.quadraticBezierTo(size.width * 0.63, 0, size.width * 0.70, 0);
-    path.lineTo(size.width, 0);
-
-    // নিচের অংশ
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-
-    // 🔹 Shadow paint (grey with opacity 0.3)
-    Paint shadowPaint = Paint()
-      ..color = Colors.grey.withOpacity(0.3)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-
-    canvas.drawPath(path.shift(const Offset(0, 4)), shadowPaint);
-
-    // 🔹 Main white paint
-    Paint paint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

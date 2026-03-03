@@ -64,9 +64,13 @@ class _DashboardViewState extends ConsumerState<UserRootView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
-      backgroundColor: Colors.grey,
-      body: screens[selectedIndex],
+      body: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          confirmAppClose(didPop, result, context);
+        },
+        child: screens[selectedIndex],
+      ),
       bottomNavigationBar: Stack(
         alignment: Alignment.bottomCenter,
         children: [

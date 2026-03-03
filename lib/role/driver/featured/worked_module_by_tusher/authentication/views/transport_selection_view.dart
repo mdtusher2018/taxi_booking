@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_radio_title_widget.dart';
-import 'package:taxi_booking/role/driver/featured/add_transfort/views/add_taxi_details_one_view.dart';
 import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:go_router/go_router.dart';
 
@@ -30,10 +29,6 @@ class DriverTransportSelectionView extends StatelessWidget {
               groupValue: selectedTransport,
               onChanged: (value) {
                 selectedTransport = value;
-
-                MaterialPageRoute(
-                  builder: (context) => AddTaxiDetailsOneView(),
-                );
               },
               leading: Image.asset(
                 AppImages.taxi,

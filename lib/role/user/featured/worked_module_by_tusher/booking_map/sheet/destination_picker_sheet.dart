@@ -99,40 +99,39 @@ class _DestinationPickerSheetState
                         const SizedBox(height: 20),
 
                         // Popular Destinations (show only when not searching)
-                        ...[
-                          const Text(
-                            'Popular Destinations',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          ...controller
-                              .getPopularLocations()
-                              .map(
-                                (location) => ListTile(
-                                  leading: const Icon(
-                                    Icons.location_on,
-                                    color: Colors.grey,
-                                  ),
-                                  title: Text(location.name),
-                                  subtitle: Text(location.address),
-                                  onTap: () {
-                                    controller.dropLocationController.text =
-                                        location.address;
-                                    controller.dropLocationController.text =
-                                        location.address;
+                        // ...[
+                        //   const Text(
+                        //     'Popular Destinations',
+                        //     style: TextStyle(
+                        //       fontSize: 16,
+                        //       fontWeight: FontWeight.w500,
+                        //     ),
+                        //   ),
+                        //   const SizedBox(height: 12),
+                        //   ...controller
+                        //       .getPopularLocations()
+                        //       .map(
+                        //         (location) => ListTile(
+                        //           leading: const Icon(
+                        //             Icons.location_on,
+                        //             color: Colors.grey,
+                        //           ),
+                        //           title: Text(location.name),
+                        //           subtitle: Text(location.address),
+                        //           onTap: () {
+                        //             controller.dropLocationController.text =
+                        //                 location.address;
+                        //             controller.dropLocationController.text =
+                        //                 location.address;
 
-                                    controller.updateDropLatLng(
-                                      latlng: location.position,
-                                    );
-                                  },
-                                ),
-                              )
-                              .toList(),
-                        ],
-
+                        //             controller.updateDropLatLng(
+                        //               latlng: location.position,
+                        //             );
+                        //           },
+                        //         ),
+                        //       )
+                        //       .toList(),
+                        // ],
                         const SizedBox(height: 20),
 
                         CustomButton(

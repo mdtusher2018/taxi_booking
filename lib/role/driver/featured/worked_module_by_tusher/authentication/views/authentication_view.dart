@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_checkbox.dart';
@@ -86,7 +87,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
           if (data != null && data is SignInResponse) {
             // Success: show snackbar and navigate
             ref.watch(snackbarServiceProvider).showSuccess("Login successful!");
-            Future.microtask(() => context.push(DriverAppRoutes.driverRoot));
+            Future.microtask(() => context.go(DriverAppRoutes.driverRoot));
           }
         },
         loading: () {
@@ -102,251 +103,260 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
     final authModeController = ref.read(
       _authModeProvider(widget.isLoginPage).notifier,
     );
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: CommonStyle.paddingAllSmall,
-          child: Column(
-            children: [
-              AuthAppBar(),
-              SizedBox(height: 15),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        confirmAppClose(didPop, result, context);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: CommonStyle.paddingAllSmall,
+            child: Column(
+              children: [
+                AuthAppBar(),
+                SizedBox(height: 15),
 
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Color(0xffF4F5FA),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        title: 'Login',
-                        buttonColor: authModeisLogin
-                            ? AppColors.mainColor
-                            : Colors.transparent,
-                        onTap: () {
-                          authModeController.state = true;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Container(
-                        width: 2,
-                        height: MediaQuery.sizeOf(context).height / 26,
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                    Expanded(
-                      child: CustomButton(
-                        title: 'Sign up',
-                        buttonColor: !authModeisLogin
-                            ? AppColors.mainColor
-                            : Colors.transparent,
-                        onTap: () {
-                          authModeController.state = false;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 15),
-
-              ///if selected login
-              Visibility(
-                visible: authModeisLogin,
-                child: Column(
-                  children: [
-                    CustomTextField(
-                      controller: loginPhoneController,
-                      prefixIcon: Icon(Icons.phone),
-                      hint: 'Phone number',
-                    ),
-                    SizedBox(height: 8),
-                    CustomTextField(
-                      controller: loginPasswordController,
-                      obscureText: true,
-                      prefixIcon: Icon(Icons.lock_outline),
-                      hint: 'Password',
-                    ),
-                    SizedBox(height: 15),
-                    Row(
-                      children: [
-                        CustomCheckBox(
-                          size: 20,
-                          isChecked: checkRemember,
-                          onChanged: (value) {
-                            checkRemember = value;
-                            setState(() {});
-                          },
-                        ),
-                        SizedBox(width: 5),
-                        CustomText(
-                          title: 'Remember me',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        Spacer(),
-                        InkWell(
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Color(0xffF4F5FA),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          title: 'Login',
+                          buttonColor: authModeisLogin
+                              ? AppColors.mainColor
+                              : Colors.transparent,
                           onTap: () {
-                            MaterialPageRoute(
-                              builder: (context) => ForgotPasswordView(),
-                            );
+                            authModeController.state = true;
                           },
-                          child: CustomText(
-                            title: 'Forgot password',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    CustomButton(
-                      title: 'Next',
-                      isLoading: authState.isLoading,
-                      onTap: () async {
-                        authController.login(
-                          phone: loginPhoneController.text.trim(),
-                          password: loginPasswordController.text.trim(),
-                          rememberMe: checkRemember,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              ///if selected sign up
-              Visibility(
-                visible: !authModeisLogin,
-                child: Column(
-                  children: [
-                    Text(
-                      'Only your first name and vehicle details are visible to clients during the booking',
-                      style: CommonStyle.textStyleSmall(size: 14),
-                    ),
-                    SizedBox(height: 20),
-
-                    /// input section
-                    CustomTextFieldWithLabel(
-                      label: 'Full Name',
-                      hint: 'Enter your full name',
-                      controller: fullNameController,
-                    ),
-
-                    CustomTextFieldWithLabel(
-                      label: 'Enter email',
-                      hint: 'Enter your email address',
-                      controller: emailController,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Phone number',
-                          style: CommonStyle.textStyleMedium(),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 5),
-                    CustomCountryPicker(
-                      defaultIsoCode: 'IE',
-                      titleText: 'Enter phone number',
-                      hintText: 'Enter number',
-                      controller: phoneNumberController,
-                      isLabelHidden: true,
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime(1995),
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now(),
-                        );
-
-                        if (pickedDate != null) {
-                          dateOfBirthController.text =
-                              "${pickedDate.day.toString().padLeft(2, '0')}/"
-                              "${pickedDate.month.toString().padLeft(2, '0')}/"
-                              "${pickedDate.year}";
-                        }
-                      },
-                      child: AbsorbPointer(
-                        child: CustomTextFieldWithLabel(
-                          label: "Date of Birth",
-                          hint: "DD/MM/YYYY",
-                          controller: dateOfBirthController,
-                          suffixIcon: Icon(Icons.calendar_month),
                         ),
                       ),
-                    ),
-
-                    CustomTextFieldWithLabel(
-                      label: 'Street Address',
-                      hint: 'e.g. 221B Baker Street',
-                      controller: streetController,
-                    ),
-
-                    CustomTextFieldWithLabel(
-                      label: 'Postal Code',
-                      hint: 'e.g. 10001',
-                      controller: postalController,
-                    ),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextFieldWithLabel(
-                            label: 'City',
-                            hint: 'e.g. New York',
-                            controller: cityController,
-                          ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Container(
+                          width: 2,
+                          height: MediaQuery.sizeOf(context).height / 26,
+                          color: Colors.grey.shade300,
                         ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: CustomTextFieldWithLabel(
-                            label: 'Country',
-                            hint: 'e.g. USA',
-                            controller: countryController,
-                          ),
+                      ),
+                      Expanded(
+                        child: CustomButton(
+                          title: 'Sign up',
+                          buttonColor: !authModeisLogin
+                              ? AppColors.mainColor
+                              : Colors.transparent,
+                          onTap: () {
+                            authModeController.state = false;
+                          },
                         ),
-                      ],
-                    ),
-
-                    CustomTextFieldWithLabel(
-                      label: 'National ID',
-                      hint: 'e.g. 1234567890',
-                      subText:
-                          "Your social security number or country\'s alternative (e.g. BVN)",
-                      controller: nationalIdController,
-                    ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Text('Password', style: CommonStyle.textStyleMedium()),
-                      ],
-                    ),
-
-                    SizedBox(height: 5),
-
-                    CustomTextField(
-                      controller: passwordController,
-                      hint: 'Password',
-                      obscureText: true,
-                    ),
-
-                    SizedBox(height: 20),
-                    CustomButton(title: 'Next', onTap: _moveNext),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+
+                SizedBox(height: 15),
+
+                ///if selected login
+                Visibility(
+                  visible: authModeisLogin,
+                  child: Column(
+                    children: [
+                      CustomTextField(
+                        controller: loginPhoneController,
+                        prefixIcon: Icon(Icons.phone),
+                        hint: 'Phone number',
+                      ),
+                      SizedBox(height: 8),
+                      CustomTextField(
+                        controller: loginPasswordController,
+                        obscureText: true,
+                        prefixIcon: Icon(Icons.lock_outline),
+                        hint: 'Password',
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        children: [
+                          CustomCheckBox(
+                            size: 20,
+                            isChecked: checkRemember,
+                            onChanged: (value) {
+                              checkRemember = value;
+                              setState(() {});
+                            },
+                          ),
+                          SizedBox(width: 5),
+                          CustomText(
+                            title: 'Remember me',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          Spacer(),
+                          InkWell(
+                            onTap: () {
+                              MaterialPageRoute(
+                                builder: (context) => ForgotPasswordView(),
+                              );
+                            },
+                            child: CustomText(
+                              title: 'Forgot password',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      CustomButton(
+                        title: 'Next',
+                        isLoading: authState.isLoading,
+                        onTap: () async {
+                          authController.login(
+                            phone: loginPhoneController.text.trim(),
+                            password: loginPasswordController.text.trim(),
+                            rememberMe: checkRemember,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                ///if selected sign up
+                Visibility(
+                  visible: !authModeisLogin,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Only your first name and vehicle details are visible to clients during the booking',
+                        style: CommonStyle.textStyleSmall(size: 14),
+                      ),
+                      SizedBox(height: 20),
+
+                      /// input section
+                      CustomTextFieldWithLabel(
+                        label: 'Full Name',
+                        hint: 'Enter your full name',
+                        controller: fullNameController,
+                      ),
+
+                      CustomTextFieldWithLabel(
+                        label: 'Enter email',
+                        hint: 'Enter your email address',
+                        controller: emailController,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Phone number',
+                            style: CommonStyle.textStyleMedium(),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 5),
+                      CustomCountryPicker(
+                        defaultIsoCode: 'IE',
+                        titleText: 'Enter phone number',
+                        hintText: 'Enter number',
+                        controller: phoneNumberController,
+                        isLabelHidden: true,
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime(1995),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime.now(),
+                          );
+
+                          if (pickedDate != null) {
+                            dateOfBirthController.text =
+                                "${pickedDate.day.toString().padLeft(2, '0')}/"
+                                "${pickedDate.month.toString().padLeft(2, '0')}/"
+                                "${pickedDate.year}";
+                          }
+                        },
+                        child: AbsorbPointer(
+                          child: CustomTextFieldWithLabel(
+                            label: "Date of Birth",
+                            hint: "DD/MM/YYYY",
+                            controller: dateOfBirthController,
+                            suffixIcon: Icon(Icons.calendar_month),
+                          ),
+                        ),
+                      ),
+
+                      CustomTextFieldWithLabel(
+                        label: 'Street Address',
+                        hint: 'e.g. 221B Baker Street',
+                        controller: streetController,
+                      ),
+
+                      CustomTextFieldWithLabel(
+                        label: 'Postal Code',
+                        hint: 'e.g. 10001',
+                        controller: postalController,
+                      ),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextFieldWithLabel(
+                              label: 'City',
+                              hint: 'e.g. New York',
+                              controller: cityController,
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: CustomTextFieldWithLabel(
+                              label: 'Country',
+                              hint: 'e.g. USA',
+                              controller: countryController,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      CustomTextFieldWithLabel(
+                        label: 'National ID',
+                        hint: 'e.g. 1234567890',
+                        subText:
+                            "Your social security number or country\'s alternative (e.g. BVN)",
+                        controller: nationalIdController,
+                      ),
+                      SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Text(
+                            'Password',
+                            style: CommonStyle.textStyleMedium(),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 5),
+
+                      CustomTextField(
+                        controller: passwordController,
+                        hint: 'Password',
+                        obscureText: true,
+                      ),
+
+                      SizedBox(height: 20),
+                      CustomButton(title: 'Next', onTap: _moveNext),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

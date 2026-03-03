@@ -225,6 +225,9 @@ class HomeRideController extends _$HomeRideController with MapMixin {
         markers: {...state.markers.where((m) => m.markerId.value != 'pickup')},
       );
     });
+    repository.rideCancel().listen((response) {
+      state = state.copyWith(status: DriverStatus.rideCanceled);
+    });
     repository.reachedDestinationLocation().listen((response) {
       repository.listenForPaymentConfirm().listen((response) {
         state = state.copyWith(status: DriverStatus.paymentRecived);
@@ -274,10 +277,17 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     });
   }
 
-  Future<void> rideDecline({required String rideId}) async {
-    repository.rideDecline(rideId: rideId);
+  Future<void> rideDecline({
+    required String rideId,
+    required String reason,
+  }) async {
+    repository.rideDecline(rideId: rideId, reason: reason);
 
-    state = state.copyWith(status: DriverStatus.online);
+    state = state.copyWith(
+      rideRequest: state.rideRequest
+          .where((ride) => ride.rideInfo.id != rideId)
+          .toList(),
+    );
   }
 
   void startRide({required String rideId}) async {

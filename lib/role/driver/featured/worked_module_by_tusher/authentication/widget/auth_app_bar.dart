@@ -15,7 +15,9 @@ class AuthAppBar extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
             },
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           ),

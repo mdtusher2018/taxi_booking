@@ -174,10 +174,21 @@ class RequestListSheet extends ConsumerWidget {
                                   width: 2,
                                   color: AppColors.btnColor,
                                 ),
-                                onTap: () {
-                                  ref
-                                      .read(homeRideControllerProvider.notifier)
-                                      .rideDecline(rideId: request.rideInfo.id);
+                                onTap: () async {
+                                  final result = await declineDialog(
+                                    ref.context,
+                                  );
+
+                                  if (result != null && result.isNotEmpty) {
+                                    ref
+                                        .read(
+                                          homeRideControllerProvider.notifier,
+                                        )
+                                        .rideDecline(
+                                          rideId: request.rideInfo.id,
+                                          reason: result,
+                                        );
+                                  }
                                 },
                               ),
                             ),
@@ -227,6 +238,49 @@ class RequestListSheet extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<String?> declineDialog(BuildContext context) async {
+    final TextEditingController reasonController = TextEditingController();
+
+    return await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Decline Ride"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("Please enter a reason for declining:"),
+              const SizedBox(height: 12),
+              TextField(
+                controller: reasonController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  hintText: "Enter reason here...",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (reasonController.text.trim().isEmpty) {
+                  return;
+                }
+                Navigator.pop(context, reasonController.text.trim());
+              },
+              child: const Text("Confirm"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

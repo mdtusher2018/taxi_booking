@@ -75,8 +75,7 @@ class SocketService {
   // ------------------ EMIT ------------------
   Future<dynamic> emit(String event, dynamic data) async {
     if (!isConnected) {
-      CustomToast.showToast(message: "Socket not connected. Try again later.");
-      return;
+      connect();
     }
 
     try {

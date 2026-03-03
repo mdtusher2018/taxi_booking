@@ -11,9 +11,7 @@ import '../../../../../../resource/common_widget/custom_network_image.dart';
 import '../views/cancel_booking_view.dart';
 
 class ArrivingSheet extends ConsumerStatefulWidget {
-  final VoidCallback? onCancel;
-
-  ArrivingSheet({super.key, this.onCancel});
+  ArrivingSheet({super.key});
 
   @override
   ConsumerState<ArrivingSheet> createState() => _ArrivingCardState();
@@ -79,7 +77,16 @@ class _ArrivingCardState extends ConsumerState<ArrivingSheet> {
               Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  onTap: widget.onCancel,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return CancelBookingView();
+                        },
+                      ),
+                    );
+                  },
                   child: const Icon(Icons.close, color: Colors.grey),
                 ),
               ),
