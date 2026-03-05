@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/controllers/booking_map_controller.dart';
 import 'package:taxi_booking/role/user/featured/worked_module_by_tusher/booking_map/model/pricing_model.dart';
@@ -28,53 +29,64 @@ class PricingOverviewSheet extends ConsumerStatefulWidget {
 class _PricingOverviewSheetState extends ConsumerState<PricingOverviewSheet> {
   int? selectedIndex; // Track selected pricing index
 
-  final pricingList = [
-    PricingModel(
-      title: "TaxiTil",
-      subtitle: "Lowest price option",
-      startFare: 34.20,
-      perKm: 11.70,
-      perMin: 4.14,
-      minFare: 99,
-      extra: "Weekend higher pricing",
-    ),
-    PricingModel(
-      title: "Comfort",
-      subtitle: "Standard",
-      startFare: 54,
-      perKm: 15.75,
-      perMin: 5.40,
-      minFare: 100,
-    ),
-    PricingModel(
-      title: "Premium",
-      subtitle: "Luxury",
-      startFare: 63.90,
-      perKm: 21.60,
-      perMin: 5.94,
-      minFare: 105,
-    ),
-    PricingModel(
-      title: "XL",
-      subtitle: "Up to 7 passengers",
-      startFare: 71.82,
-      perKm: 25.52,
-      perMin: 8.98,
-      minFare: 251,
-    ),
-    PricingModel(
-      title: "Pet",
-      subtitle: "Pet friendly",
-      startFare: 34.20,
-      perKm: 11.70,
-      perMin: 4.14,
-      minFare: 99,
-      extra: "+25 NOK pet charge",
-    ),
-  ];
+  // final pricingList = [
+  //   PricingModel(
+  //     title: "TaxiTil",
+  //     subtitle: "Lowest price option",
+  //     startFare: 34.20,
+  //     perKm: 11.70,
+  //     perMin: 4.14,
+  //     minFare: 99,
+  //     extra: "Weekend higher pricing",
+  //   ),
+  //   PricingModel(
+  //     title: "Comfort",
+  //     subtitle: "Standard",
+  //     startFare: 54,
+  //     perKm: 15.75,
+  //     perMin: 5.40,
+  //     minFare: 100,
+  //   ),
+  //   PricingModel(
+  //     title: "Premium",
+  //     subtitle: "Luxury",
+  //     startFare: 63.90,
+  //     perKm: 21.60,
+  //     perMin: 5.94,
+  //     minFare: 105,
+  //   ),
+  //   PricingModel(
+  //     title: "XL",
+  //     subtitle: "Up to 7 passengers",
+  //     startFare: 71.82,
+  //     perKm: 25.52,
+  //     perMin: 8.98,
+  //     minFare: 251,
+  //   ),
+  //   PricingModel(
+  //     title: "Pet",
+  //     subtitle: "Pet friendly",
+  //     startFare: 34.20,
+  //     perKm: 11.70,
+  //     perMin: 4.14,
+  //     minFare: 99,
+  //     extra: "+25 NOK pet charge",
+  //   ),
+  // ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final controller = ref.read(bookingMapControllerProvider.notifier);
+      controller.fetchPricingData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final controller = ref.read(bookingMapControllerProvider.notifier);
+    final state = ref.watch(bookingMapControllerProvider);
     return Container(
       height: MediaQuery.of(context).size.height * .85,
       padding: const EdgeInsets.all(16),
@@ -99,20 +111,40 @@ class _PricingOverviewSheetState extends ConsumerState<PricingOverviewSheet> {
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: ListView.separated(
-              itemCount: pricingList.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (_, index) {
-                return _PricingCard(
-                  model: pricingList[index],
-                  isSelected: selectedIndex == index,
-                  onTap: () {
-                    setState(() {
-                      selectedIndex = index; // Update selected index
-                    });
-                  },
-                );
-              },
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: ValueListenableBuilder(
+                valueListenable: controller.isLoading,
+                builder: (_, isloading, _) {
+                  if (isloading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state.pricingList.isNotEmpty) {
+                    return ListView.separated(
+                      itemCount: state.pricingList.length,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (_, index) {
+                        return _PricingCard(
+                          model: state.pricingList[index],
+                          isSelected: selectedIndex == index,
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = index; // Update selected index
+                            });
+                          },
+                        );
+                      },
+                    );
+                  } else {
+                    return Center(
+                      child: CustomText(
+                        title: "Data can't load, Pull to Refresh",
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -124,7 +156,7 @@ class _PricingOverviewSheetState extends ConsumerState<PricingOverviewSheet> {
                 ref
                     .read(bookingMapControllerProvider.notifier)
                     .selectedPriceModel(
-                      selectedPriceModel: pricingList[selectedIndex!],
+                      selectedPriceModel: state.pricingList[selectedIndex!],
                     );
 
                 SummarySheet.show(context);

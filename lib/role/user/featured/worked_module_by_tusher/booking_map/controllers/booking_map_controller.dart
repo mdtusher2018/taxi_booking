@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:taxi_booking/core/base/base_notifier.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/core/services/network/i_api_service.dart';
@@ -31,16 +32,20 @@ final bookingMapControllerProvider =
       return BookingMapController(
         apiService: ref.read(apiServiceProvider),
         socketService: ref.read(socketServiceProvider),
+        snackBarService: ref.read(snackbarServiceProvider),
       );
     });
 
-class BookingMapController extends StateNotifier<BookingMapState>
-    with MapMixin {
+class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
   final IApiService apiService;
+
   final SocketService socketService;
 
-  BookingMapController({required this.apiService, required this.socketService})
-    : super(const BookingMapState()) {
+  BookingMapController({
+    required this.apiService,
+    required this.socketService,
+    required super.snackBarService,
+  }) : super(const BookingMapState()) {
     _init();
   }
 
@@ -310,6 +315,12 @@ class BookingMapController extends StateNotifier<BookingMapState>
   //======== Create Ride Api post ===========
   //
   //=========================================
+
+  Future<void> fetchPricingData() async {
+    final response = await apiService.get(UserApiEndpoints.fareInfo);
+    final pricingList = PricingModel.fromJsonList(response['data']);
+    state = state.copyWith(pricingList: pricingList);
+  }
 
   void updateSurgeMultiplier() {
     socketService.emit(SocketEvents.liveCountUpdate, {

@@ -24,6 +24,7 @@ class BookingMapState {
   final DriverInfo? acceptedDriverInfo;
 
   final PricingModel? selectedPriceModel;
+  final List<PricingModel> pricingList;
 
   const BookingMapState({
     this.isLoading = false,
@@ -43,6 +44,7 @@ class BookingMapState {
     this.rideId = '',
     this.acceptedDriverInfo,
     this.selectedPriceModel,
+    this.pricingList = const [],
   });
 
   BookingMapState copyWith({
@@ -63,6 +65,7 @@ class BookingMapState {
     String? rideId,
     DriverInfo? acceptedDriverInfo,
     PricingModel? selectedPriceModel,
+    List<PricingModel>? pricingList,
   }) {
     return BookingMapState(
       isLoading: isLoading ?? this.isLoading,
@@ -82,6 +85,7 @@ class BookingMapState {
       rideId: rideId ?? this.rideId,
       acceptedDriverInfo: acceptedDriverInfo ?? this.acceptedDriverInfo,
       selectedPriceModel: selectedPriceModel ?? this.selectedPriceModel,
+      pricingList: pricingList ?? this.pricingList,
     );
   }
 }
