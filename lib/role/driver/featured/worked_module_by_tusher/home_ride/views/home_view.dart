@@ -1,9 +1,11 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
@@ -21,7 +23,9 @@ import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_r
 import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/home_ride/widget/trip_details_bottom_sheet.dart';
 
 class DriverHomeView extends ConsumerWidget {
-  const DriverHomeView({super.key});
+  DriverHomeView({super.key});
+
+  ValueNotifier<bool> switchingOnlineOffline = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -100,17 +104,28 @@ class DriverHomeView extends ConsumerWidget {
                         fontWeight: FontWeight.w500,
                       ),
 
-                      Switch(
-                        value: state.status != DriverStatus.offline,
-
-                        activeThumbColor: AppColors.btnColor,
-
-                        onChanged: (value) {
+                      ValueListenableBuilder(
+                        valueListenable: switchingOnlineOffline,
+                        builder: (context, value, child) {
                           if (value) {
-                            controller.driverOnline();
-                          } else {
-                            controller.driverOffline();
+                            return Center(child: CircularProgressIndicator());
                           }
+                          return Switch(
+                            value: state.status != DriverStatus.offline,
+
+                            activeThumbColor: AppColors.btnColor,
+
+                            onChanged: (value) {
+                              if (value) {
+                                switchingOnlineOffline.value = true;
+                                ref.read(socketServiceProvider).connect();
+                                controller.driverOnline();
+                                switchingOnlineOffline.value = false;
+                              } else {
+                                controller.driverOffline();
+                              }
+                            },
+                          );
                         },
                       ),
                     ],
@@ -140,7 +155,8 @@ class DriverHomeView extends ConsumerWidget {
           ),
 
           /// ---------------- REQUEST LIST SHEET ----------------
-          if (state.status == DriverStatus.online)
+          if (state.status == DriverStatus.online &&
+              state.rideRequest.isNotEmpty)
             Positioned(bottom: 0, left: 0, right: 0, child: RequestListSheet()),
 
           /// ---------------- ON THE WAY SHEET ----------------

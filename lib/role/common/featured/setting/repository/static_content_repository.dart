@@ -9,10 +9,26 @@ class StaticContentRepository extends Repository {
   IApiService apiService;
   StaticContentRepository(this.apiService);
 
-  Future<Result<PrivacyPolicyResponse, Failure>> getPrivacyPolicy() {
+  Future<Result<StaticContentResponse, Failure>> getPrivacyPolicy() {
     return asyncGuard(() async {
       final response = await apiService.get(CommonApiEndPoints.privacyPolicy);
-      return PrivacyPolicyResponse.fromJson(response);
+      return StaticContentResponse.fromJson(response);
+    });
+  }
+
+  Future<Result<StaticContentResponse, Failure>> getAboutUs() {
+    return asyncGuard(() async {
+      final response = await apiService.get(CommonApiEndPoints.aboutUs);
+      return StaticContentResponse.fromJson(response);
+    });
+  }
+
+  Future<Result<StaticContentResponse, Failure>> getTermsAndCondition() {
+    return asyncGuard(() async {
+      final response = await apiService.get(
+        CommonApiEndPoints.termsAndCondition,
+      );
+      return StaticContentResponse.fromJson(response);
     });
   }
 }

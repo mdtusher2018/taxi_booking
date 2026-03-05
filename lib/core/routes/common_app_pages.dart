@@ -4,4 +4,6 @@ class CommonAppRoutes {
   static const settingView = '/settings';
   static const profileView = '/profile';
   static const privacyView = '/privacy';
+  static const aboutUsView = '/about-us';
+  static const termsAndConditionView = '/terms-and-condition';
 }

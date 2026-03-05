@@ -5,19 +5,19 @@ import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/role/common/featured/setting/controller/static_contents.dart';
 import 'package:taxi_booking/role/common/featured/setting/model/privacy_policy_model.dart';
 
-class PrivacyPolicyView extends ConsumerStatefulWidget {
-  const PrivacyPolicyView({super.key});
+class AboutUsView extends ConsumerStatefulWidget {
+  const AboutUsView({super.key});
 
   @override
-  ConsumerState<PrivacyPolicyView> createState() => _PrivacyPolicyViewState();
+  ConsumerState<AboutUsView> createState() => _PrivacyPolicyViewState();
 }
 
-class _PrivacyPolicyViewState extends ConsumerState<PrivacyPolicyView> {
+class _PrivacyPolicyViewState extends ConsumerState<AboutUsView> {
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      ref.read(staticContentsControllerProvider.notifier).getPrivacyPolicy();
+      ref.read(staticContentsControllerProvider.notifier).getAboutUs();
     });
   }
 
@@ -30,7 +30,7 @@ class _PrivacyPolicyViewState extends ConsumerState<PrivacyPolicyView> {
         backgroundColor: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        title: CustomText(title: 'Privacy Policy', fontSize: 21),
+        title: CustomText(title: 'About Us', fontSize: 21),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
@@ -42,7 +42,7 @@ class _PrivacyPolicyViewState extends ConsumerState<PrivacyPolicyView> {
         onRefresh: () async {
           await ref
               .read(staticContentsControllerProvider.notifier)
-              .getPrivacyPolicy();
+              .getAboutUs();
         },
         child: state.when(
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -57,7 +57,7 @@ class _PrivacyPolicyViewState extends ConsumerState<PrivacyPolicyView> {
               return Center(child: CircularProgressIndicator());
             }
             if ((response as StaticContentResponse).description.isEmpty) {
-              return const Center(child: Text('No Privacy Policy found'));
+              return const Center(child: Text('No About info found'));
             }
 
             final content = response.description;

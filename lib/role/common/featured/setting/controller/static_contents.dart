@@ -22,7 +22,37 @@ class StaticContentsController extends _$StaticContentsController {
     state = AsyncLoading();
     final result = await repository.getPrivacyPolicy();
     if (result is Success) {
-      state = AsyncData((result as Success).data as PrivacyPolicyResponse);
+      state = AsyncData((result as Success).data as StaticContentResponse);
+    } else if (result is Failure) {
+      final error = (result as FailureResult).error as Failure;
+      state = AsyncError(
+        error.message,
+        error.stackTrace ?? StackTrace.fromString("No trace found"),
+      );
+    }
+    result;
+  }
+
+  Future<void> getAboutUs() async {
+    state = AsyncLoading();
+    final result = await repository.getAboutUs();
+    if (result is Success) {
+      state = AsyncData((result as Success).data as StaticContentResponse);
+    } else if (result is Failure) {
+      final error = (result as FailureResult).error as Failure;
+      state = AsyncError(
+        error.message,
+        error.stackTrace ?? StackTrace.fromString("No trace found"),
+      );
+    }
+    result;
+  }
+
+  Future<void> getTermsAndCondition() async {
+    state = AsyncLoading();
+    final result = await repository.getTermsAndCondition();
+    if (result is Success) {
+      state = AsyncData((result as Success).data as StaticContentResponse);
     } else if (result is Failure) {
       final error = (result as FailureResult).error as Failure;
       state = AsyncError(

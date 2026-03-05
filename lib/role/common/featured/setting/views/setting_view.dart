@@ -40,7 +40,7 @@ class _SettingViewState extends ConsumerState<SettingView> {
     final state = ref.watch(profileControllerProvider);
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: "Settings"),
+      appBar: CustomAppBar(title: "Settings", leading: SizedBox()),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -240,9 +240,23 @@ class _SettingViewState extends ConsumerState<SettingView> {
 
             SettingItemCard(
               icon: Icon(Icons.policy, color: Colors.yellow.shade900),
-              title: "Security & Privacy",
+              title: "Privacy",
               onTap: () {
                 context.push(CommonAppRoutes.privacyView);
+              },
+            ),
+            SettingItemCard(
+              icon: Icon(Icons.policy, color: Colors.yellow.shade900),
+              title: "About Us",
+              onTap: () {
+                context.push(CommonAppRoutes.aboutUsView);
+              },
+            ),
+            SettingItemCard(
+              icon: Icon(Icons.policy, color: Colors.yellow.shade900),
+              title: "Terms & Service",
+              onTap: () {
+                context.push(CommonAppRoutes.termsAndConditionView);
               },
             ),
 

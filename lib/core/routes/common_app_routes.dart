@@ -2,9 +2,11 @@ import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/role/common/featured/chat/views/message_view.dart';
 import 'package:taxi_booking/role/common/featured/setting/model/profile_response.dart';
+import 'package:taxi_booking/role/common/featured/setting/views/about_us.dart';
 import 'package:taxi_booking/role/common/featured/setting/views/edit_profile_view.dart';
 import 'package:taxi_booking/role/common/featured/setting/views/privacy_policy.dart';
 import 'package:taxi_booking/role/common/featured/setting/views/setting_view.dart';
+import 'package:taxi_booking/role/common/featured/setting/views/terms_and_condition_view.dart';
 
 final commonAppRoutes = [
   GoRoute(
@@ -33,6 +35,18 @@ final commonAppRoutes = [
     path: CommonAppRoutes.privacyView,
     builder: (context, state) {
       return PrivacyPolicyView();
+    },
+  ),
+  GoRoute(
+    path: CommonAppRoutes.aboutUsView,
+    builder: (context, state) {
+      return AboutUsView();
+    },
+  ),
+  GoRoute(
+    path: CommonAppRoutes.termsAndConditionView,
+    builder: (context, state) {
+      return TermsAndConditionView();
     },
   ),
 ];
