@@ -25,7 +25,7 @@ Future<void> appinitalized() async {
   await NotificationService.init();
 }
 
-const String _role = String.fromEnvironment('APP_ROLE', defaultValue: 'user');
+const String _role = String.fromEnvironment('APP_ROLE', defaultValue: 'driver');
 
 final appRole = StateProvider<AppRole>((ref) {
   return _role == 'driver' ? AppRole.driver : AppRole.user;
