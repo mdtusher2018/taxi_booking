@@ -147,12 +147,7 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
             SearchingDriverBottomSheet(),
 
           if (state.status == RideBookingStatus.driverOnTheWay)
-            Positioned(
-              bottom: 100,
-              left: 16,
-              right: 16,
-              child: ArrivingSheet(),
-            ),
+            Positioned(bottom: 0, left: 16, right: 16, child: ArrivingSheet()),
           if (state.status == RideBookingStatus.driverArived)
             Positioned(
               bottom: 100, // Position from the bottom of the screen
