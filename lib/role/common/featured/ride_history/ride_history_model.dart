@@ -66,6 +66,7 @@ class Fare {
 
 class Ride {
   String id;
+  String rideStaus;
   Location pickupLocation;
   Location dropOffLocation;
   Fare fare;
@@ -76,6 +77,7 @@ class Ride {
 
   Ride({
     required this.id,
+    required this.rideStaus,
     required this.pickupLocation,
     required this.dropOffLocation,
     required this.fare,
@@ -88,6 +90,7 @@ class Ride {
   factory Ride.fromJson(dynamic json) {
     return Ride(
       id: JsonHelper.stringVal(json?['_id']),
+      rideStaus: JsonHelper.stringVal(json?['status'] ?? "N/A"),
       pickupLocation: Location.fromJson(json?['pickupLocation']),
       dropOffLocation: Location.fromJson(json?['dropOffLocation']),
       fare: Fare.fromJson(json?['fare']),

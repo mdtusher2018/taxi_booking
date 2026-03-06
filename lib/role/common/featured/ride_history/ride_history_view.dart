@@ -93,6 +93,7 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
                     ...entry.value.map((item) {
                       final index = entry.value.indexOf(item);
                       return _CustomHistoryCard(
+                        status: item.rideStaus,
                         dropAddress: item.dropOffLocation.address,
                         pickupAddress: item.pickupLocation.address,
                         dropLocation: LatLng(
@@ -214,6 +215,7 @@ class _CustomHistoryCard extends StatelessWidget {
   final String dropAddress;
   final String pickupAddress;
   final String dateFormatted;
+  final String status;
   final int duration;
   final double distance;
   final Fare fare;
@@ -221,10 +223,11 @@ class _CustomHistoryCard extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback onToggle;
 
-  const _CustomHistoryCard({
+  _CustomHistoryCard({
     required this.dropAddress,
     required this.pickupAddress,
     required this.dateFormatted,
+    required this.status,
     required this.duration,
     required this.distance,
     required this.fare,
@@ -394,19 +397,26 @@ class _CustomHistoryCard extends StatelessWidget {
               // Fare Breakdown
               Row(
                 children: [
-                  const Icon(
-                    Icons.attach_money,
-                    size: 20,
-                    color: Colors.blueGrey,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Fare: \$${fare.totalFare.toStringAsFixed(2)}',
-                    style: CommonStyle.textStyleMedium(
-                      size: 14,
-                      color: Colors.green[800],
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.attach_money,
+                          size: 20,
+                          color: Colors.blueGrey,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Fare: \$${fare.totalFare.toStringAsFixed(2)}',
+                          style: CommonStyle.textStyleMedium(
+                            size: 14,
+                            color: Colors.green[800],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  rideStatusBadge(status),
                 ],
               ),
             ],
@@ -415,4 +425,51 @@ class _CustomHistoryCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget rideStatusBadge(String status) {
+    final style =
+        rideStatusStyles[status] ??
+        const _RideStatusStyle('Unknown', Colors.grey);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: style.color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: style.color),
+      ),
+      child: Text(
+        style.label,
+        style: TextStyle(
+          color: style.color,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+
+  final Map<String, _RideStatusStyle> rideStatusStyles = {
+    'CREATED': _RideStatusStyle('Created', Colors.grey),
+    'SEARCHING': _RideStatusStyle('Searching Driver', Colors.orange),
+    'REQUESTED': _RideStatusStyle('Request Sent', Colors.blue),
+    'ACCEPTED': _RideStatusStyle('Driver Accepted', Colors.green),
+    'DRIVER_ARRIVED': _RideStatusStyle('Driver Arrived', Colors.teal),
+    'STARTED': _RideStatusStyle('Trip Started', Colors.indigo),
+    'ONEWAY': _RideStatusStyle('On The Way', Colors.deepPurple),
+    'DRIVER_ARRIVED_DROPOFF': _RideStatusStyle(
+      'Arrived at Dropoff',
+      Colors.cyan,
+    ),
+    'COMPLETED': _RideStatusStyle('Completed', Colors.green),
+    'CANCELLED': _RideStatusStyle('Cancelled', Colors.red),
+    'FAILED': _RideStatusStyle('Failed', Colors.redAccent),
+  };
+}
+
+class _RideStatusStyle {
+  final String label;
+  final Color color;
+
+  const _RideStatusStyle(this.label, this.color);
 }
