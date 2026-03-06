@@ -10,7 +10,7 @@ import 'package:taxi_booking/resource/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/role/common/featured/chat/controller/message_controller.dart';
 import 'package:taxi_booking/role/common/featured/chat/model/message_response_model.dart';
-import 'package:taxi_booking/role/driver/featured/worked_module_by_tusher/vehicals/view/my_vehicales_view.dart';
+import 'package:taxi_booking/role/driver/featured/vehicals/view/my_vehicales_view.dart';
 
 class MessageView extends ConsumerStatefulWidget {
   final String reciverId;

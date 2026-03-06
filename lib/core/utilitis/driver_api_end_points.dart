@@ -9,6 +9,7 @@ class DriverApiEndpoints {
   static const String baseSocketUrl = CommonApiEndPoints.baseSocketUrl;
 
   static const String login = "auth/login";
+  static const String otpVerification = "otp/verify-phone-number";
 
   static const String signupWithCar = "with-car-drivers/signup";
   static const String signupWithoutCar =
