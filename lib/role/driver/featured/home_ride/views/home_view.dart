@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,13 +21,18 @@ import 'package:taxi_booking/role/driver/featured/home_ride/widget/ride_canceled
 import 'package:taxi_booking/role/driver/featured/home_ride/widget/ride_compleate_sheet.dart';
 import 'package:taxi_booking/role/driver/featured/home_ride/widget/trip_details_bottom_sheet.dart';
 
-class DriverHomeView extends ConsumerWidget {
+class DriverHomeView extends ConsumerStatefulWidget {
   DriverHomeView({super.key});
 
+  @override
+  ConsumerState<DriverHomeView> createState() => _DriverHomeViewState();
+}
+
+class _DriverHomeViewState extends ConsumerState<DriverHomeView> {
   ValueNotifier<bool> switchingOnlineOffline = ValueNotifier(false);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final controller = ref.read(homeRideControllerProvider.notifier);
     final state = ref.watch(homeRideControllerProvider);
     ref.listen(homeRideControllerProvider, (previous, next) {

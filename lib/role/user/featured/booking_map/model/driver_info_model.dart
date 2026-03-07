@@ -10,16 +10,10 @@ class RideAcceptResponse {
   factory RideAcceptResponse.fromJson(Map<String, dynamic> json) {
     return RideAcceptResponse(
       rideId: json['rideId'] as String?,
-      driverInfo:
-          json['driverInfo'] != null
-              ? DriverInfo.fromJson(json['driverInfo'])
-              : null,
+      driverInfo: json['driverInfo'] != null
+          ? DriverInfo.fromJson(json['driverInfo'])
+          : null,
     );
-  }
-
-  // Converts Ride object to JSON
-  Map<String, dynamic> toJson() {
-    return {'rideId': rideId, 'driverInfo': driverInfo?.toJson()};
   }
 }
 
@@ -52,27 +46,16 @@ class DriverInfo {
       image: json['image'] as String?,
       email: json['email'] as String?,
       phone: json['phone'] as String?,
-      rating:
-          json['rating'] != null ? (json['rating'] as num).toDouble() : null,
-      location:
-          json['location'] != null ? Location.fromJson(json['location']) : null,
-      vehicle:
-          json['vehicle'] != null ? Vehicle.fromJson(json['vehicle']) : null,
+      rating: json['rating'] != null
+          ? (json['rating'] as num).toDouble()
+          : null,
+      location: json['location'] != null
+          ? Location.fromJson(json['location'])
+          : null,
+      vehicle: json['vehicle'] != null
+          ? Vehicle.fromJson(json['vehicle'])
+          : null,
     );
-  }
-
-  // Converts DriverInfo object to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'driverId': driverId,
-      'name': name,
-      'image': image,
-      'email': email,
-      'phone': phone,
-      'rating': rating,
-      'location': location?.toJson(),
-      'vehicle': vehicle?.toJson(),
-    };
   }
 }
 
@@ -87,17 +70,11 @@ class Location {
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
       type: json['type'] as String?,
-      coordinates:
-          json['coordinates'] != null
-              ? List<double>.from(json['coordinates'])
-              : null,
+      coordinates: json['coordinates'] != null
+          ? List<double>.from(json['coordinates'])
+          : null,
       address: json['address'] as String?,
     );
-  }
-
-  // Converts Location object to JSON
-  Map<String, dynamic> toJson() {
-    return {'type': type, 'coordinates': coordinates, 'address': address};
   }
 }
 
@@ -115,11 +92,6 @@ class Vehicle {
       name: json['name'] as String?,
       model: json['model'] as String?,
     );
-  }
-
-  // Converts Vehicle object to JSON
-  Map<String, dynamic> toJson() {
-    return {'photo': photo, 'name': name, 'model': model};
   }
 }
 

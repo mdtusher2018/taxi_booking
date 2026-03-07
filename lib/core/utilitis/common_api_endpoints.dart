@@ -21,9 +21,11 @@ class CommonApiEndPoints {
 
   static String rideHistory(int page) => "rides/my-rides?page=$page";
 
-  static var getProfile = "users/my-profile";
-  static var privacyPolicy = "pats/privacy-policy";
-  static var aboutUs = "pats/about-us";
-  static var termsAndCondition = "pats/terms-and-service";
-  static var adminInfo = "users/admin-support-info";
+  static const String getProfile = "users/my-profile";
+  static const String privacyPolicy = "pats/privacy-policy";
+  static const String aboutUs = "pats/about-us";
+  static const String termsAndCondition = "pats/terms-and-service";
+  static const String adminInfo = "users/admin-support-info";
+
+  static String rideDetails(String rideId) => "rides/ride-details/$rideId";
 }

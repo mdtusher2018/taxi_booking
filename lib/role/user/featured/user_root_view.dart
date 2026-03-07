@@ -6,8 +6,10 @@ import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/core/utilitis/user_api_end_points.dart';
 import 'package:taxi_booking/role/common/featured/chat/views/chat_list_view.dart';
 import 'package:taxi_booking/role/common/featured/notifications/notifications_view.dart';
+import 'package:taxi_booking/role/common/featured/ride_details/ride_details_controller.dart';
 import 'package:taxi_booking/role/common/featured/ride_history/ride_history_view.dart';
 import 'package:taxi_booking/role/common/featured/setting/views/setting_view.dart';
+import 'package:taxi_booking/role/user/featured/booking_map/controllers/booking_map_controller.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/views/booking_map_view.dart';
 
 class UserRootView extends ConsumerStatefulWidget {
@@ -59,6 +61,10 @@ class _DashboardViewState extends ConsumerState<UserRootView> {
       SocketConfig(url: UserApiEndpoints.baseSocketUrl, token: token),
     );
     socketService.connect();
+    ref
+        .read(bookingMapControllerProvider.notifier)
+        .listenRideDetails(ref.read(rideDetailsControllerProvider));
+    ref.read(bookingMapControllerProvider.notifier).emitRideDetails();
   }
 
   @override

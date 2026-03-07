@@ -10,6 +10,8 @@ import 'package:taxi_booking/core/services/storage/i_local_storage_service.dart'
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/common/featured/chat/model/message_response_model.dart';
+import 'package:taxi_booking/role/common/featured/ride_details/ride_details_controller.dart';
+import 'package:taxi_booking/role/common/featured/ride_details/ride_details_response.dart';
 import 'package:taxi_booking/role/driver/featured/home_ride/model/driver_online_response.dart';
 import 'package:taxi_booking/role/driver/featured/home_ride/model/ride_request_response.dart';
 
@@ -47,9 +49,6 @@ class HomeRideRepository extends Repository {
     socketService.on(SocketEvents.rideRequest, (data) {
       AppLogger.i(data.toString());
       if (data != null) {
-        // final rideRequestResponse = RideRequestResponse.fromJson(data);
-        // controller.add(rideRequestResponse);
-
         if (data is List && data.isNotEmpty) {
           final rideMap = data[0];
           if (rideMap is Map<String, dynamic>) {
@@ -204,5 +203,26 @@ class HomeRideRepository extends Repository {
       }
     });
     return controller.stream;
+  }
+
+  Stream<RideDetailsResponse?> rideDetails(
+    RideDetailsController rideDetailsController,
+  ) {
+    final StreamController<RideDetailsResponse?> controller =
+        StreamController<RideDetailsResponse?>();
+    socketService.on(SocketEvents.restoreRideState, (data) async {
+      AppLogger.d("$data ========================= ridedetails called");
+      if (data is List && data[0] != null) {
+        final bool hasActiveRide = data[0]["hasActiveRide"] ?? false;
+        final String rideId = data[0]["rideId"] ?? "";
+        final rideDetails = await rideDetailsController.getRideDetails(rideId);
+        controller.add((hasActiveRide ? rideDetails : null));
+      }
+    });
+    return controller.stream;
+  }
+
+  void emitRideDetails() {
+    socketService.emit(SocketEvents.restoreRideState, {});
   }
 }

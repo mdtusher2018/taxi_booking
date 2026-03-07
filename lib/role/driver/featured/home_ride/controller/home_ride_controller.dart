@@ -9,7 +9,9 @@ import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
 import 'package:taxi_booking/core/utilitis/driver_api_end_points.dart';
 import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
+import 'package:taxi_booking/core/utilitis/extension/ride_details_extensions_driver.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
+import 'package:taxi_booking/role/common/featured/ride_details/ride_details_controller.dart';
 import 'package:taxi_booking/role/driver/driver_di/repository.dart';
 import 'package:taxi_booking/role/driver/featured/home_ride/controller/home_ride_state.dart';
 import 'package:taxi_booking/core/utilitis/mixin/map_mixin.dart';
@@ -158,7 +160,6 @@ class HomeRideController extends _$HomeRideController with MapMixin {
   }
 
   Future<void> driverOnline() async {
-    
     Position? position = await getCurrentLocation();
     if (position == null) {
       state = state.copyWith(error: "Failed to get current location");
@@ -318,5 +319,24 @@ class HomeRideController extends _$HomeRideController with MapMixin {
 
       state = state.copyWith(status: DriverStatus.rideEnd);
     }
+  }
+
+  Future<void> listenRideDetails() async {
+    final controller = ref.read(rideDetailsControllerProvider);
+    repository.rideDetails(controller).listen((rideDetails) {
+      if (rideDetails == null) return;
+      final rideRequest = rideDetails.toRideRequest();
+      state = state.copyWith(
+        selectedRide: rideRequest,
+        rideRequest: [rideRequest],
+        expandedRequestId: rideRequest.rideInfo.id,
+        status: rideDetails.data!.driverStatus,
+      );
+      startTrackingDriverLocation();
+    });
+  }
+
+  void emitRideDetails() {
+    repository.emitRideDetails();
   }
 }

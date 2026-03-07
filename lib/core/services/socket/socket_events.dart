@@ -10,6 +10,7 @@ class SocketEvents {
   // =========================
   // RIDE EVENTS
   // =========================
+  static const String restoreRideState = 'restore-ride-state';
   static const String rideRequest = 'ride-request';
   static const String rideAccepted = 'ride-accepted';
   static const String acceptRide = 'accept-ride';

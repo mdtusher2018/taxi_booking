@@ -17,6 +17,7 @@ import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/core/utilitis/user_api_end_points.dart';
 import 'package:taxi_booking/core/utilitis/mixin/map_mixin.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
+import 'package:taxi_booking/role/common/featured/ride_details/ride_details_controller.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/controllers/booking_map_state.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/model/create_ride_response.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/model/driver_live_location_update.dart';
@@ -544,5 +545,22 @@ class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
         message: response['message'] ?? "Field to Tip Compleate, Try again",
       );
     }
+  }
+
+  Future<void> listenRideDetails(RideDetailsController controller) async {
+    socketService.on(SocketEvents.restoreRideState, (data) async {
+      AppLogger.d("$data ========================= ridedetails called");
+      if (data is List && data[0] != null) {
+        final bool hasActiveRide = data[0]["hasActiveRide"] ?? false;
+        final String rideId = data[0]["rideId"] ?? "";
+        if (hasActiveRide) {
+          final rideDetails = await controller.getRideDetails(rideId);
+        }
+      }
+    });
+  }
+
+  void emitRideDetails() {
+    socketService.emit(SocketEvents.restoreRideState, {});
   }
 }
