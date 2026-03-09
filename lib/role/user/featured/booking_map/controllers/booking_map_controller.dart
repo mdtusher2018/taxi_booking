@@ -13,6 +13,7 @@ import 'package:taxi_booking/core/services/socket/socket_events.dart';
 import 'package:taxi_booking/core/services/socket/socket_service.dart';
 import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
+import 'package:taxi_booking/core/utilitis/extension/ride_details_extentions_user.dart';
 import 'package:taxi_booking/core/utilitis/helper.dart';
 import 'package:taxi_booking/core/utilitis/user_api_end_points.dart';
 import 'package:taxi_booking/core/utilitis/mixin/map_mixin.dart';
@@ -555,6 +556,8 @@ class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
         final String rideId = data[0]["rideId"] ?? "";
         if (hasActiveRide) {
           final rideDetails = await controller.getRideDetails(rideId);
+          if (rideDetails == null) return;
+          state = rideDetails.toBookingMapState(state);
         }
       }
     });
