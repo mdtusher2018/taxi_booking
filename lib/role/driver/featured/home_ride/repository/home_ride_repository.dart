@@ -215,7 +215,10 @@ class HomeRideRepository extends Repository {
       if (data is List && data[0] != null) {
         final bool hasActiveRide = data[0]["hasActiveRide"] ?? false;
         final String rideId = data[0]["rideId"] ?? "";
-        final rideDetails = await rideDetailsController.getRideDetails(rideId);
+
+        final rideDetails = (hasActiveRide)
+            ? await rideDetailsController.getRideDetails(rideId)
+            : null;
         controller.add((hasActiveRide ? rideDetails : null));
       }
     });

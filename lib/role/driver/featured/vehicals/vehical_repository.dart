@@ -12,6 +12,7 @@ import 'package:taxi_booking/role/driver/featured/vehicals/model/delete_vehical_
 import 'package:taxi_booking/role/driver/featured/vehicals/model/edit_vehical_response.dart';
 import 'package:taxi_booking/role/driver/featured/vehicals/model/my_vehicals_response.dart';
 import 'package:taxi_booking/role/driver/featured/vehicals/model/vehicale_details_response.dart';
+import 'package:taxi_booking/role/user/featured/booking_map/model/pricing_model.dart';
 
 class VehicalRepository extends Repository {
   IApiService apiService;
@@ -141,6 +142,16 @@ class VehicalRepository extends Repository {
         DriverApiEndpoints.deleteVehicale(vehicalId),
       );
       return DeleteVehicleResponse.fromJson(response);
+    });
+  }
+
+  Future<Result<List<PricingModel>, Failure>> getVehicaleCategory() async {
+    return asyncGuard(() async {
+      final response = await apiService.get(
+        DriverApiEndpoints.getVehicaleCategory,
+      );
+
+      return PricingModel.fromJsonList(response['data']);
     });
   }
 }

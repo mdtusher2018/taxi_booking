@@ -20,6 +20,8 @@ class ChatListView extends ConsumerStatefulWidget {
 }
 
 class _ChatViewState extends ConsumerState<ChatListView> {
+  String userId = "";
+
   @override
   void initState() {
     super.initState();
@@ -29,9 +31,9 @@ class _ChatViewState extends ConsumerState<ChatListView> {
               .read(localStorageServiceProvider)
               .readKey(StorageKey.accessToken) ??
           "";
-      ref
-          .read(chatListControllerProvider.notifier)
-          .getAllChatList(decodeJwtField(token, "_id"));
+      userId = decodeJwtField(token, "_id");
+      ref.read(chatListControllerProvider.notifier).getAllChatList(userId);
+      setState(() {});
     });
   }
 
@@ -74,32 +76,28 @@ class _ChatViewState extends ConsumerState<ChatListView> {
         itemBuilder: (context, index) {
           final chat = state.chats[index];
 
-          final participant = chat.chat.participants.isNotEmpty
-              ? chat.chat.participants.first
-              : null;
-
           final lastMessage = chat.message.text;
+          final messageModel = chat.message;
 
           return CustomChatTile(
-            imageUrl: participant?.image ?? "",
-            userName: participant?.email ?? "Unknown User",
+            imageUrl: messageModel.receiver?.image ?? "",
+            userName: messageModel.receiver?.email ?? "Unknown User",
             lastMessage: lastMessage,
             rating: chat.unreadMessageCount.toDouble(),
-            onTap: participant == null
-                ? null
-                : () {
-                    AppLogger.d(participant.id);
-                    context.push(
-                      CommonAppRoutes.messagingView,
+            onTap: () {
+              AppLogger.e(messageModel.receiver?.id ?? "");
+              context.push(
+                CommonAppRoutes.messagingView,
 
-                      extra: {
-                        'id': participant.id,
-                        'oldChatting': true,
-                        'hideMessageTextfield':
-                            ref.read(appRole) == AppRole.user,
-                      },
-                    );
-                  },
+                extra: {
+                  'id': (chat.message.sender != userId)
+                      ? chat.message.sender
+                      : messageModel.receiver?.id,
+                  'oldChatting': true,
+                  'hideMessageTextfield': ref.read(appRole) == AppRole.user,
+                },
+              );
+            },
           );
         },
       ),

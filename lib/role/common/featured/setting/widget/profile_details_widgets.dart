@@ -2,8 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/core/utilitis/image_utils.dart';
-import 'package:taxi_booking/main.dart';
-import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/common_widget/network_circular_image.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
@@ -114,6 +112,7 @@ class ProfileHeader extends ConsumerWidget {
   final String phone;
   final String image;
   final bool isVerified;
+  final bool iaNotApproved;
 
   const ProfileHeader({
     super.key,
@@ -121,6 +120,7 @@ class ProfileHeader extends ConsumerWidget {
     required this.phone,
     required this.image,
     required this.isVerified,
+    this.iaNotApproved = false,
   });
 
   @override
@@ -138,66 +138,55 @@ class ProfileHeader extends ConsumerWidget {
           ),
         ],
       ),
-      child: Column(
-        spacing: 4,
-        children: [
-          Row(
-            children: [
-              NetworkCircleAvatar(
-                imageUrl: getFullImagePath(image),
-                radius: 40,
-                fallback: Icon(Icons.person, size: 40),
-              ),
-
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomText(
-                      title: name,
-                      style: CommonStyle.textStyleMedium(size: 18),
-                    ),
-                    const SizedBox(height: 4),
-                    CustomText(
-                      title: phone,
-                      style: CommonStyle.textStyleSmall(color: Colors.grey),
-                    ),
-                  ],
+      child: (iaNotApproved)
+          ? SizedBox(
+              height: 80,
+              child: Center(
+                child: CustomText(
+                  title: "Your profile is under admin approval or blocked",
                 ),
               ),
-              if (isVerified)
-                Icon(Icons.verified, size: 32, color: Colors.yellow.shade800),
-            ],
-          ),
-
-          if (ref.watch(appRole.notifier).state == AppRole.user) ...[
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            )
+          : Column(
+              spacing: 4,
               children: [
                 Row(
                   children: [
-                    Image.asset(AppImages.bronzeIcon, width: 32, height: 32),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Bronze",
-                      style: CommonStyle.textStyleMedium(size: 14),
+                    NetworkCircleAvatar(
+                      imageUrl: getFullImagePath(image),
+                      radius: 40,
+                      fallback: Icon(Icons.person, size: 40),
                     ),
+
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomText(
+                            title: name,
+                            style: CommonStyle.textStyleMedium(size: 18),
+                          ),
+                          const SizedBox(height: 4),
+                          CustomText(
+                            title: phone,
+                            style: CommonStyle.textStyleSmall(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isVerified)
+                      Icon(
+                        Icons.verified,
+                        size: 32,
+                        color: Colors.yellow.shade800,
+                      ),
                   ],
-                ),
-                const Text(
-                  "63.2 Points",
-                  style: TextStyle(
-                    color: Colors.amber,
-                    fontWeight: FontWeight.w600,
-                  ),
                 ),
               ],
             ),
-          ],
-        ],
-      ),
     );
   }
 }

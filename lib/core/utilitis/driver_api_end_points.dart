@@ -19,6 +19,7 @@ class DriverApiEndpoints {
 
   //vihicals
   static var addVehicale = "vehicles/create-vehicle";
+  static var getVehicaleCategory = "fare/fare";
 
   static String myVehicales(int page) =>
       "vehicles/my-vehicles?limit=10&page=$page";
@@ -51,7 +52,5 @@ class DriverApiEndpoints {
       "with-car-drivers/driver-wallet/$id";
   static String revenueChart = "with-car-drivers/full-year-revenue-reports";
 
-  //chat
-  static String previousMessage(String reciverId) =>
-      "messages/previous-messages/$reciverId";
+
 }

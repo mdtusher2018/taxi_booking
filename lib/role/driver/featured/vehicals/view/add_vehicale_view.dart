@@ -7,10 +7,12 @@ import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_drop_down_widget.dart';
+import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text_field_with_label.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/driver/featured/vehicals/controller/add_vehical_controller.dart';
+import 'package:taxi_booking/role/driver/featured/vehicals/controller/vehical_category_controller.dart';
 import 'package:taxi_booking/role/driver/featured/vehicals/model/add_vehical_response.dart';
 import 'package:taxi_booking/role/driver/featured/vehicals/widget/add_edit_view_widgets.dart';
 
@@ -23,8 +25,6 @@ class AddVehicleView extends ConsumerStatefulWidget {
 
 class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
   final ImagePicker _picker = ImagePicker();
-
-  List<String> carCategory = ["TaxiTil", "Comfort", "Premium", "XL", "Pet"];
 
   // Vehicle info
   final vehicleMakeController = TextEditingController(
@@ -110,8 +110,17 @@ class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
   }
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref.watch(vehicalCategoryControllerProvider.notifier).fetchPricingData();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(addVehicalControllerProvider);
+    final categoryState = ref.watch(vehicalCategoryControllerProvider);
     ref.listen<AsyncValue<AddVehicleResponse?>>(addVehicalControllerProvider, (
       previous,
       next,
@@ -166,13 +175,63 @@ class _AddVehicleViewState extends ConsumerState<AddVehicleView> {
                   ),
 
                   SizedBox(height: 10),
-                  CustomDropDownWidget(
-                    items: carCategory,
-                    hintText: "Select a catagory",
-                    onChanged: (value) {
-                      if (value != null) carCatagoryController.text = value;
+
+                  categoryState.when(
+                    data: (data) {
+                      if (data == null) {
+                        return InkWell(
+                          onTap: () async {
+                            ref
+                                .read(
+                                  vehicalCategoryControllerProvider.notifier,
+                                )
+                                .fetchPricingData();
+                          },
+                          child: CustomText(
+                            title: "Could not fetch catagory, Click to Refresh",
+                          ),
+                        );
+                      }
+                      if (data.isEmpty) {
+                        return InkWell(
+                          onTap: () async {
+                            ref
+                                .read(
+                                  vehicalCategoryControllerProvider.notifier,
+                                )
+                                .fetchPricingData();
+                          },
+                          child: CustomText(
+                            title: "No catagory, Click to Refresh",
+                            fontSize: 14,
+                          ),
+                        );
+                      }
+                      return CustomDropDownWidget(
+                        items: data.map((e) => e.title).toList(),
+                        hintText: "Select a catagory",
+                        onChanged: (value) {
+                          if (value != null) carCatagoryController.text = value;
+                        },
+                      );
+                    },
+                    error: (error, stackTrace) {
+                      return InkWell(
+                        onTap: () async {
+                          ref
+                              .read(vehicalCategoryControllerProvider.notifier)
+                              .fetchPricingData();
+                        },
+                        child: CustomText(
+                          title: "Could not fetch catagory, Click to Refresh",
+                        ),
+                      );
+                    },
+                    loading: () {
+                      return Center(child: CircularProgressIndicator());
                     },
                   ),
+
                   Row(
                     children: [
                       Expanded(

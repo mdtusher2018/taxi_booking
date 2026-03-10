@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
+import 'package:taxi_booking/core/logger/log_helper.dart';
 import 'package:taxi_booking/role/common/di/repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/role/common/featured/setting/model/profile_response.dart';
@@ -30,7 +31,8 @@ class ProfileController extends _$ProfileController {
         profile.adminInfo = (adminInfo as Success).data as SupportInfoResponse;
       }
       state = AsyncData(profile);
-    } else if (result is Failure) {
+    } else if (result is FailureResult) {
+      AppLogger.d("===============2");
       final error = (result as FailureResult).error as Failure;
       state = AsyncError(
         error.message,

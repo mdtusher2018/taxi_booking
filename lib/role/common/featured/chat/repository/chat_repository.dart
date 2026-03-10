@@ -21,6 +21,7 @@ class ChatRepository extends Repository {
   Stream<List<ChatListItem>> getChatListStream(String userId) {
     final controller = StreamController<List<ChatListItem>>();
     socketService.on(SocketEvents.myChatListListen(userId), (data) {
+      AppLogger.d(data.toString());
       if (data != null && data is List) {
         final chatJson = (data[0] as List)[0];
         AppLogger.w("=============>>>>>>>>>" + chatJson.toString());

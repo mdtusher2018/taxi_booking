@@ -67,7 +67,10 @@ class VehicleData {
   factory VehicleData.fromJson(Map<String, dynamic> json) {
     return VehicleData(
       id: json['_id'],
-      vehicleOwner: VehicleOwner.fromJson(json['vehicleOwnerId']['user']),
+      vehicleOwner: VehicleOwner.fromJson(
+        json['vehicleOwnerId']['user'],
+        json["vehicleOwnerId"],
+      ),
       vehicleMake: json['vehicleMake'],
       model: json['model'],
       year: json['year'],
@@ -130,9 +133,12 @@ class VehicleOwner {
     required this.updatedAt,
   });
 
-  factory VehicleOwner.fromJson(Map<String, dynamic> json) {
+  factory VehicleOwner.fromJson(
+    Map<String, dynamic> json,
+    Map<String, dynamic> parentId,
+  ) {
     return VehicleOwner(
-      id: json['_id'],
+      id: parentId['_id'], //should be change by tomorrow
       fullName: json['fullName'],
       dateOfBirth: json['dateOfBirth'],
       nationalIdNumber: json['nationalIdNumber'],

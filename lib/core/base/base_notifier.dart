@@ -35,7 +35,10 @@ abstract class BaseNotifier<T> extends StateNotifier<T> {
       return result;
     } catch (e, stack) {
       debugPrint("❌ Exception: $e\n$stack");
-      errorMessage.value = e.toString();
+      // ✅ Convert to user-friendly message
+      final friendlyMessage = _toFriendlyMessage(e);
+      errorMessage.value = friendlyMessage;
+
       if (handleErrorExplicitly != null && e is ApiException) {
         handleErrorExplicitly(e.statusCode, e.message);
         return null;
@@ -49,5 +52,38 @@ abstract class BaseNotifier<T> extends StateNotifier<T> {
       isLoading.value = false;
       onComplete?.call();
     }
+  }
+
+  // ✅ Centralized friendly message mapper
+  String _toFriendlyMessage(Object e) {
+    if (e is ApiException) {
+      return switch (e.statusCode) {
+        400 => 'Invalid request. Please check your input.',
+        401 => 'Session expired. Please log in again.',
+        403 => 'You don\'t have permission to do this.',
+        404 => 'Resource not found.',
+        408 => 'Request timed out. Try again.',
+        409 => 'Conflict. This action could not be completed.',
+        422 => 'Invalid data submitted.',
+        429 => 'Too many requests. Please slow down.',
+        500 => 'Server error. Please try again later.',
+        503 => 'Service unavailable. Try again later.',
+        _ => e.message.isNotEmpty ? e.message : 'Something went wrong.',
+      };
+    }
+
+    final message = e.toString().toLowerCase();
+
+    if (message.contains('socketexception') || message.contains('network')) {
+      return 'No internet connection.';
+    }
+    if (message.contains('timeout')) {
+      return 'Connection timed out. Try again.';
+    }
+    if (message.contains('formatexception')) {
+      return 'Unexpected response from server.';
+    }
+
+    return 'Something went wrong. Please try again.';
   }
 }

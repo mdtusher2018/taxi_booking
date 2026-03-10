@@ -37,7 +37,7 @@ class DriverAuthenticationView extends ConsumerStatefulWidget {
 
 class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
   TextEditingController passwordController = TextEditingController(
-    text: kDebugMode ? "password@!5" : null,
+    text: kDebugMode ? "Hello123@" : null,
   );
   bool checkRemember = false;
 
@@ -66,14 +66,14 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
     text: kDebugMode ? "123456789" : null,
   );
   final TextEditingController phoneNumberController = TextEditingController(
-    text: kDebugMode ? "+8801646456521" : null,
+    text: kDebugMode ? "+8801646456527" : null,
   );
   // login
   final TextEditingController loginPhoneController = TextEditingController(
-    text: kDebugMode ? "+8801171291266" : null,
+    text: kDebugMode ? "+8801646456527" : null,
   );
   final TextEditingController loginPasswordController = TextEditingController(
-    text: kDebugMode ? "password@!5" : null,
+    text: kDebugMode ? "Hello123@" : null,
   );
 
   @override

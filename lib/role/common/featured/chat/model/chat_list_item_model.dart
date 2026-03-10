@@ -82,7 +82,7 @@ class Message {
   final String text;
   final bool seen;
   final String sender;
-  final String receiver;
+  Receiver? receiver;
   final String chat;
   final List<UploadedFile> imageUrl;
   final DateTime? createdAt;
@@ -106,7 +106,9 @@ class Message {
       text: JsonHelper.stringVal(json?['text']),
       seen: JsonHelper.boolVal(json?['seen']),
       sender: JsonHelper.stringVal(json?['sender']),
-      receiver: JsonHelper.stringVal(json?['receiver']),
+      receiver: json['receiver'] != null
+          ? Receiver.fromJson(json['receiver'])
+          : null,
       chat: JsonHelper.stringVal(json?['chat']),
       imageUrl:
           (json?['imageUrl'] as List<dynamic>?)
@@ -116,5 +118,25 @@ class Message {
       createdAt: JsonHelper.parseDate(json?['createdAt']),
       updatedAt: JsonHelper.parseDate(json?['updatedAt']),
     );
+  }
+}
+
+class Receiver {
+  String? id;
+  String? email;
+  String? phone;
+  String? image;
+  String? password;
+  bool? isActive;
+  bool? isOnline;
+
+  Receiver.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
+    email = json['email'];
+    phone = json['phone'];
+    image = json['imageUrl'];
+    password = json['password'];
+    isActive = json['isActive'];
+    isOnline = json['isOnline'];
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import 'package:taxi_booking/role/common/featured/chat/model/chat_list_item_model.dart';
 import 'package:taxi_booking/role/common/featured/chat/repository/chat_repository.dart';
 import 'package:taxi_booking/role/common/di/repository.dart';
@@ -66,14 +65,5 @@ class ChatListController extends _$ChatListController {
           },
         );
     state = state.copyWith(isLoading: false);
-  }
-
-  /// 📤 Send message
-  void sendMessage({required String reciverId, required String text}) {
-    if (text.isEmpty) {
-      CustomToast.showToast(message: "massage cannot be empty");
-      return;
-    }
-    repository.sendMessage(reciverId: reciverId, text: text);
   }
 }
