@@ -30,14 +30,21 @@ class ProfileData {
   final String id;
   final String role;
   final User user;
+  final String? stripeAccountId;
 
-  ProfileData({required this.id, required this.role, required this.user});
+  ProfileData({
+    required this.id,
+    required this.role,
+    required this.user,
+    this.stripeAccountId,
+  });
 
   factory ProfileData.fromJson(dynamic json) {
     return ProfileData(
       id: JsonHelper.stringVal(json?['_id']),
       role: JsonHelper.stringVal(json?['role']),
       user: User.fromJson(json?['user'] ?? {}),
+      stripeAccountId: json['stripeAccountId'],
     );
   }
 }

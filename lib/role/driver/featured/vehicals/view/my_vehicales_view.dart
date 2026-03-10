@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/resource/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
+import 'package:taxi_booking/role/common/featured/setting/controller/profile_controller.dart';
+import 'package:taxi_booking/role/common/featured/setting/model/profile_response.dart';
+import 'package:taxi_booking/role/driver/driver_di/repository.dart';
 import 'package:taxi_booking/role/driver/featured/vehicals/controller/my_vehicales_controller.dart';
 import 'package:taxi_booking/role/driver/featured/vehicals/model/my_vehicals_response.dart'
     show Vehicle;
 import 'package:taxi_booking/role/driver/featured/vehicals/view/add_vehicale_view.dart';
+import 'package:taxi_booking/role/driver/featured/vehicals/view/stripe_connect_webview.dart';
 import 'package:taxi_booking/role/driver/featured/vehicals/view/vehicale_details_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,6 +32,7 @@ class _MyVehiclesViewState extends ConsumerState<MyVehiclesView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(myVehiclesControllerProvider.notifier).load();
+      ref.read(profileControllerProvider.notifier).getProfile();
     });
 
     final controller = ref.read(myVehiclesControllerProvider.notifier);
@@ -43,6 +49,10 @@ class _MyVehiclesViewState extends ConsumerState<MyVehiclesView> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(myVehiclesControllerProvider);
+    final profileState = ref.watch(profileControllerProvider);
+    final stripeConnectState = ref.watch(
+      stripeConnectWebviewControllerProvider,
+    );
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -50,17 +60,20 @@ class _MyVehiclesViewState extends ConsumerState<MyVehiclesView> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.yellow.shade900,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: CustomText(
-          title: "Add Vehicle",
-          color: Colors.white,
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
+        label: ValueListenableBuilder(
+          valueListenable: stripeConnectState.isLoading,
+          builder: (context, value, child) {
+            if (value) return Center(child: CircularProgressIndicator());
+            return CustomText(
+              title: "Add Vehicle",
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            );
+          },
         ),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => AddVehicleView()),
-          );
+          _addVehicle(profileState, ref);
         },
       ),
       body: state.when(
@@ -260,11 +273,15 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
-class _EmptyVehiclesView extends StatelessWidget {
+class _EmptyVehiclesView extends ConsumerWidget {
   const _EmptyVehiclesView();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(profileControllerProvider);
+    final stripeConnectState = ref.watch(
+      stripeConnectWebviewControllerProvider,
+    );
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -290,16 +307,99 @@ class _EmptyVehiclesView extends StatelessWidget {
               style: CommonStyle.textStyleSmall(color: Colors.grey),
               textAlign: TextAlign.center,
             ),
+
             const SizedBox(height: 20),
-            CustomButton(
-              title: "Add Vehicle",
-              onTap: () {
-                // Navigate to add vehicle
+            ValueListenableBuilder(
+              valueListenable: stripeConnectState.isLoading,
+              builder: (context, value, child) {
+                return CustomButton(
+                  title: "Add Vehicle",
+                  isLoading: value,
+                  onTap: () {
+                    _addVehicle(profileState, ref);
+                  },
+                );
               },
+            ),
+            profileState.when(
+              data: (data) {
+                if (data?.data.stripeAccountId == null) {
+                  return Column(
+                    children: [
+                      const SizedBox(height: 6),
+                      CustomText(
+                        title:
+                            "Note: To add your own vehicale you have to connect your Stripe Account frist",
+                        style: CommonStyle.textStyleSmall(color: Colors.black),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox();
+                }
+              },
+              error: (error, stackTrace) => SizedBox(),
+              loading: () => SizedBox(),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+void _addVehicle(AsyncValue<ProfileResponse?> profileState, WidgetRef ref) {
+  profileState.when(
+    data: (data) async {
+      if (data?.data.stripeAccountId != null) {
+        Navigator.push(
+          ref.context,
+          MaterialPageRoute(builder: (_) => AddVehicleView()),
+        );
+        return;
+      }
+
+      // ✅ Has stripe account — launch webview
+      final value = await ref
+          .read(stripeConnectWebviewControllerProvider)
+          .connectStripe();
+
+      if (value == null) {
+        ScaffoldMessenger.of(ref.context).showSnackBar(
+          const SnackBar(content: Text("Failed to launch Stripe WebView")),
+        );
+        return;
+      }
+
+      // ✅ Push webview and wait for result
+      final result = await Navigator.push<StripeResult>(
+        ref.context,
+        MaterialPageRoute(
+          builder: (_) => StripeConnectWebViewPage(checkoutUrl: value),
+        ),
+      );
+
+      if (result == StripeResult.success) {
+        Navigator.push(
+          ref.context,
+          MaterialPageRoute(builder: (_) => AddVehicleView()),
+        );
+      } else {
+        ScaffoldMessenger.of(ref.context).showSnackBar(
+          const SnackBar(content: Text("Payment failed or was cancelled")),
+        );
+      }
+    },
+    loading: () {
+      ScaffoldMessenger.of(
+        ref.context,
+      ).showSnackBar(const SnackBar(content: Text("Profile is loading...")));
+    },
+    error: (_, __) {
+      ScaffoldMessenger.of(
+        ref.context,
+      ).showSnackBar(const SnackBar(content: Text("Failed to load profile")));
+    },
+  );
 }

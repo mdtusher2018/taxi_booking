@@ -51,6 +51,5 @@ class DriverApiEndpoints {
   static String walletByDriverId(String id) =>
       "with-car-drivers/driver-wallet/$id";
   static String revenueChart = "with-car-drivers/full-year-revenue-reports";
-
-
+  static String stripeConnect = "stripe/connect";
 }

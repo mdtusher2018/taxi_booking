@@ -1,8 +1,10 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taxi_booking/role/driver/featured/authentication/repository/auth_repository.dart';
 import 'package:taxi_booking/role/driver/featured/driver/drivers_repository.dart';
 import 'package:taxi_booking/role/driver/featured/home_ride/repository/home_ride_repository.dart';
+import 'package:taxi_booking/role/driver/featured/vehicals/controller/stripe_connect_webview_controller.dart';
 import 'package:taxi_booking/role/driver/featured/vehicals/vehical_repository.dart';
 import 'package:taxi_booking/role/driver/featured/wallet/wallet_repository.dart';
 
@@ -44,3 +46,10 @@ DriversRepository driversRepository(Ref ref) {
 WalletRepository walletRepository(Ref ref) {
   return WalletRepository(apiService: ref.watch(apiServiceProvider));
 }
+
+final stripeConnectWebviewControllerProvider = Provider((ref) {
+  return StripeConnectWebviewController(
+    snackBarService: ref.read(snackbarServiceProvider),
+    apiService: ref.read(apiServiceProvider),
+  );
+});
