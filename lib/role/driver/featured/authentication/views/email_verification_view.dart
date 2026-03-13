@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/core/di/service.dart';
 import 'package:taxi_booking/core/routes/driver_app_routes.dart';
-import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_otp_widget.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
@@ -60,6 +59,7 @@ class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
   @override
   Widget build(BuildContext context) {
     final controller = ref.read(authControllerProvider.notifier);
+    final state = ref.watch(authControllerProvider);
     ref.listen<AsyncValue<dynamic>>(authControllerProvider, (previous, next) {
       next.when(
         data: (data) {
@@ -95,15 +95,6 @@ class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
             ),
             SizedBox(height: 20),
 
-            if (widget.phoneNumber.length > 5)
-              Center(
-                child: CustomButton(
-                  width: MediaQuery.sizeOf(context).width / 2,
-                  title: '${widget.phoneNumber.substring(5)}****',
-                  onTap: () {},
-                ),
-              ),
-            SizedBox(height: 20),
             CustomOtpWidget(
               controllers: otpController,
               numberOfFields: 4,
@@ -112,28 +103,10 @@ class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
 
             /// TIMER SECTION
             SizedBox(height: 20),
-            Center(
-              child: enableResend
-                  ? CustomButton(
-                      onTap: resendCode,
-                      title: 'Resend Code',
-                      buttonColor: Colors.white,
-                      titleColor: AppColors.mainColor,
-                      border: Border.all(color: AppColors.mainColor),
-                      width: MediaQuery.sizeOf(context).width / 2,
-                    )
-                  : Text(
-                      'Resend code in ${secondsRemaining}s',
-                      style: CommonStyle.textStyleSmall(
-                        size: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-            ),
 
-            SizedBox(height: MediaQuery.sizeOf(context).height / 16),
             CustomButton(
               title: 'Send Code',
+              isLoading: state.isLoading,
               onTap: () {
                 controller.otpVerification(
                   otp: otpController.map((e) => e.text).join(),
