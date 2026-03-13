@@ -111,39 +111,42 @@ class _PricingOverviewSheetState extends ConsumerState<PricingOverviewSheet> {
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              child: ValueListenableBuilder(
-                valueListenable: controller.isLoading,
-                builder: (_, isloading, _) {
-                  if (isloading) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (state.pricingList.isNotEmpty) {
-                    return ListView.separated(
-                      itemCount: state.pricingList.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
-                      itemBuilder: (_, index) {
-                        return _PricingCard(
-                          model: state.pricingList[index],
-                          isSelected: selectedIndex == index,
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = index; // Update selected index
-                            });
-                          },
-                        );
-                      },
-                    );
-                  } else {
-                    return Center(
-                      child: CustomText(
-                        title: "Data can't load, Pull to Refresh",
-                      ),
-                    );
-                  }
-                },
+            child: RefreshIndicator(
+              onRefresh: () async => controller.fetchPricingData(),
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: ValueListenableBuilder(
+                  valueListenable: controller.isLoading,
+                  builder: (_, isloading, _) {
+                    if (isloading) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (state.pricingList.isNotEmpty) {
+                      return ListView.separated(
+                        itemCount: state.pricingList.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        itemBuilder: (_, index) {
+                          return _PricingCard(
+                            model: state.pricingList[index],
+                            isSelected: selectedIndex == index,
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = index; // Update selected index
+                              });
+                            },
+                          );
+                        },
+                      );
+                    } else {
+                      return Center(
+                        child: CustomText(
+                          title: "Data can't load, Pull to Refresh",
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ),
