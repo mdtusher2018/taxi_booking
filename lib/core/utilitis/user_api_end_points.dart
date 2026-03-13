@@ -11,6 +11,7 @@ class UserApiEndpoints {
   static const String login = "auth/login";
 
   static const String signup = "users/register";
+  static const String verifyOtp = "otp/verify-phone-number";
 
   static var refreshToken = "auth/refresh-token";
 

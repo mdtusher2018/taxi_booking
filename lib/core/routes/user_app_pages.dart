@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/core/routes/common_app_routes.dart';
 import 'package:taxi_booking/role/user/featured/authentication/views/authentication_view.dart';
+import 'package:taxi_booking/role/user/featured/authentication/views/otp_verify_view.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/views/booking_map_view.dart';
 
 import 'package:taxi_booking/role/user/featured/splash/splash_view.dart';
@@ -18,6 +19,10 @@ final userAppRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => UserSplashView(),
       ),
 
+      GoRoute(
+        path: UserAppRoutes.otpVerifyView,
+        builder: (context, state) => OtpVerifyView(),
+      ),
       GoRoute(
         path: UserAppRoutes.rootView,
         builder: (context, state) => UserRootView(),

@@ -71,17 +71,23 @@ class AuthRepository extends Repository {
         method: "POST",
         body: data,
       );
-      return SignupResponse.fromJson(res);
+
+      final response = SignupResponse.fromJson(res);
+      if (response.success) {
+        localStorageService.disableSessionMode(false);
+
+        localStorageService.saveKey(
+          StorageKey.accessToken,
+          response.accessToken,
+        );
+      }
+      return response;
     });
   }
 
-  Future<Result<bool, Failure>> otpVerification({
-    required String phone,
-    required String otp,
-  }) async {
+  Future<Result<bool, Failure>> otpVerification({required String otp}) async {
     return asyncGuard(() async {
       final res = await api.post(DriverApiEndpoints.otpVerification, {
-        "phone": phone,
         "otp": otp,
       });
 

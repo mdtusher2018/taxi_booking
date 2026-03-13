@@ -99,18 +99,16 @@ class AuthController extends _$AuthController {
         error.stackTrace ?? StackTrace.fromString("No trace found"),
       );
     } else if (result is Success) {
+      
       state = AsyncData((result as Success).data as SignupResponse);
     }
     return;
   }
 
-  Future<void> otpVerification({
-    required String phone,
-    required String otp,
-  }) async {
+  Future<void> otpVerification({required String otp}) async {
     state = AsyncLoading();
 
-    final result = await _repo.otpVerification(phone: phone, otp: otp);
+    final result = await _repo.otpVerification(otp: otp);
     if (result is FailureResult) {
       final error = (result as FailureResult).error as Failure;
       state = AsyncError(

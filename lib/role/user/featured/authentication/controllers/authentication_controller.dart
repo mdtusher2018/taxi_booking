@@ -137,9 +137,35 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
       if (signupResponse.statusCode == 201) {
         final token = signupResponse.data.sendOtp.token;
         await localStorage.saveKey(StorageKey.accessToken, token);
-        context.go(UserAppRoutes.rootView);
+        context.go(UserAppRoutes.otpVerifyView);
       } else {
         CustomToast.showToast(message: signupResponse.message, isError: true);
+      }
+    } catch (e) {
+      CustomToast.showToast(
+        message: Failure.mapExceptionToFailure(e).message,
+        isError: true,
+      );
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+
+  Future<void> verifyOtp({
+    required String otp,
+    required BuildContext context,
+  }) async {
+    try {
+      state = state.copyWith(isLoading: true);
+
+      final body = {"otp": otp};
+
+      final response = await apiService.post(UserApiEndpoints.verifyOtp, body);
+
+      if (response['statusCode'] == 200) {
+        context.go(UserAppRoutes.rootView);
+      } else {
+        CustomToast.showToast(message: response['message'], isError: true);
       }
     } catch (e) {
       CustomToast.showToast(

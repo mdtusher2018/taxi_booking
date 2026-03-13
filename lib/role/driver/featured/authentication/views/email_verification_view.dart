@@ -64,15 +64,7 @@ class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
       next.when(
         data: (data) {
           if (data != null && data is Map<String, bool>) {
-            ref
-                .watch(snackbarServiceProvider)
-                .showSuccess("Account created successful!");
-            Future.microtask(
-              () => context.go(
-                DriverAppRoutes.authenticationView,
-                extra: {"isLogin": true},
-              ),
-            );
+            () => context.go(DriverAppRoutes.driverRoot);
           }
         },
         loading: () {
@@ -144,7 +136,6 @@ class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
               title: 'Send Code',
               onTap: () {
                 controller.otpVerification(
-                  phone: widget.phoneNumber,
                   otp: otpController.map((e) => e.text).join(),
                 );
               },

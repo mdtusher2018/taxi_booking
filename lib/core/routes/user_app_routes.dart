@@ -5,4 +5,6 @@ class UserAppRoutes {
 
   static const authenticationView = '/authentication';
   static const transportSelectionView = '/transportSelectionView';
+
+  static String otpVerifyView = '/otp-verify';
 }
