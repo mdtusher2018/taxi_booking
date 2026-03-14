@@ -71,7 +71,9 @@ class Location {
     return Location(
       type: json['type'] as String?,
       coordinates: json['coordinates'] != null
-          ? List<double>.from(json['coordinates'])
+          ? List<num>.from(
+              json['coordinates'],
+            ).map((e) => e.toDouble()).toList()
           : null,
       address: json['address'] as String?,
     );

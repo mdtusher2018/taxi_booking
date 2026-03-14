@@ -160,6 +160,7 @@ class HomeRideController extends _$HomeRideController with MapMixin {
   }
 
   Future<void> driverOnline() async {
+    
     Position? position = await getCurrentLocation();
     if (position == null) {
       state = state.copyWith(error: "Failed to get current location");
@@ -177,7 +178,7 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     );
     if (res is FailureResult) {
       final error = (res as FailureResult).error as Failure;
-      state = state.copyWith(error: error.message);
+      state = state.copyWith(error: error.message,);
     }
 
     repository.listenToRideRequest().listen((rideRequestResponse) {

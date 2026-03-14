@@ -418,6 +418,7 @@ class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
         state = state.copyWith(status: RideBookingStatus.searchingDriver);
 
         socketService.on(SocketEvents.rideAccepted, (data) {
+          AppLogger.d(data.toString());
           final driverInfo = RideAcceptResponse.fromJson(data[0]).driverInfo;
 
           socketService.on(SocketEvents.driverCurrentLocation, (data) {

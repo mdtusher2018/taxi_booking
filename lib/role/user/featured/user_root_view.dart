@@ -61,10 +61,12 @@ class _DashboardViewState extends ConsumerState<UserRootView> {
       SocketConfig(url: UserApiEndpoints.baseSocketUrl, token: token),
     );
     socketService.connect();
-    ref
-        .read(bookingMapControllerProvider.notifier)
-        .listenRideDetails(ref.read(rideDetailsControllerProvider));
-    ref.read(bookingMapControllerProvider.notifier).emitRideDetails();
+    Future.delayed(Duration(seconds: 5), () {
+      ref
+          .read(bookingMapControllerProvider.notifier)
+          .listenRideDetails(ref.read(rideDetailsControllerProvider));
+      ref.read(bookingMapControllerProvider.notifier).emitRideDetails();
+    });
   }
 
   @override

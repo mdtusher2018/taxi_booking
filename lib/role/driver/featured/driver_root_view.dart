@@ -61,8 +61,10 @@ class _DriverDashboardViewState extends ConsumerState<DriverRootView> {
       SocketConfig(url: DriverApiEndpoints.baseSocketUrl, token: token),
     );
     socketService.connect();
-    ref.read(homeRideControllerProvider.notifier).listenRideDetails();
-    ref.read(homeRideControllerProvider.notifier).emitRideDetails();
+    Future.delayed(Duration(seconds: 5), () {
+      ref.read(homeRideControllerProvider.notifier).listenRideDetails();
+      ref.read(homeRideControllerProvider.notifier).emitRideDetails();
+    });
   }
 
   @override
