@@ -250,7 +250,7 @@ class _VehicleDetailsViewState extends ConsumerState<VehicleDetailsView> {
                               );
                             },
                           ),
-                        if (widget.isMyVehicale)
+                        if (widget.isMyVehicale && vehicle.isAvailable)
                           CustomButton(
                             title: "Use Myself",
                             onTap: () {

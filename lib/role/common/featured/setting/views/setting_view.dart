@@ -14,6 +14,7 @@ import 'package:taxi_booking/role/driver/featured/vehicals/view/all_vehicales_vi
 import 'package:taxi_booking/role/driver/featured/vehicals/view/my_vehicales_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taxi_booking/role/driver/featured/vehicals/view/vehicale_details_view.dart';
 import 'package:taxi_booking/role/driver/featured/wallet/views/wallet_with_car_driver_view.dart';
 import '../../../../driver/featured/wallet/views/wallet_without_car_driver_view.dart';
 import '../widget/setting_item_card.dart';
@@ -162,6 +163,41 @@ class _SettingViewState extends ConsumerState<SettingView> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => MyVehiclesView(isForAssign: false),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
+                error: (error, stackTrace) {
+                  return SizedBox.shrink();
+                },
+              ),
+              state.when(
+                loading: () {
+                  return SizedBox.shrink();
+                },
+                data: (data) {
+                  if (data == null) {
+                    return SizedBox.shrink();
+                  }
+
+                  if (ref.watch(appRole.notifier).state == AppRole.driver &&
+                      data.data.user.activeVehicleId != null) {
+                    return SettingItemCard(
+                      icon: Icon(
+                        Icons.drive_eta_outlined,
+                        color: Colors.yellow.shade900,
+                      ),
+                      title: "My Active Vehicale",
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => VehicleDetailsView(
+                            vehicaleId: data.data.user.activeVehicleId!,
+                            isMyVehicale: true,
+                          ),
                         ),
                       ),
                     );
