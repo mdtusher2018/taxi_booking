@@ -64,7 +64,10 @@ class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
       next.when(
         data: (data) {
           if (data != null && data is Map<String, bool>) {
-            () => context.go(DriverAppRoutes.driverRoot);
+            context.go(DriverAppRoutes.authenticationView, extra: {"isLogin": true});
+            ref
+                .watch(snackbarServiceProvider)
+                .showSuccess("Account created successful!");
           }
         },
         loading: () {

@@ -124,8 +124,9 @@ class _DriverHomeViewState extends ConsumerState<DriverHomeView> {
                                 switchingOnlineOffline.value = true;
                                 ref.read(socketServiceProvider).connect();
                                 controller.driverOnline();
-                                switchingOnlineOffline.value = false;
                               } else {
+                                ref.read(socketServiceProvider).disconnect();
+                                switchingOnlineOffline.value = false;
                                 controller.driverOffline();
                               }
                             },
