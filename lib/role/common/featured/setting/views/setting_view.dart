@@ -117,7 +117,8 @@ class _SettingViewState extends ConsumerState<SettingView> {
                   );
                 },
               ),
-
+  if (ref.watch(appRole.notifier).state == AppRole.driver 
+                      )
               SettingItemCard(
                 icon: Icon(Icons.credit_card, color: Colors.yellow.shade900),
                 title: "Wallet",
