@@ -7,9 +7,28 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:59441920882:android:494a5453fdf2d6c4477beb",
+        "mobilesdk_app_id": "1:59441920882:android:cb4633792abeb39b477beb",
         "android_client_info": {
-          "package_name": "com.example.taxi_booking"
+          "package_name": "com.taxitile.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE4QYD7t9KTTG-K9cz8uw9Seyd3iIIq8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59441920882:android:6beb28eaefa56efc477beb",
+        "android_client_info": {
+          "package_name": "com.taxitile.passenger"
         }
       },
       "oauth_client": [],

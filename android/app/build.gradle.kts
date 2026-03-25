@@ -14,7 +14,7 @@ android {
     useLibrary("org.apache.http.legacy")
 
 
-    namespace = "com.example.taxi_booking"
+    namespace = "com.taxitile.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -29,15 +29,30 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.taxi_booking"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
+    }
+
+    flavorDimensions += "role"
+
+    productFlavors {
+        create("driver") {
+            dimension = "role"
+            applicationId = "com.taxitile.driver"
+            versionCode = 1
+            versionName = "1.0.0"
+            resValue("string", "app_name", "TaxiTile Driver")
+        }
+        create("user") {
+            dimension = "role"
+            applicationId = "com.taxitile.passenger"
+            versionCode = 1
+            versionName = "1.0.0"
+            resValue("string", "app_name", "TaxiTile Passenger")
+        }
     }
 
 

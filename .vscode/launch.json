@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Driver App",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "driver",
+                "--dart-define=APP_ROLE=driver"
+            ]
+        },
+        {
+            "name": "Passenger App",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "passenger",
+                "--dart-define=APP_ROLE=user"
+            ]
+        }
+    ]
+}

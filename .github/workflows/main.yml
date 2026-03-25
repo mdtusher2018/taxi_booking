@@ -32,7 +32,7 @@ jobs:
 
 
       - name: User Build APK
-        run: flutter build apk --dart-define=APP_ROLE=user
+        run: flutter build apk --flavor user --release --dart-define=APP_ROLE=user
 
       - name: Upload User APK
         uses: actions/upload-artifact@v4
@@ -41,8 +41,7 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Driver Build APK
-        run: flutter build apk --release --dart-define=APP_ROLE=driver
-
+        run: flutter build apk --flavor driver --release --dart-define=APP_ROLE=driver
       
       - name: Upload Driver APK
         uses: actions/upload-artifact@v4

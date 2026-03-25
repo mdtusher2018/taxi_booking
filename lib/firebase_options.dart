@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,9 +28,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -40,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB9vmXDFnADQUlYTdaxyr6EDqE_l2LzMiM',
-    appId: '1:59441920882:web:42bc5656fcfb26a5477beb',
-    messagingSenderId: '59441920882',
-    projectId: 'texibooking-26657',
-    authDomain: 'texibooking-26657.firebaseapp.com',
-    storageBucket: 'texibooking-26657.firebasestorage.app',
-    measurementId: 'G-636L02NDTK',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAE4QYD7t9KTTG-K9cz8uw9Seyd3iIIq8c',
-    appId: '1:59441920882:android:494a5453fdf2d6c4477beb',
+    appId: '1:59441920882:android:cb4633792abeb39b477beb',
     messagingSenderId: '59441920882',
     projectId: 'texibooking-26657',
     storageBucket: 'texibooking-26657.firebasestorage.app',
@@ -60,30 +59,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAwaEVQ5JPWlXehIypwv8g5vfnU3t12ZQ0',
-    appId: '1:59441920882:ios:15aeba42b594437d477beb',
+    appId: '1:59441920882:ios:456a2b56d63653cf477beb',
     messagingSenderId: '59441920882',
     projectId: 'texibooking-26657',
     storageBucket: 'texibooking-26657.firebasestorage.app',
-    iosBundleId: 'com.example.taxiBooking',
+    iosBundleId: 'com.taxitile.passenger',
   );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAwaEVQ5JPWlXehIypwv8g5vfnU3t12ZQ0',
-    appId: '1:59441920882:ios:15aeba42b594437d477beb',
-    messagingSenderId: '59441920882',
-    projectId: 'texibooking-26657',
-    storageBucket: 'texibooking-26657.firebasestorage.app',
-    iosBundleId: 'com.example.taxiBooking',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyB9vmXDFnADQUlYTdaxyr6EDqE_l2LzMiM',
-    appId: '1:59441920882:web:09fb84ef26d9d9df477beb',
-    messagingSenderId: '59441920882',
-    projectId: 'texibooking-26657',
-    authDomain: 'texibooking-26657.firebaseapp.com',
-    storageBucket: 'texibooking-26657.firebasestorage.app',
-    measurementId: 'G-817Y3EC0BG',
-  );
-
 }
