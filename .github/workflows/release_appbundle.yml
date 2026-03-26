@@ -29,7 +29,7 @@ jobs:
       # 🔐 Decode keystore
       - name: Decode Keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/taxitile-keystore.jks
 
       # 🔐 Create key.properties
       - name: Create key.properties
@@ -37,7 +37,7 @@ jobs:
           echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=taxitile-keystore.jks" >> android/key.properties
+          echo "storeFile=app/taxitile-keystore.jks" >> android/key.properties
 
       # ✅ BUILD USER AAB
       - name: Build User AAB
