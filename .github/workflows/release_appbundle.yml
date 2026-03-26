@@ -1,0 +1,60 @@
+name: Flutter - Android Build AAB
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 🔐 Decode keystore
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      # 🔐 Create key.properties
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=upload-keystore.jks" >> android/key.properties
+
+      # ✅ BUILD USER AAB
+      - name: Build User AAB
+        run: flutter build appbundle --flavor user --release --dart-define=APP_ROLE=user
+
+      - name: Upload User AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: user-aab
+          path: build/app/outputs/bundle/userRelease/app-user-release.aab
+
+      # ✅ BUILD DRIVER AAB
+      - name: Build Driver AAB
+        run: flutter build appbundle --flavor driver --release --dart-define=APP_ROLE=driver
+
+      - name: Upload Driver AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: driver-aab
+          path: build/app/outputs/bundle/driverRelease/app-driver-release.aab
