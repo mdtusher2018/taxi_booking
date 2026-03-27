@@ -21,37 +21,53 @@ class NotificationService {
   }
 
   /// 🔹 INITIALIZE EVERYTHING
-  static Future<void> init() async {
-    // Permissions (iOS + Android 13)
-    await _messaging.requestPermission(alert: true, badge: true, sound: true);
+static Future<void> init() async {
+  // 1️⃣ Request notification permissions (iOS + Android 13)
+  NotificationSettings settings = await _messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
 
-    // FCM token
-    String? token = await _messaging.getToken();
-    log('FCM Token: $token');
-
-    // Local notification setup
-    const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const InitializationSettings settings = InitializationSettings(
-      android: androidSettings,
-    );
-
-    await _localNotifications.initialize(settings);
-
-    // Foreground listener
-    FirebaseMessaging.onMessage.listen(_onForegroundMessage);
-
-    // Background listener
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-    // Notification tap (background)
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log('Notification clicked (background)');
-      log(message.data.toString());
-      // 👉 Navigate using GetX if needed
-    });
+  if (settings.authorizationStatus != AuthorizationStatus.authorized) {
+    log('User declined notification permissions');
+    return;
   }
+
+  // 2️⃣ Initialize local notifications
+  const AndroidInitializationSettings androidSettings =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const DarwinInitializationSettings iosSettings = DarwinInitializationSettings();
+
+  const InitializationSettings initSettings = InitializationSettings(
+    android: androidSettings,
+    iOS: iosSettings,
+  );
+
+  await _localNotifications.initialize(initSettings);
+
+  // 3️⃣ Listen for FCM token safely (iOS-safe)
+  _messaging.onTokenRefresh.listen((token) {
+    log('FCM Token available: $token');
+    // send token to your backend here
+  });
+
+  // 4️⃣ Foreground listener
+  FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+
+  // 5️⃣ Background listener
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  // 6️⃣ Notification tap handler (background)
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    log('Notification clicked (background)');
+    log(message.data.toString());
+    // Navigate using GetX or Navigator if needed
+  });
+
+  log('NotificationService initialized ✅');
+}
 
   /// 🔹 FOREGROUND MESSAGE HANDLER
   static void _onForegroundMessage(RemoteMessage message) {
