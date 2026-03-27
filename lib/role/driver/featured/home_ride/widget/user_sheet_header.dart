@@ -45,11 +45,11 @@ class UserSheetHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '${distance} km',
+              '$distance km',
               style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
             ),
             Text(
-              '\$${fare}',
+              '\$$fare',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

@@ -49,7 +49,7 @@ class CustomChatTile extends StatelessWidget {
           ),
         ],
       ),
-      trailing: Container(
+      trailing: SizedBox(
         width: MediaQuery.sizeOf(context).width / 7,
         child: Row(
           children: [

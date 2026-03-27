@@ -64,7 +64,7 @@ class _MyDriversViewState extends ConsumerState<MyDriversView> {
               controller: scrollController,
               padding: const EdgeInsets.all(16),
               itemCount: drivers.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final driver = drivers[index];
                 return DriverCard(driver: driver);
@@ -475,7 +475,7 @@ class _VehicleImageSection extends StatelessWidget {
             child: const Center(child: CircularProgressIndicator()),
           );
         },
-        errorBuilder: (_, __, ___) {
+        errorBuilder: (_, _, _) {
           return Container(
             height: 160,
             color: Colors.grey.shade200,

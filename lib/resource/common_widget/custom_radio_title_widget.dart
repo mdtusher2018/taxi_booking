@@ -13,7 +13,7 @@ class CustomRadioTile<T> extends StatelessWidget {
   final VoidCallback? onTap; // <-- optional onTap
 
   const CustomRadioTile({
-    Key? key,
+    super.key,
     required this.value,
     required this.groupValue,
     required this.onChanged,
@@ -23,7 +23,7 @@ class CustomRadioTile<T> extends StatelessWidget {
     this.spacing = 12,
     required this.titleText,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

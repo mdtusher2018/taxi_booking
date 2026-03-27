@@ -12,7 +12,7 @@ import 'package:taxi_booking/role/driver/featured/authentication/views/reset_pas
 import '../widget/auth_app_bar.dart';
 
 class OtpVerifyView extends StatefulWidget {
-  OtpVerifyView({super.key});
+  const OtpVerifyView({super.key});
 
   @override
   State<OtpVerifyView> createState() => _OtpVerifyViewState();

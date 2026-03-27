@@ -11,14 +11,14 @@ class CustomCountryPicker extends StatefulWidget {
   final bool? isLabelHidden;
   final String defaultIsoCode;
 
-  CustomCountryPicker({
-    Key? key,
+  const CustomCountryPicker({
+    super.key,
     required this.titleText,
     required this.hintText,
     this.controller,
     this.isLabelHidden = false,
     this.defaultIsoCode = 'US',
-  }) : super(key: key);
+  });
 
   @override
   State<CustomCountryPicker> createState() => _CustomCountryPickerState();

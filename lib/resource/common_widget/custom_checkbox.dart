@@ -10,14 +10,14 @@ class CustomCheckBox extends StatelessWidget {
   final Function(bool) onChanged;
 
   const CustomCheckBox({
-    Key? key,
+    super.key,
     required this.isChecked,
     this.size = 20.0,
     this.activeColor = AppColors.mainColor,
     this.inactiveColor = Colors.transparent,
     this.borderWidth = 1.5,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

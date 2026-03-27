@@ -22,7 +22,7 @@ import 'package:taxi_booking/role/driver/featured/home_ride/widget/ride_compleat
 import 'package:taxi_booking/role/driver/featured/home_ride/widget/trip_details_bottom_sheet.dart';
 
 class DriverHomeView extends ConsumerStatefulWidget {
-  DriverHomeView({super.key});
+  const DriverHomeView({super.key});
 
   @override
   ConsumerState<DriverHomeView> createState() => _DriverHomeViewState();

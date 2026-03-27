@@ -88,6 +88,7 @@ final class ApiService implements IApiService {
     );
   }
 
+  @override
   Future<dynamic> multipartMulti(
     String endpoint, {
     String method = 'POST',

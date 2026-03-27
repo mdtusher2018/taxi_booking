@@ -43,13 +43,13 @@ class CustomLoaderWidget extends StatefulWidget {
   final Duration duration;
 
   const CustomLoaderWidget({
-    Key? key,
+    super.key,
     this.size = 35.0,
     this.colors = const [Colors.blue, Colors.purple],
     this.strokeWidth = 5.0,
     this.child,
     this.duration = const Duration(milliseconds: 500),
-  }) : super(key: key);
+  });
 
   @override
   State<CustomLoaderWidget> createState() => _CustomLoaderWidgetState();

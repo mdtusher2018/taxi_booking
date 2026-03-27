@@ -11,7 +11,7 @@ import '../../../../../resource/common_widget/custom_network_image.dart';
 import '../views/cancel_booking_view.dart';
 
 class ArrivingSheet extends ConsumerStatefulWidget {
-  ArrivingSheet({super.key});
+  const ArrivingSheet({super.key});
 
   @override
   ConsumerState<ArrivingSheet> createState() => _ArrivingCardState();

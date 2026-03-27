@@ -176,7 +176,7 @@ class _DriverSplashViewState extends ConsumerState<DriverSplashView> {
                         SizedBox(height: screenHeight * 0.04),
 
                         // Log in button
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           height: screenHeight * 0.065,
                           child: ElevatedButton(
@@ -206,7 +206,7 @@ class _DriverSplashViewState extends ConsumerState<DriverSplashView> {
                         SizedBox(height: screenHeight * 0.015),
 
                         // Sign up button
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           height: screenHeight * 0.065,
                           child: ElevatedButton(

@@ -8,7 +8,7 @@ import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
 import '../../../../../resource/utilitis/common_style.dart';
 
 class SummarySheet extends ConsumerStatefulWidget {
-  SummarySheet({super.key});
+  const SummarySheet({super.key});
   @override
   ConsumerState<SummarySheet> createState() => _SummarySheetState();
 

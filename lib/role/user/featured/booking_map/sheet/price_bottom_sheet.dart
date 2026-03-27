@@ -125,7 +125,7 @@ class _PricingOverviewSheetState extends ConsumerState<PricingOverviewSheet> {
                         itemCount: state.pricingList.length,
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
                         itemBuilder: (_, index) {
                           return _PricingCard(
                             model: state.pricingList[index],

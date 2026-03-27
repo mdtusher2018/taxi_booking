@@ -16,7 +16,7 @@ class LottieLoaderWidget extends StatelessWidget {
   final double animationSpeed;
 
   const LottieLoaderWidget({
-    Key? key,
+    super.key,
     required this.lottieAssetPath,
     this.height,
     this.width,
@@ -27,7 +27,7 @@ class LottieLoaderWidget extends StatelessWidget {
     this.repeat = true,
     this.reverse = false,
     this.animationSpeed = 1.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

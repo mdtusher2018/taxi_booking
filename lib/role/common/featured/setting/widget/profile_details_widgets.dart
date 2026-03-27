@@ -10,7 +10,7 @@ class ImageRow extends StatelessWidget {
   final String title;
   final String url;
 
-  const ImageRow({required this.title, required this.url});
+  const ImageRow({super.key, required this.title, required this.url});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class InfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const InfoRow(this.label, this.value);
+  const InfoRow(this.label, this.value, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class SectionCard extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const SectionCard({required this.title, required this.children});
+  const SectionCard({super.key, required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {

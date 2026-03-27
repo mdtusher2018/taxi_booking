@@ -287,7 +287,7 @@ class _MessageBubble extends StatelessWidget {
                           child: Center(child: CircularProgressIndicator()),
                         );
                       },
-                      errorBuilder: (_, __, ___) =>
+                      errorBuilder: (_, _, _) =>
                           const Icon(Icons.broken_image),
                     ),
                   );

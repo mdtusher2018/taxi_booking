@@ -34,7 +34,7 @@ class CustomText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      maxLines:maxLines ?? null,
+      maxLines:maxLines,
       overflow: overflow,
       textAlign: textAlign,
       style: style ?? GoogleFonts.poppins(

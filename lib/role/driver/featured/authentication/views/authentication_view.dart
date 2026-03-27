@@ -329,7 +329,7 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
                         label: 'National ID',
                         hint: 'e.g. 1234567890',
                         subText:
-                            "Your social security number or country\'s alternative (e.g. BVN)",
+                            "Your social security number or country's alternative (e.g. BVN)",
                         controller: nationalIdController,
                       ),
                       SizedBox(height: 12),

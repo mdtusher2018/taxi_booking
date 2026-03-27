@@ -12,7 +12,7 @@ import 'package:taxi_booking/role/common/featured/ride_history/ride_history_view
 import 'package:taxi_booking/role/common/featured/setting/views/setting_view.dart';
 
 class DriverRootView extends ConsumerStatefulWidget {
-  DriverRootView({super.key});
+  const DriverRootView({super.key});
 
   @override
   ConsumerState<DriverRootView> createState() => _DriverDashboardViewState();

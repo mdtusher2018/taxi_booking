@@ -11,7 +11,7 @@ import 'package:taxi_booking/role/user/featured/booking_map/controllers/booking_
 
 // Create the Professional Driver Arrived Card
 class DriverArrivedCard extends ConsumerStatefulWidget {
-  DriverArrivedCard({super.key});
+  const DriverArrivedCard({super.key});
 
   @override
   ConsumerState<DriverArrivedCard> createState() =>

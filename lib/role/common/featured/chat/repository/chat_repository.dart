@@ -24,7 +24,7 @@ class ChatRepository extends Repository {
       AppLogger.d(data.toString());
       if (data != null && data is List) {
         final chatJson = (data[0] as List)[0];
-        AppLogger.w("=============>>>>>>>>>" + chatJson.toString());
+        AppLogger.w("=============>>>>>>>>>$chatJson");
         final chats = ChatListItem.fromJson(chatJson);
         controller.add([chats]);
       }

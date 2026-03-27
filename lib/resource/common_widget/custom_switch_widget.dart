@@ -12,14 +12,14 @@ class CustomSwitchWidget extends StatelessWidget {
   final double scale;
 
   const CustomSwitchWidget({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     this.activeColor = AppColors.mainColor,
     this.inactiveThumbColor = Colors.grey,
     this.inactiveTrackColor = Colors.black12,
     this.scale = 1.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class CustomSwitchWidget extends StatelessWidget {
       child: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: activeColor,
+        activeThumbColor: activeColor,
         inactiveThumbColor: inactiveThumbColor,
         inactiveTrackColor: inactiveTrackColor,
       ),

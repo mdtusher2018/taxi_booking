@@ -13,7 +13,7 @@ class CustomOtpWidget extends StatelessWidget {
   final int? numberOfFields;
   final List<TextEditingController> controllers;
 
-  CustomOtpWidget({
+  const CustomOtpWidget({
     super.key,
     this.pinColor,
     this.borderColor,

@@ -101,7 +101,7 @@ class _MyVehiclesViewState extends ConsumerState<MyVehiclesView> {
               itemCount:
                   response.items.length + (response.isLoadingMore ? 1 : 0),
               controller: scrollController,
-              separatorBuilder: (_, __) => const SizedBox(height: 14),
+              separatorBuilder: (_, _) => const SizedBox(height: 14),
               itemBuilder: (_, index) {
                 if (index == response.items.length) {
                   return const Padding(
@@ -396,7 +396,7 @@ void _addVehicle(AsyncValue<ProfileResponse?> profileState, WidgetRef ref) {
         ref.context,
       ).showSnackBar(const SnackBar(content: Text("Profile is loading...")));
     },
-    error: (_, __) {
+    error: (_, _) {
       ScaffoldMessenger.of(
         ref.context,
       ).showSnackBar(const SnackBar(content: Text("Failed to load profile")));
