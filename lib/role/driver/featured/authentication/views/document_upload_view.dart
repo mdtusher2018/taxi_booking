@@ -9,7 +9,6 @@ import 'package:taxi_booking/role/driver/featured/authentication/controller/auth
 import 'package:taxi_booking/role/driver/featured/authentication/controller/signup_from_provider.dart';
 import 'package:taxi_booking/role/driver/featured/authentication/models/signup_response.dart';
 import 'package:taxi_booking/core/routes/driver_app_routes.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -41,44 +40,6 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
   File? operatingLicenseDocument;
   File? commercialInsuranceCertificate;
   File? companyRegistrationCertificate;
-  @override
-  void initState() {
-    super.initState();
-    if (kDebugMode) {
-      driverLicenseFront = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-      driverLicenseBack = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-      driverPermitFront = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-      driverPermitBack = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-      selfie = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-      idFront = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-      idBack = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-
-      // Business documents
-      operatingLicenseDocument = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-      commercialInsuranceCertificate = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-      companyRegistrationCertificate = File(
-        "/data/user/0/com.drivertexibooking.app.taxi_booking/cache/scaled_56.jpg",
-      );
-    }
-  }
 
   Future<void> _pickImage(
     Function(File) setFile, {

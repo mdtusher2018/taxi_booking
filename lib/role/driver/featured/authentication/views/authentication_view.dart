@@ -66,11 +66,11 @@ class _AuthenticationViewState extends ConsumerState<DriverAuthenticationView> {
     text: kDebugMode ? "123456789" : null,
   );
   final TextEditingController phoneNumberController = TextEditingController(
-    text: kDebugMode ? "+8801646456527" : null,
+    text: kDebugMode ? "+4916083304519" : null,
   );
   // login
   final TextEditingController loginPhoneController = TextEditingController(
-    text: kDebugMode ? "+8801646456527" : null,
+    text: kDebugMode ? "+4915200575680" : null,
   );
   final TextEditingController loginPasswordController = TextEditingController(
     text: kDebugMode ? "Hello123@" : null,
