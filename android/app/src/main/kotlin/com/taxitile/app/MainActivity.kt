@@ -1,4 +1,4 @@
-package com.taxitile.passenger
+package com.taxitile.app
 
 import io.flutter.embedding.android.FlutterActivity
 
