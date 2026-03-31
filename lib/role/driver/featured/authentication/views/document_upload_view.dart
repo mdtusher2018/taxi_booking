@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/utilitis/common_style.dart';
@@ -41,6 +42,25 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
   File? commercialInsuranceCertificate;
   File? companyRegistrationCertificate;
 
+  // Compress the image to reduce size
+  Future<XFile> _compressImage(XFile file) async {
+    final filePath = file.path;
+
+    final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
+    final splitted = filePath.substring(0, (lastIndex));
+    final outPath = "${splitted}_compressed.jpg";
+
+    final result = await FlutterImageCompress.compressAndGetFile(
+      file.path,
+      outPath,
+      quality: 50,
+      minWidth: 800,
+      minHeight: 600,
+    );
+
+    return result ?? file;
+  }
+
   Future<void> _pickImage(
     Function(File) setFile, {
     ImageSource source = ImageSource.gallery,
@@ -50,7 +70,8 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
       imageQuality: 70,
     );
     if (pickedFile != null) {
-      setFile(File(pickedFile.path));
+      final compressedFile = await _compressImage(pickedFile);
+      setFile(File(compressedFile.path));
     }
   }
 

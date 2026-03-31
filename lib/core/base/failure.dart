@@ -66,7 +66,9 @@ class Failure {
 
       // Cancelled
       if (e.type == DioExceptionType.cancel) {
-        final message = e.response?.data['message'];
+        final message = e.response?.data is Map
+            ? e.response?.data['message']?.toString()
+            : e.response?.data?.toString() ?? 'Something went wrong';
         return Failure(
           type: FailureType.cancelled,
           message: message ?? 'Request was cancelled.',
@@ -76,7 +78,9 @@ class Failure {
 
       if (e.type == DioExceptionType.badResponse) {
         final statusCode = e.response?.statusCode;
-        final message = e.response?.data['message'];
+        final message = e.response?.data is Map
+            ? e.response?.data['message']?.toString()
+            : e.response?.data?.toString() ?? 'Something went wrong';
 
         switch (statusCode) {
           case 400:
