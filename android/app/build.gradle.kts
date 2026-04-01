@@ -75,7 +75,10 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug") 
+            // Sign only if keystore exists
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
             isShrinkResources = false
         }
