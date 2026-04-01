@@ -34,7 +34,7 @@ jobs:
 
       # 🔐 Decode keystore
       - name: Decode Keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/keystore.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
 
       # 🔐 Decode key.properties
       - name: Decode key.properties
