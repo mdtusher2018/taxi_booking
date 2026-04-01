@@ -1,13 +1,19 @@
 // booking_map_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxi_booking/core/routes/common_app_pages.dart';
 
 import 'package:taxi_booking/core/utilitis/enum/payment_status_enums.dart';
 import 'package:taxi_booking/core/utilitis/enum/use_enums.dart';
+import 'package:taxi_booking/core/utilitis/image_utils.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
+import 'package:taxi_booking/resource/common_widget/custom_text.dart';
+import 'package:taxi_booking/resource/utilitis/common_style.dart';
 import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
+import 'package:taxi_booking/role/common/featured/setting/controller/profile_controller.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/sheet/ride_end_sheet.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/views/cancel_booking_view.dart';
 import 'package:taxi_booking/role/user/featured/booking_map/views/pay_tip_webview.dart';
@@ -33,9 +39,18 @@ class UserBookingMapView extends ConsumerStatefulWidget {
 
 class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(profileControllerProvider.notifier).getProfile();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final controller = ref.read(bookingMapControllerProvider.notifier);
     final state = ref.watch(bookingMapControllerProvider);
+    final profileState = ref.watch(profileControllerProvider);
 
     ref.listen(bookingMapControllerProvider, (previous, next) async {
       if (previous?.checkoutUrl != next.checkoutUrl &&
@@ -97,32 +112,125 @@ class _BookingMapViewState extends ConsumerState<UserBookingMapView> {
                   // Netherlands map style (you can customize this)
                   mapType: MapType.normal,
                 ),
-          Positioned(
-            top: 50,
-            right: MediaQuery.sizeOf(context).width / 3.1,
-            left: MediaQuery.sizeOf(context).width / 3.1,
-            child: Center(child: CountPriceWidget()),
-          ),
 
           Positioned(
             top: 50,
-            left: 16,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.whiteColor,
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: CustomNetworkImage(
-                imageUrl: 'https://i.pravatar.cc/150?img=1',
-                height: 60,
-                width: 60,
-                borderRadius: BorderRadius.circular(12.0),
+            left: 32,
+            child: Row(
+              children: [
+                profileState.when(
+                  data: (data) {
+                    return InkWell(
+                      onTap: () {
+                        if (data != null) {
+                          context.push(
+                            CommonAppRoutes.profileView,
+                            extra: data.data,
+                          );
+                        } else {
+                          CustomToast.showToast(
+                            message: "Could not load Profile data...",
+                          );
+                        }
+                      },
+                      child: CustomNetworkImage(
+                        key: ValueKey(
+                          data?.data.user.image ??
+                              data?.data.user.identityUploads?.selfie ??
+                              "N/A",
+                        ),
+                        imageUrl: getFullImagePath(
+                          data?.data.user.image ??
+                              data?.data.user.identityUploads?.selfie ??
+                              "N/A",
+                        ),
+                        height: 60,
+                        width: 60,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    );
+                  },
+                  error: (error, stackTrace) {
+                    return InkWell(
+                      onTap: () {
+                        CustomToast.showToast(
+                          message: "Could not load Profile data...",
+                        );
+                      },
+                      child: CustomNetworkImage(
+                        key: ValueKey("N/A"),
+                        imageUrl: getFullImagePath("N/A"),
+                        height: 60,
+                        width: 60,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    );
+                  },
+                  loading: () {
+                    return InkWell(
+                      onTap: () {
+                        CustomToast.showToast(message: "Profile is Loading...");
+                      },
+                      child: CustomNetworkImage(
+                        key: ValueKey("N/A"),
+                        imageUrl: getFullImagePath("N/A"),
+                        height: 60,
+                        width: 60,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // Name and phone number centered horizontally
+          Positioned(
+            top: 50,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.bgColor.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomText(
+                      title: profileState.maybeWhen(
+                        data: (data) =>
+                            data?.data.user.fullName ?? "Name not available",
+                        orElse: () => "Loading...",
+                      ),
+                      style: CommonStyle.textStyleMedium(size: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    CustomText(
+                      title: profileState.maybeWhen(
+                        data: (data) =>
+                            data?.data.user.phone ?? "Phone not available",
+                        orElse: () => "Loading...",
+                      ),
+                      style: CommonStyle.textStyleSmall(color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
 
+          // Helper function for placeholder avatar
           if (state.status == RideBookingStatus.initial)
-            const Positioned(top: 50, right: 16, child: SearchBarWidget()),
+            const Positioned(top: 50, right: 32, child: SearchBarWidget()),
 
           if (state.status == RideBookingStatus.rideCreating)
             const DestinationPickerSheet(),

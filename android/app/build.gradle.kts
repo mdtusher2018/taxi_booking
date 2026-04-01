@@ -51,14 +51,14 @@ android {
             applicationId = "com.taxitile.driver"
             versionCode = 1
             versionName = "1.0.0"
-            resValue("string", "app_name", "TaxiTile Driver")
+            resValue("string", "app_name", "Tilx Driver")
         }
         create("user") {
             dimension = "role"
             applicationId = "com.taxitile.passenger"
             versionCode = 1
             versionName = "1.0.0"
-            resValue("string", "app_name", "TaxiTile Passenger")
+            resValue("string", "app_name", "Tilx Passenger")
         }
     }
 

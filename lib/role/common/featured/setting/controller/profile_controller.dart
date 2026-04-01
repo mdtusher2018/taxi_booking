@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/result.dart';
@@ -40,5 +41,26 @@ class ProfileController extends _$ProfileController {
       );
     }
     result;
+  }
+
+  Future<String?> updateProfile({required File image}) async {
+    final currentProfile = state.asData?.value;
+
+    state = AsyncLoading();
+
+    final result = await profileRepository.updateProfile(image: image);
+
+    if (result is Success) {
+      return result as String;
+    } else if (result is FailureResult) {
+      state = currentProfile != null
+          ? AsyncData(currentProfile)
+          : AsyncError(
+              (result as FailureResult).error.message,
+              (result as FailureResult).error.stackTrace ??
+                  StackTrace.fromString("No trace found"),
+            );
+    }
+    return null;
   }
 }

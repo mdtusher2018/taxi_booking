@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxi_booking/resource/common_widget/custom_app_bar.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
+import 'package:taxi_booking/resource/utilitis/custom_toast.dart';
+import 'package:taxi_booking/role/common/featured/setting/controller/profile_controller.dart';
 import 'package:taxi_booking/role/common/featured/setting/model/profile_response.dart';
 import 'package:taxi_booking/role/common/featured/setting/widget/profile_details_widgets.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends ConsumerWidget {
   final ProfileData data;
   const ProfileView({super.key, required this.data});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final user = data.user;
     final address = user.address;
     final licenseUploads = user.driverLicenseUploads;
@@ -26,8 +29,16 @@ class ProfileView extends StatelessWidget {
             ProfileHeader(
               name: user.fullName,
               isVerified: user.status == "APPROVED",
-              image: identityUploads?.selfie ?? "", // Null-safe
+              image:user.image ?? identityUploads?.selfie ?? "", // Null-safe
               phone: user.phone,
+              onSaveImage: (file) async {
+                final result = await ref
+                    .read(profileControllerProvider.notifier)
+                    .updateProfile(image: file);
+                if (result != null) {
+                  CustomToast.showToast(message: result);
+                }
+              },
             ),
             const SizedBox(height: 24),
 

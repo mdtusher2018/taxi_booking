@@ -58,16 +58,24 @@ extension RideDetailsBookingMapExtension on RideDetailsResponse {
     // Map ride status to BookingMapStatus
     RideBookingStatus mapStatus(String? status) {
       switch (status) {
-        case "CREATED":
+        case "REQUESTED":
+        case "SEARCHING":
           return RideBookingStatus.searchingDriver;
         case "ACCEPTED":
           return RideBookingStatus.driverOnTheWay;
+        case "DRIVER_ARRIVED":
+          return RideBookingStatus.driverArived;
         case "STARTED":
+        case "ONEWAY":
           return RideBookingStatus.rideStarted;
+        case "DRIVER_ARRIVED_DROPOFF":
+          return RideBookingStatus.destinationReached;
         case "COMPLETED":
           return RideBookingStatus.rideEnded;
-        case "CANCELLED":
+        case 'CANCELLED':
+        case 'FAILED':
           return RideBookingStatus.rideCancelled;
+        case "CREATED":
         default:
           return RideBookingStatus.initial;
       }

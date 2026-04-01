@@ -160,7 +160,6 @@ class HomeRideController extends _$HomeRideController with MapMixin {
   }
 
   Future<void> driverOnline() async {
-    
     Position? position = await getCurrentLocation();
     if (position == null) {
       state = state.copyWith(error: "Failed to get current location");
@@ -178,7 +177,7 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     );
     if (res is FailureResult) {
       final error = (res as FailureResult).error as Failure;
-      state = state.copyWith(error: error.message,);
+      state = state.copyWith(error: error.message);
     }
 
     repository.listenToRideRequest().listen((rideRequestResponse) {
@@ -326,6 +325,12 @@ class HomeRideController extends _$HomeRideController with MapMixin {
     final controller = ref.read(rideDetailsControllerProvider);
     repository.rideDetails(controller).listen((rideDetails) {
       if (rideDetails == null) return;
+
+      // Only proceed if the ride is in driver-active statuses
+      if (!_isDriverActiveRide(rideDetails.data?.status ?? "")) {
+        return;
+      }
+
       final rideRequest = rideDetails.toRideRequest();
       state = state.copyWith(
         selectedRide: rideRequest,
@@ -339,5 +344,18 @@ class HomeRideController extends _$HomeRideController with MapMixin {
 
   void emitRideDetails() {
     repository.emitRideDetails();
+  }
+
+  // Helper to check driver-active ride statuses
+  bool _isDriverActiveRide(String? status) {
+    const driverActiveStatuses = [
+      'ACCEPTED',
+      'DRIVER_ARRIVED',
+      'STARTED',
+      'ONEWAY',
+      'DRIVER_ARRIVED_DROPOFF',
+    ];
+
+    return driverActiveStatuses.contains(status);
   }
 }

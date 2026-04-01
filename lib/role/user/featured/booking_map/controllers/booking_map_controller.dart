@@ -557,8 +557,11 @@ class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
         final String rideId = data[0]["rideId"] ?? "";
         if (hasActiveRide) {
           final rideDetails = await controller.getRideDetails(rideId);
+
           if (rideDetails == null) return;
-          state = rideDetails.toBookingMapState(state);
+          if (_isRideRetrievable(rideDetails.data?.status ?? "")) {
+            state = rideDetails.toBookingMapState(state);
+          }
         }
       }
     });
@@ -566,5 +569,20 @@ class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
 
   void emitRideDetails() {
     socketService.emit(SocketEvents.restoreRideState, {});
+  }
+
+  bool _isRideRetrievable(String status) {
+    const retrievableStatuses = [
+      'SEARCHING',
+      'REQUESTED',
+      'ACCEPTED',
+      'DRIVER_ARRIVED',
+      'STARTED',
+      'ONEWAY',
+      'DRIVER_ARRIVED_DROPOFF',
+    ];
+
+    if (retrievableStatuses.contains(status)) return true;
+    return false;
   }
 }

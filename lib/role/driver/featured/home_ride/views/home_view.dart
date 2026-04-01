@@ -5,13 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_booking/core/di/service.dart';
-import 'package:taxi_booking/core/routes/common_app_pages.dart';
 import 'package:taxi_booking/core/routes/driver_app_routes.dart';
 import 'package:taxi_booking/core/utilitis/enum/driver_enums.dart';
+import 'package:taxi_booking/core/utilitis/image_utils.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/app_images/app_images.dart';
 import 'package:taxi_booking/resource/common_widget/custom_network_image.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
+import 'package:taxi_booking/role/common/featured/setting/controller/profile_controller.dart';
 import 'package:taxi_booking/role/driver/featured/home_ride/controller/home_ride_controller.dart';
 import 'package:taxi_booking/role/driver/featured/home_ride/widget/on_going_ride.dart';
 import 'package:taxi_booking/role/driver/featured/home_ride/widget/on_the_way_sheet.dart';
@@ -32,9 +33,21 @@ class _DriverHomeViewState extends ConsumerState<DriverHomeView> {
   ValueNotifier<bool> switchingOnlineOffline = ValueNotifier(false);
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(profileControllerProvider.notifier).getProfile();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final controller = ref.read(homeRideControllerProvider.notifier);
+
     final state = ref.watch(homeRideControllerProvider);
+
+    final profileState = ref.watch(profileControllerProvider);
+
     ref.listen(homeRideControllerProvider, (previous, next) {
       if (next.status == DriverStatus.rideEnd) {
         showDialog(
@@ -73,19 +86,39 @@ class _DriverHomeViewState extends ConsumerState<DriverHomeView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
-                  onTap: () {
-                    context.push(CommonAppRoutes.settingView);
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CustomNetworkImage(
-                      imageUrl:
-                          "https://tse2.mm.bing.net/th/id/OIP.xrZIEhpJrAdGTbuBh8JHOQHaJy?cb=ucfimg2&ucfimg=1&w=3024&h=4000&rs=1&pid=ImgDetMain&o=7&rm=3",
+                profileState.when(
+                  data: (data) {
+                    return CustomNetworkImage(
+                      key: ValueKey(
+                        data?.data.user.identityUploads?.selfie ?? "N/A",
+                      ),
+                      imageUrl: getFullImagePath(
+                        data?.data.user.image ??
+                            data?.data.user.identityUploads?.selfie ??
+                            "N/A",
+                      ),
                       height: 60,
                       width: 60,
-                    ),
-                  ),
+                    );
+                  },
+                  error: (error, stackTrace) {
+                    return CustomNetworkImage(
+                      key: ValueKey("N/A"),
+                      imageUrl: getFullImagePath("N/A"),
+                      height: 60,
+                      width: 60,
+                      borderRadius: BorderRadius.circular(16),
+                    );
+                  },
+                  loading: () {
+                    return CustomNetworkImage(
+                      key: ValueKey("N/A"),
+                      imageUrl: getFullImagePath("N/A"),
+                      height: 60,
+                      width: 60,
+                      borderRadius: BorderRadius.circular(16),
+                    );
+                  },
                 ),
 
                 Container(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:taxi_booking/core/base/failure.dart';
 import 'package:taxi_booking/core/base/repository.dart';
 import 'package:taxi_booking/core/base/result.dart';
@@ -14,6 +16,19 @@ class ProfileRepository extends Repository {
     return asyncGuard(() async {
       final response = await apiService.get(CommonApiEndPoints.getProfile);
       return ProfileResponse.fromJson(response);
+    });
+  }
+
+  Future<Result<String, Failure>> updateProfile({required File image}) {
+    return asyncGuard(() async {
+      final response = await apiService.multipartMulti(
+        CommonApiEndPoints.updateProfile,
+        method: "PUT",
+        files: {
+          'image': [image],
+        },
+      );
+      return response['message'];
     });
   }
 

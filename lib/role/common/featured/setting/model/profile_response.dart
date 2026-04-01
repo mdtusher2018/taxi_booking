@@ -53,6 +53,7 @@ class User {
   final String id;
   final String fullName;
   final String phone;
+  final String? image;
   final String? email;
   final String? status;
   final String? dateOfBirth;
@@ -75,6 +76,7 @@ class User {
   User({
     required this.id,
     required this.fullName,
+    required this.image,
     required this.phone,
     required this.email,
     required this.status,
@@ -103,6 +105,7 @@ class User {
         json['fullName'] ?? json['fullname'],
         fallback: "Unnamed User",
       ),
+      image: json['profile'],
       phone: JsonHelper.stringVal(json['phone'], fallback: "No number"),
       email: json['email'],
       status: json['status'],

@@ -61,20 +61,14 @@ class _SettingViewState extends ConsumerState<SettingView> {
                   );
                 },
                 data: (data) {
-                  if (data == null) {
-                    return ProfileHeader(
-                      name: 'Loading...',
-                      isVerified: false,
-                      image: "N/A",
-                      phone: 'loading...',
-                    );
-                  }
-
                   return ProfileHeader(
-                    name: data.data.user.fullName,
-                    phone: data.data.user.phone,
-                    image: data.data.user.identityUploads?.selfie ?? "",
-                    isVerified: data.data.user.status == "APPROVED",
+                    name: data?.data.user.fullName ?? "Loading...",
+                    phone: data?.data.user.phone ?? "Loading...",
+                    image:
+                        data?.data.user.image ??
+                        data?.data.user.identityUploads?.selfie ??
+                        "N/A",
+                    isVerified: data?.data.user.status == "APPROVED",
                   );
                 },
                 error: (error, stackTrace) {
@@ -82,7 +76,7 @@ class _SettingViewState extends ConsumerState<SettingView> {
                     return ProfileHeader(
                       name: 'N/A',
                       isVerified: false,
-                      iaNotApproved: true,
+
                       image: "N/A",
                       phone: 'N/A',
                     );
@@ -117,31 +111,31 @@ class _SettingViewState extends ConsumerState<SettingView> {
                   );
                 },
               ),
-  if (ref.watch(appRole.notifier).state == AppRole.driver 
-                      )
-              SettingItemCard(
-                icon: Icon(Icons.credit_card, color: Colors.yellow.shade900),
-                title: "Wallet",
-                onTap: () {
-                  if (state is AsyncData) {
-                    final data = (state as AsyncData).value as ProfileResponse;
+              if (ref.watch(appRole.notifier).state == AppRole.driver)
+                SettingItemCard(
+                  icon: Icon(Icons.credit_card, color: Colors.yellow.shade900),
+                  title: "Wallet",
+                  onTap: () {
+                    if (state is AsyncData) {
+                      final data =
+                          (state as AsyncData).value as ProfileResponse;
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => (data.data.role == "WithCar")
-                            ? WalletWithCarDriverView(
-                                name: data.data.user.fullName,
-                              )
-                            : WalletWithoutCarDriverView(
-                                id: data.data.user.id,
-                                name: data.data.user.fullName,
-                              ),
-                      ),
-                    );
-                  }
-                },
-              ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => (data.data.role == "WithCar")
+                              ? WalletWithCarDriverView(
+                                  name: data.data.user.fullName,
+                                )
+                              : WalletWithoutCarDriverView(
+                                  id: data.data.user.id,
+                                  name: data.data.user.fullName,
+                                ),
+                        ),
+                      );
+                    }
+                  },
+                ),
 
               state.when(
                 loading: () {
