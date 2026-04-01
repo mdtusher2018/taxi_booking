@@ -62,8 +62,8 @@ class _SettingViewState extends ConsumerState<SettingView> {
                 },
                 data: (data) {
                   return ProfileHeader(
-                    name: data?.data.user.fullName ?? "Loading...",
-                    phone: data?.data.user.phone ?? "Loading...",
+                    name: data?.data.user.fullName ?? "Unnamed User",
+                    phone: data?.data.user.phone ?? "No Phone Number",
                     image:
                         data?.data.user.image ??
                         data?.data.user.identityUploads?.selfie ??
