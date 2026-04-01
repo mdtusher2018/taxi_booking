@@ -1,4 +1,4 @@
-name: Flutter - Android Build (Flavors - Unsigned)
+name: Flutter - Android Build (Release - Debug Signed)
 
 on:
   push:
@@ -32,46 +32,24 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # 🧱 Build USER APK (unsigned)
+      # 🧱 Build USER APK (release behavior, debug signed)
       - name: Build User APK
-        run: flutter build apk --flavor user --debug --dart-define=APP_ROLE=user
+        run: flutter build apk --flavor user --release --dart-define=APP_ROLE=user
 
-      # 📦 Build USER AAB (unsigned)
-      - name: Build User AAB
-        run: flutter build appbundle --flavor user --debug --dart-define=APP_ROLE=user
-
-      # 🧱 Build DRIVER APK (unsigned)
+      # 🧱 Build DRIVER APK
       - name: Build Driver APK
-        run: flutter build apk --flavor driver --debug --dart-define=APP_ROLE=driver
-
-      # 📦 Build DRIVER AAB (unsigned)
-      - name: Build Driver AAB
-        run: flutter build appbundle --flavor driver --debug --dart-define=APP_ROLE=driver
+        run: flutter build apk --flavor driver --release --dart-define=APP_ROLE=driver
 
       # 📤 Upload USER APK
       - name: Upload User APK
         uses: actions/upload-artifact@v4
         with:
           name: user-apk
-          path: build/app/outputs/flutter-apk/app-user-debug.apk
-
-      # 📤 Upload USER AAB
-      - name: Upload User AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: user-aab
-          path: build/app/outputs/bundle/userDebug/app-user-debug.aab
+          path: build/app/outputs/flutter-apk/app-user-release.apk
 
       # 📤 Upload DRIVER APK
       - name: Upload Driver APK
         uses: actions/upload-artifact@v4
         with:
           name: driver-apk
-          path: build/app/outputs/flutter-apk/app-driver-debug.apk
-
-      # 📤 Upload DRIVER AAB
-      - name: Upload Driver AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: driver-aab
-          path: build/app/outputs/bundle/driverDebug/app-driver-debug.aab
+          path: build/app/outputs/flutter-apk/app-driver-release.apk
