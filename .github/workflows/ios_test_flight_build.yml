@@ -103,6 +103,7 @@ jobs:
             --file "build/ios/ipa/Runner.ipa" \
             --apiKey "${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}" \
             --apiIssuer "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}"
+            --private-key @file:"$HOME/.private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8"
 
       # 🔁 Rename driver IPA before next build
       - name: Rename Driver IPA artifact
@@ -125,6 +126,7 @@ jobs:
             --file "build/ios/ipa/Runner.ipa" \
             --apiKey "${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}" \
             --apiIssuer "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}"
+            --private-key @file:"$HOME/.private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8"
 
       # 🔁 Rename passenger IPA
       - name: Rename Passenger IPA artifact
