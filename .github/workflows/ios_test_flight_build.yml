@@ -1,0 +1,144 @@
+name: Flutter - iOS Build (TestFlight - Both Flavors)
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-ios:
+    runs-on: macos-latest  # ← Must be macOS, no way around this
+
+    steps:
+      # 📥 Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ☕ Setup Java (needed for Flutter tooling)
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+
+      # 🐦 Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      # 📦 Install Flutter dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 🍎 Install CocoaPods dependencies
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install --repo-update
+
+      # 🔐 Install Distribution Certificate into Keychain
+      - name: Install Certificate
+        run: |
+          # Create a temporary keychain
+          KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # Decode and import certificate
+          echo "${{ secrets.CERTIFICATE_P12_BASE64 }}" | base64 --decode > $RUNNER_TEMP/certificate.p12
+          security import "$RUNNER_TEMP/certificate.p12" \
+            -k "$KEYCHAIN_PATH" \
+            -P "${{ secrets.CERTIFICATE_PASSWORD }}" \
+            -A -t cert -f pkcs12
+
+          # Add to search list
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+
+      # 🔐 Install Provisioning Profiles
+      - name: Install Provisioning Profiles
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+
+          # Driver profile
+          echo "${{ secrets.DRIVER_PROVISIONING_PROFILE_BASE64 }}" | base64 --decode \
+            > ~/Library/MobileDevice/Provisioning\ Profiles/TilxDriver_AppStore.mobileprovision
+
+          # Passenger profile
+          echo "${{ secrets.PASSENGER_PROVISIONING_PROFILE_BASE64 }}" | base64 --decode \
+            > ~/Library/MobileDevice/Provisioning\ Profiles/TilxPassenger_AppStore.mobileprovision
+
+      # 🔑 Setup App Store Connect API Key
+      - name: Setup App Store Connect API Key
+        run: |
+          mkdir -p ~/.private_keys
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 --decode \
+            > ~/.private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+
+      # 🧱 Build DRIVER IPA
+      - name: Build Driver IPA
+        run: |
+          flutter build ipa \
+            --flavor driver \
+            --release \
+            --dart-define=APP_ROLE=driver \
+            --export-options-plist=ios/ExportOptions-driver.plist
+
+      # 📤 Upload DRIVER to TestFlight
+      - name: Upload Driver to TestFlight
+        run: |
+          xcrun altool --upload-app \
+            --type ios \
+            --file "build/ios/ipa/Runner.ipa" \
+            --apiKey "${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}" \
+            --apiIssuer "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}"
+
+      # 🔁 Rename driver IPA before next build
+      - name: Rename Driver IPA artifact
+        run: mv build/ios/ipa/Runner.ipa build/ios/ipa/driver-release.ipa
+
+      # 🧱 Build PASSENGER IPA
+      - name: Build Passenger IPA
+        run: |
+          flutter build ipa \
+            --flavor user \
+            --release \
+            --dart-define=APP_ROLE=user \
+            --export-options-plist=ios/ExportOptions-passenger.plist
+
+      # 📤 Upload PASSENGER to TestFlight
+      - name: Upload Passenger to TestFlight
+        run: |
+          xcrun altool --upload-app \
+            --type ios \
+            --file "build/ios/ipa/Runner.ipa" \
+            --apiKey "${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}" \
+            --apiIssuer "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}"
+
+      # 🔁 Rename passenger IPA
+      - name: Rename Passenger IPA artifact
+        run: mv build/ios/ipa/Runner.ipa build/ios/ipa/passenger-release.ipa
+
+      # 📤 Save Driver IPA as artifact
+      - name: Upload Driver IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: driver-ipa
+          path: build/ios/ipa/driver-release.ipa
+
+      # 📤 Save Passenger IPA as artifact
+      - name: Upload Passenger IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: passenger-ipa
+          path: build/ios/ipa/passenger-release.ipa
+
+      # 🧹 Cleanup keychain
+      - name: Cleanup Keychain
+        if: always()
+        run: |
+          security delete-keychain $RUNNER_TEMP/build.keychain || true
