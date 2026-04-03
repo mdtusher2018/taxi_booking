@@ -41,7 +41,6 @@ jobs:
       # 🔐 Install Distribution Certificate into Keychain
       - name: Install Certificate
         run: |
-          # Create a temporary keychain
           KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain
           KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
 
@@ -49,14 +48,22 @@ jobs:
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
-          # Decode and import certificate
           echo "${{ secrets.CERTIFICATE_P12_BASE64 }}" | base64 --decode > $RUNNER_TEMP/certificate.p12
+          
+          # Handle empty password — try with empty string, fallback to no -P flag
           security import "$RUNNER_TEMP/certificate.p12" \
             -k "$KEYCHAIN_PATH" \
-            -P "${{ secrets.CERTIFICATE_PASSWORD }}" \
+            -P "" \
+            -A -t cert -f pkcs12 \
+            --keychain "$KEYCHAIN_PATH" || \
+          security import "$RUNNER_TEMP/certificate.p12" \
+            -k "$KEYCHAIN_PATH" \
             -A -t cert -f pkcs12
 
-          # Add to search list
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
           security list-keychain -d user -s "$KEYCHAIN_PATH"
 
       # 🔐 Install Provisioning Profiles
