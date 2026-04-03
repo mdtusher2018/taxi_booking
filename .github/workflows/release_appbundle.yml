@@ -2,9 +2,9 @@ name: Flutter - Android Build (Flavors + Signed)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["production"]
   pull_request:
-    branches: ["main"]
+    branches: ["production"]
 
 jobs:
   build:
