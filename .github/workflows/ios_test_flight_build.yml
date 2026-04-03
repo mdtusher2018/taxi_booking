@@ -86,14 +86,19 @@ jobs:
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 --decode \
             > ~/.private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
 
-      # 🧱 Build DRIVER IPA
       - name: Build Driver IPA
         run: |
           flutter build ipa \
             --flavor driver \
             --release \
             --dart-define=APP_ROLE=driver \
-            --export-options-plist=ios/ExportOptions-driver.plist
+            --export-options-plist=ios/ExportOptions-driver.plist \
+            --build-number=${{ github.run_number }} \
+            -- \
+            DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }} \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="TilxDriver_AppStore"
 
       # 📤 Upload DRIVER to TestFlight
       - name: Upload Driver to TestFlight
