@@ -234,13 +234,20 @@ class _ProfessionalDriverArrivedCardState
               ),
             ),
             SizedBox(height: 8),
-            CustomButton(
-              title: "Pay Now",
-              isLoading: ref.watch(bookingMapControllerProvider).isLoading,
-              onTap: () {
-                ref
-                    .read(bookingMapControllerProvider.notifier)
-                    .paymentConfirm();
+            ValueListenableBuilder(
+              valueListenable: ref
+                  .watch(bookingMapControllerProvider.notifier)
+                  .isLoading,
+              builder: (context, value, child) {
+                return CustomButton(
+                  title: "Pay Now",
+                  isLoading: value,
+                  onTap: () {
+                    ref
+                        .read(bookingMapControllerProvider.notifier)
+                        .paymentConfirm();
+                  },
+                );
               },
             ),
             SizedBox(height: 16),

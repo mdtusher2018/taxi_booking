@@ -24,7 +24,7 @@ android {
 
     useLibrary("org.apache.http.legacy")
     namespace = "com.taxitile.app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

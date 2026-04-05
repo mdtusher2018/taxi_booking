@@ -151,28 +151,40 @@ class _ProfessionalDriverArrivedCardState extends ConsumerState<GiveTipsSheet> {
           const SizedBox(height: 20),
 
           // Pay Tip button
-          CustomButton(
-            onTap: () async {
-              if (_selectedTip != null && _selectedTip! > 0) {
-                await ref
-                    .read(bookingMapControllerProvider.notifier)
-                    .payTips(tipAmount: _selectedTip!);
-              } else {
-                CustomToast.showToast(
-                  message: "Please select a tip amount.",
-                  isError: true,
-                );
-              }
+          ValueListenableBuilder(
+            valueListenable: ref
+                .read(bookingMapControllerProvider.notifier)
+                .isLoading,
+            builder: (context, value, child) {
+              return CustomButton(
+                isLoading: value,
+                onTap: () async {
+                  if (_selectedTip != null && _selectedTip! > 0) {
+                    await ref
+                        .read(bookingMapControllerProvider.notifier)
+                        .payTips(tipAmount: _selectedTip!);
+                  } else {
+                    CustomToast.showToast(
+                      message: "Please select a tip amount.",
+                      isError: true,
+                    );
+                  }
+                },
+                title: "Pay Tip",
+              );
             },
-            title: "Pay Tip",
           ),
           const SizedBox(height: 12),
 
           // No Thanks button
           CustomButton(
-            onTap: () {
-              // ref.invalidate(bookingMapControllerProvider);
-              context.go(UserAppRoutes.rootView);
+            onTap: () async {
+              final result = await ref
+                  .read(bookingMapControllerProvider.notifier)
+                  .onRideCompleate();
+              if (result == true && mounted) {
+                context.go(UserAppRoutes.rootView);
+              }
             },
             buttonColor: Color(0xffEAECF0),
             titleColor: AppColors.blackColor,

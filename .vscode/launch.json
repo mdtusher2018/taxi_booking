@@ -9,20 +9,21 @@
             "program": "lib/main.dart",
             "args": [
                 "--flavor",
-                "driver",
-                "--dart-define=APP_ROLE=driver"
+                "driver"
+                // ,
+                // "--dart-define=APP_ROLE=driver"
             ]
         },
-        {
-            "name": "Passenger App",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "args": [
-                "--flavor",
-                "user",
-                "--dart-define=APP_ROLE=user"
-            ]
-        }
+        // {
+        //     "name": "Passenger App",
+        //     "request": "launch",
+        //     "type": "dart",
+        //     "program": "lib/main.dart",
+        //     "args": [
+        //         "--flavor",
+        //         "user",
+        //         "--dart-define=APP_ROLE=user"
+        //     ]
+        // }
     ]
 }

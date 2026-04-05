@@ -44,21 +44,19 @@ class _DocumentUploadViewState extends ConsumerState<DocumentUploadView> {
 
   // Compress the image to reduce size
   Future<XFile> _compressImage(XFile file) async {
-    final filePath = file.path;
-
-    final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
-    final splitted = filePath.substring(0, (lastIndex));
-    final outPath = "${splitted}_compressed.jpg";
-
-    final result = await FlutterImageCompress.compressAndGetFile(
-      file.path,
-      outPath,
-      quality: 50,
-      minWidth: 800,
-      minHeight: 600,
-    );
-
-    return result ?? file;
+    // final filePath = file.path;
+    // final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
+    // final splitted = filePath.substring(0, (lastIndex));
+    // final outPath = "${splitted}_compressed.jpg";
+    // final result = await FlutterImageCompress.compressAndGetFile(
+    //   file.path,
+    //   outPath,
+    //   quality: 50,
+    //   minWidth: 800,
+    //   minHeight: 600,
+    // );
+    // return result ?? file;
+    return file;
   }
 
   Future<void> _pickImage(

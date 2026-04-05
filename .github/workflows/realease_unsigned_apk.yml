@@ -2,9 +2,9 @@ name: Flutter - Android Build (Release - Debug Signed)
 
 on:
   push:
-    branches: ["production"]
+    branches: ["main"]
   pull_request:
-    branches: ["production"]
+    branches: ["main"]
 
 jobs:
   build:

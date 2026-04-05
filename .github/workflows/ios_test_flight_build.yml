@@ -2,9 +2,9 @@ name: Flutter - iOS Build (TestFlight - Both Flavors)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["production"]
   pull_request:
-    branches: ["main"]
+    branches: ["production"]
 
 jobs:
   build-ios:

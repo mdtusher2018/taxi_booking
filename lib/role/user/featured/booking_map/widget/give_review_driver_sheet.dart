@@ -170,44 +170,52 @@ class _ProfessionalDriverArrivedCardState
             const SizedBox(height: 20),
 
             // Next button
-            CustomButton(
-              title: 'Submit Review',
-              onTap: () {
-                if (_rating <= 0) {
-                  CustomToast.showToast(
-                    message: "Please give a rating ⭐",
-                    isError: true,
-                  );
+            ValueListenableBuilder(
+              valueListenable: ref
+                  .read(bookingMapControllerProvider.notifier)
+                  .isLoading,
+              builder: (context, value, child) {
+                return CustomButton(
+                  title: 'Submit Review',
+                  isLoading: value,
+                  onTap: () {
+                    if (_rating <= 0) {
+                      CustomToast.showToast(
+                        message: "Please give a rating ⭐",
+                        isError: true,
+                      );
 
-                  return;
-                }
+                      return;
+                    }
 
-                // Review validation
-                if (reviewController.text.trim().isEmpty) {
-                  CustomToast.showToast(
-                    message: "Please write a review ✍️",
-                    isError: true,
-                  );
+                    // Review validation
+                    if (reviewController.text.trim().isEmpty) {
+                      CustomToast.showToast(
+                        message: "Please write a review ✍️",
+                        isError: true,
+                      );
 
-                  return;
-                }
+                      return;
+                    }
 
-                controller.giveReview(
-                  ratting: _rating,
-                  review: reviewController.text.trim(),
+                    controller.giveReview(
+                      ratting: _rating,
+                      review: reviewController.text.trim(),
+                    );
+                  },
+                  widget: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Submit Review",
+                        style: CommonStyle.textStyleSmall(size: 16),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Icons.arrow_forward),
+                    ],
+                  ),
                 );
               },
-              widget: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Submit Review",
-                    style: CommonStyle.textStyleSmall(size: 16),
-                  ),
-                  SizedBox(width: 8),
-                  Icon(Icons.arrow_forward),
-                ],
-              ),
             ),
           ],
         ),

@@ -67,92 +67,96 @@ class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
       TextEditingController();
 
   Future<void> onPicupPickoffLocationChanged() async {
-    // ----- MARKERS -----
-    final updatedMarkers = Set<Marker>.from(state.markers);
+    safeCall(
+      task: () async {
+        // ----- MARKERS -----
+        final updatedMarkers = Set<Marker>.from(state.markers);
 
-    updatedMarkers.removeWhere((m) => m.markerId.value == 'pickup');
-    if (state.pickupLatLng != null && pickupIcon != null) {
-      updatedMarkers.add(
-        Marker(
-          markerId: const MarkerId('pickup'),
-          position: state.pickupLatLng!,
-          icon: pickupIcon!,
-          infoWindow: InfoWindow(
-            title: 'Pickup Location',
-            snippet: pickupLocationController.text,
-          ),
-        ),
-      );
-    }
-
-    // Remove old drop marker
-    updatedMarkers.removeWhere((m) => m.markerId.value == 'drop');
-
-    // Add drop marker
-    if (state.dropLatLng != null) {
-      updatedMarkers.add(
-        Marker(
-          markerId: const MarkerId('drop'),
-          position: state.dropLatLng!,
-          infoWindow: InfoWindow(
-            title: 'Drop Location',
-            snippet: dropLocationController.text,
-          ),
-        ),
-      );
-    }
-
-    // Update markers in state
-    state = state.copyWith(markers: updatedMarkers);
-
-    // ----- POLYLINES -----
-    if (state.pickupLatLng != null && state.dropLatLng != null) {
-      final updatedPolylines = <Polyline>{};
-
-      final result = await polylinePoints.getRouteBetweenCoordinatesV2(
-        request: RoutesApiRequest(
-          origin: PointLatLng(
-            state.pickupLatLng!.latitude,
-            state.pickupLatLng!.longitude,
-          ),
-          destination: PointLatLng(
-            state.dropLatLng!.latitude,
-            state.dropLatLng!.longitude,
-          ),
-          travelMode: TravelMode.driving,
-        ),
-      );
-
-      if (result.primaryRoute?.polylinePoints != null) {
-        final routePoints = result.primaryRoute!.polylinePoints!
-            .map((p) => LatLng(p.latitude, p.longitude))
-            .toList();
-
-        updatedPolylines.add(
-          Polyline(
-            polylineId: const PolylineId('route'),
-            color: Colors.blue,
-            width: 5,
-            points: routePoints,
-          ),
-        );
-
-        state = state.copyWith(
-          polylines: updatedPolylines,
-          routeDistanceKm:
-              result.primaryRoute!.distanceKm ??
-              calculatePolylineDistance(routePoints),
-          tripDurationMin: ((result.primaryRoute!.duration ?? 0) / 60),
-        );
-
-        if (kDebugMode) {
-          print(result.primaryRoute!.duration);
-          print(state.tripDurationMin);
+        updatedMarkers.removeWhere((m) => m.markerId.value == 'pickup');
+        if (state.pickupLatLng != null && pickupIcon != null) {
+          updatedMarkers.add(
+            Marker(
+              markerId: const MarkerId('pickup'),
+              position: state.pickupLatLng!,
+              icon: pickupIcon!,
+              infoWindow: InfoWindow(
+                title: 'Pickup Location',
+                snippet: pickupLocationController.text,
+              ),
+            ),
+          );
         }
 
-        fitCameraBounds(routePoints);
-      }
-    }
+        // Remove old drop marker
+        updatedMarkers.removeWhere((m) => m.markerId.value == 'drop');
+
+        // Add drop marker
+        if (state.dropLatLng != null) {
+          updatedMarkers.add(
+            Marker(
+              markerId: const MarkerId('drop'),
+              position: state.dropLatLng!,
+              infoWindow: InfoWindow(
+                title: 'Drop Location',
+                snippet: dropLocationController.text,
+              ),
+            ),
+          );
+        }
+
+        // Update markers in state
+        state = state.copyWith(markers: updatedMarkers);
+
+        // ----- POLYLINES -----
+        if (state.pickupLatLng != null && state.dropLatLng != null) {
+          final updatedPolylines = <Polyline>{};
+
+          final result = await polylinePoints.getRouteBetweenCoordinatesV2(
+            request: RoutesApiRequest(
+              origin: PointLatLng(
+                state.pickupLatLng!.latitude,
+                state.pickupLatLng!.longitude,
+              ),
+              destination: PointLatLng(
+                state.dropLatLng!.latitude,
+                state.dropLatLng!.longitude,
+              ),
+              travelMode: TravelMode.driving,
+            ),
+          );
+
+          if (result.primaryRoute?.polylinePoints != null) {
+            final routePoints = result.primaryRoute!.polylinePoints!
+                .map((p) => LatLng(p.latitude, p.longitude))
+                .toList();
+
+            updatedPolylines.add(
+              Polyline(
+                polylineId: const PolylineId('route'),
+                color: Colors.blue,
+                width: 5,
+                points: routePoints,
+              ),
+            );
+
+            state = state.copyWith(
+              polylines: updatedPolylines,
+              routeDistanceKm:
+                  result.primaryRoute!.distanceKm ??
+                  calculatePolylineDistance(routePoints),
+              tripDurationMin: ((result.primaryRoute!.duration ?? 0) / 60),
+            );
+
+            if (kDebugMode) {
+              print(result.primaryRoute!.duration);
+              print(state.tripDurationMin);
+            }
+
+            fitCameraBounds(routePoints);
+          }
+        }
+      },
+    );
   }
 
   Future<void> onDriverLocationChanged() async {
@@ -250,6 +254,16 @@ class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
       CustomToast.showToast(message: e.toString());
       return false;
     }
+  }
+
+  Future<bool?> onRideCompleate() async {
+    return await safeCall<bool>(
+      task: () async {
+        state = BookingMapState();
+        _init();
+        return true;
+      },
+    );
   }
 
   void selectedPriceModel({required PricingModel selectedPriceModel}) {
@@ -504,67 +518,88 @@ class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
   }
 
   Future<void> paymentConfirm() async {
-    final response = await apiService.post(
-      UserApiEndpoints.paymentConfirmed(state.rideId),
-      {},
-    );
+    safeCall(
+      task: () async {
+        final response = await apiService.post(
+          UserApiEndpoints.paymentConfirmed(state.rideId),
+          {},
+        );
 
-    if (response['success'] == true) {
-      state = state.copyWith(status: RideBookingStatus.giveReview);
-    } else {
-      CustomToast.showToast(message: "Payment Confirmed Failed,Try again");
-    }
+        if (response['success'] == true) {
+          driverPaymentConfirmation(state.rideId);
+          state = state.copyWith(status: RideBookingStatus.giveReview);
+        } else {
+          CustomToast.showToast(message: "Payment Confirmed Failed,Try again");
+        }
+      },
+    );
   }
 
   Future<void> giveReview({
     required num ratting,
     required String review,
   }) async {
-    final response = await apiService.post(
-      UserApiEndpoints.giveReview(state.rideId),
-      {"rating": ratting, "note": review},
-    );
+    safeCall(
+      task: () async {
+        final response = await apiService.post(
+          UserApiEndpoints.giveReview(state.rideId),
+          {"rating": ratting, "note": review},
+        );
 
-    if (response['statusCode'] == 201) {
-      state = state.copyWith(status: RideBookingStatus.tipProcessing);
-    } else {
-      CustomToast.showToast(message: "Feedback Faield,Try again");
-    }
+        if (response['statusCode'] == 201) {
+          state = state.copyWith(status: RideBookingStatus.tipProcessing);
+        } else {
+          CustomToast.showToast(message: "Feedback Faield,Try again");
+        }
+      },
+    );
   }
 
   Future<void> payTips({required num tipAmount}) async {
-    final response = await apiService.post(
-      UserApiEndpoints.payTips(state.rideId),
-      {"tipAmount": tipAmount},
-    );
+    safeCall(
+      task: () async {
+        final response = await apiService.post(
+          UserApiEndpoints.payTips(state.rideId),
+          {"tipAmount": tipAmount},
+        );
 
-    if (response['statusCode'] == 201) {
-      state = state.copyWith(
-        tipCheckoutUrl: TipsResponse.fromJson(response).data.checkoutUrl,
-      );
-    } else {
-      CustomToast.showToast(
-        message: response['message'] ?? "Field to Tip Compleate, Try again",
-      );
-    }
+        if (response['statusCode'] == 201) {
+          state = state.copyWith(
+            tipCheckoutUrl: TipsResponse.fromJson(response).data.checkoutUrl,
+          );
+        } else {
+          CustomToast.showToast(
+            message: response['message'] ?? "Field to Tip Compleate, Try again",
+          );
+        }
+      },
+    );
   }
 
   Future<void> listenRideDetails(RideDetailsController controller) async {
     socketService.on(SocketEvents.restoreRideState, (data) async {
-      AppLogger.d("$data ========================= ridedetails called");
-      if (data is List && data[0] != null) {
-        final bool hasActiveRide = data[0]["hasActiveRide"] ?? false;
-        final String rideId = data[0]["rideId"] ?? "";
-        if (hasActiveRide) {
-          final rideDetails = await controller.getRideDetails(rideId);
+      safeCall(
+        task: () async {
+          AppLogger.d("$data ========================= ridedetails called");
+          if (data is List && data[0] != null) {
+            final bool hasActiveRide = data[0]["hasActiveRide"] ?? false;
+            final String rideId = data[0]["rideId"] ?? "";
+            if (hasActiveRide) {
+              final rideDetails = await controller.getRideDetails(rideId);
 
-          if (rideDetails == null) return;
-          if (_isRideRetrievable(rideDetails.data?.status ?? "")) {
-            state = rideDetails.toBookingMapState(state);
+              if (rideDetails == null) return;
+              if (_isRideRetrievable(rideDetails.data?.status ?? "")) {
+                state = rideDetails.toBookingMapState(state);
+              }
+            }
           }
-        }
-      }
+        },
+      );
     });
+  }
+
+  void driverPaymentConfirmation(String id) {
+    socketService.emit(SocketEvents.driverRecivedPayment, {'rideId': id});
   }
 
   void emitRideDetails() {

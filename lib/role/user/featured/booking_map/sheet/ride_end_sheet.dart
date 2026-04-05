@@ -6,6 +6,7 @@ import 'package:taxi_booking/core/routes/user_app_routes.dart';
 import 'package:taxi_booking/resource/app_colors/app_colors.dart';
 import 'package:taxi_booking/resource/common_widget/custom_button.dart';
 import 'package:taxi_booking/resource/common_widget/custom_text.dart';
+import 'package:taxi_booking/role/user/featured/booking_map/controllers/booking_map_controller.dart';
 
 class RideEndSheet extends ConsumerStatefulWidget {
   final VoidCallback? onCancel;
@@ -56,8 +57,13 @@ class _ArrivingCardState extends ConsumerState<RideEndSheet> {
 
           CustomButton(
             title: "Back to Home",
-            onTap: () {
-              context.go(UserAppRoutes.rootView);
+            onTap: () async {
+              final result = await ref
+                  .read(bookingMapControllerProvider.notifier)
+                  .onRideCompleate();
+              if (result == true && mounted) {
+                context.go(UserAppRoutes.rootView);
+              }
             },
           ),
         ],

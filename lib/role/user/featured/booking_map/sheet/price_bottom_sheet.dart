@@ -27,52 +27,7 @@ class PricingOverviewSheet extends ConsumerStatefulWidget {
 }
 
 class _PricingOverviewSheetState extends ConsumerState<PricingOverviewSheet> {
-  int? selectedIndex; // Track selected pricing index
-
-  // final pricingList = [
-  //   PricingModel(
-  //     title: "TaxiTil",
-  //     subtitle: "Lowest price option",
-  //     startFare: 34.20,
-  //     perKm: 11.70,
-  //     perMin: 4.14,
-  //     minFare: 99,
-  //     extra: "Weekend higher pricing",
-  //   ),
-  //   PricingModel(
-  //     title: "Comfort",
-  //     subtitle: "Standard",
-  //     startFare: 54,
-  //     perKm: 15.75,
-  //     perMin: 5.40,
-  //     minFare: 100,
-  //   ),
-  //   PricingModel(
-  //     title: "Premium",
-  //     subtitle: "Luxury",
-  //     startFare: 63.90,
-  //     perKm: 21.60,
-  //     perMin: 5.94,
-  //     minFare: 105,
-  //   ),
-  //   PricingModel(
-  //     title: "XL",
-  //     subtitle: "Up to 7 passengers",
-  //     startFare: 71.82,
-  //     perKm: 25.52,
-  //     perMin: 8.98,
-  //     minFare: 251,
-  //   ),
-  //   PricingModel(
-  //     title: "Pet",
-  //     subtitle: "Pet friendly",
-  //     startFare: 34.20,
-  //     perKm: 11.70,
-  //     perMin: 4.14,
-  //     minFare: 99,
-  //     extra: "+25 NOK pet charge",
-  //   ),
-  // ];
+  int? selectedIndex;
 
   @override
   void initState() {
@@ -118,7 +73,7 @@ class _PricingOverviewSheetState extends ConsumerState<PricingOverviewSheet> {
                 child: ValueListenableBuilder(
                   valueListenable: controller.isLoading,
                   builder: (_, isloading, _) {
-                    if (isloading) {
+                    if (isloading || state.pricingList.isEmpty) {
                       return Center(child: CircularProgressIndicator());
                     } else if (state.pricingList.isNotEmpty) {
                       return ListView.separated(
