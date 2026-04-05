@@ -67,96 +67,92 @@ class BookingMapController extends BaseNotifier<BookingMapState> with MapMixin {
       TextEditingController();
 
   Future<void> onPicupPickoffLocationChanged() async {
-    safeCall(
-      task: () async {
-        // ----- MARKERS -----
-        final updatedMarkers = Set<Marker>.from(state.markers);
+    // ----- MARKERS -----
+    final updatedMarkers = Set<Marker>.from(state.markers);
 
-        updatedMarkers.removeWhere((m) => m.markerId.value == 'pickup');
-        if (state.pickupLatLng != null && pickupIcon != null) {
-          updatedMarkers.add(
-            Marker(
-              markerId: const MarkerId('pickup'),
-              position: state.pickupLatLng!,
-              icon: pickupIcon!,
-              infoWindow: InfoWindow(
-                title: 'Pickup Location',
-                snippet: pickupLocationController.text,
-              ),
-            ),
-          );
+    updatedMarkers.removeWhere((m) => m.markerId.value == 'pickup');
+    if (state.pickupLatLng != null && pickupIcon != null) {
+      updatedMarkers.add(
+        Marker(
+          markerId: const MarkerId('pickup'),
+          position: state.pickupLatLng!,
+          icon: pickupIcon!,
+          infoWindow: InfoWindow(
+            title: 'Pickup Location',
+            snippet: pickupLocationController.text,
+          ),
+        ),
+      );
+    }
+
+    // Remove old drop marker
+    updatedMarkers.removeWhere((m) => m.markerId.value == 'drop');
+
+    // Add drop marker
+    if (state.dropLatLng != null) {
+      updatedMarkers.add(
+        Marker(
+          markerId: const MarkerId('drop'),
+          position: state.dropLatLng!,
+          infoWindow: InfoWindow(
+            title: 'Drop Location',
+            snippet: dropLocationController.text,
+          ),
+        ),
+      );
+    }
+
+    // Update markers in state
+    state = state.copyWith(markers: updatedMarkers);
+
+    // ----- POLYLINES -----
+    if (state.pickupLatLng != null && state.dropLatLng != null) {
+      final updatedPolylines = <Polyline>{};
+
+      final result = await polylinePoints.getRouteBetweenCoordinatesV2(
+        request: RoutesApiRequest(
+          origin: PointLatLng(
+            state.pickupLatLng!.latitude,
+            state.pickupLatLng!.longitude,
+          ),
+          destination: PointLatLng(
+            state.dropLatLng!.latitude,
+            state.dropLatLng!.longitude,
+          ),
+          travelMode: TravelMode.driving,
+        ),
+      );
+
+      if (result.primaryRoute?.polylinePoints != null) {
+        final routePoints = result.primaryRoute!.polylinePoints!
+            .map((p) => LatLng(p.latitude, p.longitude))
+            .toList();
+
+        updatedPolylines.add(
+          Polyline(
+            polylineId: const PolylineId('route'),
+            color: Colors.blue,
+            width: 5,
+            points: routePoints,
+          ),
+        );
+
+        state = state.copyWith(
+          polylines: updatedPolylines,
+          routeDistanceKm:
+              result.primaryRoute!.distanceKm ??
+              calculatePolylineDistance(routePoints),
+          tripDurationMin: ((result.primaryRoute!.duration ?? 0) / 60),
+        );
+
+        if (kDebugMode) {
+          print(result.primaryRoute!.duration);
+          print(state.tripDurationMin);
         }
 
-        // Remove old drop marker
-        updatedMarkers.removeWhere((m) => m.markerId.value == 'drop');
-
-        // Add drop marker
-        if (state.dropLatLng != null) {
-          updatedMarkers.add(
-            Marker(
-              markerId: const MarkerId('drop'),
-              position: state.dropLatLng!,
-              infoWindow: InfoWindow(
-                title: 'Drop Location',
-                snippet: dropLocationController.text,
-              ),
-            ),
-          );
-        }
-
-        // Update markers in state
-        state = state.copyWith(markers: updatedMarkers);
-
-        // ----- POLYLINES -----
-        if (state.pickupLatLng != null && state.dropLatLng != null) {
-          final updatedPolylines = <Polyline>{};
-
-          final result = await polylinePoints.getRouteBetweenCoordinatesV2(
-            request: RoutesApiRequest(
-              origin: PointLatLng(
-                state.pickupLatLng!.latitude,
-                state.pickupLatLng!.longitude,
-              ),
-              destination: PointLatLng(
-                state.dropLatLng!.latitude,
-                state.dropLatLng!.longitude,
-              ),
-              travelMode: TravelMode.driving,
-            ),
-          );
-
-          if (result.primaryRoute?.polylinePoints != null) {
-            final routePoints = result.primaryRoute!.polylinePoints!
-                .map((p) => LatLng(p.latitude, p.longitude))
-                .toList();
-
-            updatedPolylines.add(
-              Polyline(
-                polylineId: const PolylineId('route'),
-                color: Colors.blue,
-                width: 5,
-                points: routePoints,
-              ),
-            );
-
-            state = state.copyWith(
-              polylines: updatedPolylines,
-              routeDistanceKm:
-                  result.primaryRoute!.distanceKm ??
-                  calculatePolylineDistance(routePoints),
-              tripDurationMin: ((result.primaryRoute!.duration ?? 0) / 60),
-            );
-
-            if (kDebugMode) {
-              print(result.primaryRoute!.duration);
-              print(state.tripDurationMin);
-            }
-
-            fitCameraBounds(routePoints);
-          }
-        }
-      },
-    );
+        fitCameraBounds(routePoints);
+      }
+    }
   }
 
   Future<void> onDriverLocationChanged() async {

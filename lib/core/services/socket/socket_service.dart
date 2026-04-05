@@ -81,7 +81,7 @@ class SocketService {
     try {
       AppLogger.i("Emit event: $event with $data");
 
-      await _socket!.emitWithAckAsync(
+      _socket!.emitWithAckAsync(
         event,
         data,
         ack: (response) {
